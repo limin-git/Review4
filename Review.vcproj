@@ -185,66 +185,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\ConsoleCommand.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ConsoleUtility.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DirectoryWatcher.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FileUtility.h"
-				>
-			</File>
-			<File
-				RelativePath=".\History.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Loader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Log.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OptionString.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OptionUpdateHelper.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ProgramOptions.h"
-				>
-			</File>
-			<File
-				RelativePath=".\QueueProcessor.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ReviewManager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ReviewString.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Speech.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SrtSubtitleParser.h"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -264,113 +204,13 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\stdafx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\targetver.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TimeUtility.h"
-				>
-			</File>
-			<File
-				RelativePath=".\UnicodeUtility.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Utility.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WriteConsoleHelper.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Utility"
 			>
-			<File
-				RelativePath=".\ConsoleUtility.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\FileUtility.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SoundUtility.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SrtSubtitleParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\StringUtility.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\StringUtility.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TimeUtility.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\UnicodeUtility.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Utility.cpp"
-				>
-			</File>
 		</Filter>
 		<File
-			RelativePath=".\ConsoleCommand.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\DirectoryWatcher.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\History.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Loader.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Log.cpp"
-			>
-		</File>
-		<File
 			RelativePath=".\main.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\ProgramOptions.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\review.cfg"
-			>
-		</File>
-		<File
-			RelativePath=".\ReviewManager.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\ReviewString.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Speech.cpp"
 			>
 		</File>
 	</Files>
