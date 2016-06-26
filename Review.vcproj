@@ -64,6 +64,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(BOOST_HOME)\stage\lib&quot;"
+				GenerateManifest="true"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -145,6 +146,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(BOOST_HOME)\stage\lib&quot;"
+				GenerateManifest="true"
 				EnableUAC="true"
 				GenerateDebugInformation="false"
 				SubSystem="1"
@@ -185,6 +187,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\IDirectoryChangeMonitor.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -204,10 +210,22 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\stdafx.h"
+				>
+			</File>
 		</Filter>
 		<Filter
-			Name="Utility"
+			Name="src"
 			>
+			<File
+				RelativePath=".\DirectoryChangeMonitor.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DirectoryChangeMonitor.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\main.cpp"
