@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="Review"
-	ProjectGUID="{1F81D3E6-184E-4216-8254-A06BA167C205}"
-	RootNamespace="Review"
+	Name="ReviewTest"
+	ProjectGUID="{2C165DDE-0B7B-45EE-8D2A-BA84DDCEB441}"
+	RootNamespace="Test"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -21,6 +21,7 @@
 			OutputDirectory="$(ProjectDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
+			UseOfATL="1"
 			CharacterSet="1"
 			>
 			<Tool
@@ -43,7 +44,7 @@
 				AdditionalOptions="-Zm1024"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(BOOST_HOME)&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -64,7 +65,6 @@
 				Name="VCLinkerTool"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(BOOST_HOME)\stage\lib&quot;"
-				GenerateManifest="true"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -96,6 +96,7 @@
 			OutputDirectory="$(ProjectDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
+			UseOfATL="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -118,17 +119,11 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="-Zm1024"
 				Optimization="2"
-				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				OmitFramePointers="true"
 				AdditionalIncludeDirectories="&quot;$(BOOST_HOME)&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN"
-				StringPooling="true"
-				MinimalRebuild="true"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				EnableEnhancedInstructionSet="2"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -146,13 +141,10 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(BOOST_HOME)\stage\lib&quot;"
-				GenerateManifest="true"
-				EnableUAC="true"
-				GenerateDebugInformation="false"
+				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -182,41 +174,19 @@
 	</References>
 	<Files>
 		<Filter
-			Name="includes"
+			Name="src"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			>
+		</Filter>
+		<Filter
+			Name="include"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\DirectoryChangeMonitor.h"
+				RelativePath="..\stdafx.cpp"
 				>
-			</File>
-			<File
-				RelativePath=".\DirectoryChangeMonitorThread.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FileSystem.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IDirectoryChangeHandler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IDirectoryChangeMonitor.h"
-				>
-			</File>
-			<File
-				RelativePath=".\stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
 					>
@@ -227,23 +197,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\stdafx.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="src"
-			>
-			<File
-				RelativePath=".\DirectoryChangeMonitor.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DirectoryChangeMonitorThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\FileSystem.cpp"
+				RelativePath="..\stdafx.h"
 				>
 			</File>
 		</Filter>

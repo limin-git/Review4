@@ -3,6 +3,41 @@
 //#include "Log.h"
 
 
+void DirectoryChangeMonitor::add_file_change_handler( const boost::filesystem::path& file_path, IDirectoryChangeHandler* handler )
+{
+    DirectoryChangeMonitorThread t( file_path, handler );
+
+    BOOST_FOREACH( DirectoryChangeMonitorThreadMap::value_type& v, m_threads )
+    {
+        if ( v.second.second.merge_child( t ) )
+        {
+            return;
+        }
+    }
+
+    for ( DirectoryChangeMonitorThreadMap::iterator it = m_threads.begin(); it != m_threads.end(); )
+    {
+        if ( t.merge_child( it->second.second ) )
+        {
+            it->second.second.terminate();
+            it-.second.first->join();
+            delete it->second.first;
+            m_threads.erase( it++ );
+        }
+        else
+        {
+            ++it;
+        }
+    }
+
+   
+    m_threads[file_path]
+
+}
+
+
+#if 0
+
 void DirectoryChangeMonitor::add_file_change_handler( const fs::path& file_path, FileChangeHandler handler )
 {
     if ( !fs::is_directory( file_path ) )
@@ -25,14 +60,8 @@ void DirectoryChangeMonitor::add_file_change_handler( const fs::path& file_path,
                 list.push_back( p );
             }
 
-            SignalType*& signal = m_file_signal_map[p];
-
-            if ( signal == NULL )
-            {
-                signal = new SignalType;
-            }
-
-            signal->connect( handler );
+            FileChangeHandlerList& handlers = m_file_handler_map[p];
+            handlers.push_back( handler );
             return;
         }
     }
@@ -40,8 +69,7 @@ void DirectoryChangeMonitor::add_file_change_handler( const fs::path& file_path,
     fs::path pp = p.parent_path();
     m_directory_thread_map[pp] = new boost::thread; // TODO
     m_directory_files_map[pp].push_back( p );
-    m_file_signal_map[p] = new SignalType;
-    m_file_signal_map[p]->connect( handler );
+    m_file_handler_map[p].push_back( handler );
 
 
     for ( DirectoryThreadMap::iterator it = m_directory_thread_map.begin(); it != m_directory_thread_map.end(); ++it )
@@ -52,7 +80,16 @@ void DirectoryChangeMonitor::add_file_change_handler( const fs::path& file_path,
         {
             if ( parent == pp )
             {
-                //TODO
+                // move files to new monitor
+                std::vector<fs::path>& new_files = m_directory_files_map[pp];
+                std::vector<fs::path>& old_files = m_directory_files_map[dir];
+                new_files.insert( new_files.end(), old_files.begin(), old_files.end() );
+
+                // delete old monitor
+                FindCloseChangeNotification(  );
+                m_directory_files_map.erase( dir );
+                delete m_directory_thread_map[dir];
+
             }
         }
     }    
@@ -63,19 +100,20 @@ void DirectoryChangeMonitor::remove_file_change_handler( const fs::path& file_pa
 {
     fs::path p = fs::system_complete( file_path );
 
-    FileSignalMap::iterator it = m_file_signal_map.find( p );
+    FileHandlerMap::iterator it = m_file_handler_map.find( p );
 
-    if ( it != m_file_signal_map.end() )
+    if ( it != m_file_handler_map.end() )
     {
         const fs::path& pp = it->first;
-        SignalType* signal = it->second;
+        //SignalType* signal = it->second;
+        //signal->disconnect( foo );
         //signal->disconnect( handler );
-    }
+        //TODO
+   }
 }
 
 
 
-#if 0
 
 void DirectoryChangeMonitor::watch_directory_thread( const std::wstring& file )
 {

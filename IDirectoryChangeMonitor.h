@@ -1,16 +1,14 @@
 #pragma once
 
 
-typedef boost::function<void()> FileChangeHandler;
+struct IDirectoryChangeHandler;
 
 
-class IDirectoryChangeMonitor
+struct IDirectoryChangeMonitor
 {
-public:
-
-    virtual ~IDirectoryChangeMonitor() {};
-    virtual void add_file_change_handler( const boost::filesystem::path& file_path, FileChangeHandler handler ) = 0;
-    virtual void remove_file_change_handler( const boost::filesystem::path& file_path, FileChangeHandler handler ) = 0;
+    virtual ~IDirectoryChangeMonitor() = 0;
+    virtual void add_file_change_handler( const boost::filesystem::path& file_path, IDirectoryChangeHandler* handler ) = 0;
+    virtual void remove_file_change_handler( const boost::filesystem::path& file_path, IDirectoryChangeHandler* handler ) = 0;
 
     static IDirectoryChangeMonitor* instance();
     static void remove();

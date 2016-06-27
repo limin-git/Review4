@@ -47,6 +47,8 @@
 #include <boost/log/utility/setup.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/random_generator.hpp>
+#include <boost/function.hpp>
+#include <boost/function_equal.hpp>
 #include <boost/functional.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/local_function.hpp>
@@ -61,3 +63,4 @@
 #include <boost/any.hpp>
 #include <boost/variant.hpp>
 #include <boost/locale.hpp>
+#include <boost/foreach.hpp>
