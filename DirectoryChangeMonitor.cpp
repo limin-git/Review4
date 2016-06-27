@@ -3,8 +3,6 @@
 //#include "Log.h"
 
 
-boost::thread make_thread();
-
 void DirectoryChangeMonitor::add_file_change_handler( const fs::path& file_path, FileChangeHandler handler )
 {
     if ( !fs::is_directory( file_path ) )
