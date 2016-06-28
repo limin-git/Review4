@@ -1,8 +1,8 @@
 #pragma once
 
 
-struct IDirectoryChangeHandler
+struct IFileChangeHandler
 {
-    virtual ~IDirectoryChangeHandler() = 0;
+    virtual ~IFileChangeHandler() {};
     virtual void last_write_time_changed( const boost::filesystem::path& file ) = 0;
 };

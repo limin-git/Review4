@@ -27,4 +27,4 @@ namespace Utility
     }
 }
 
-#define stdcout Utility::WriteConsoleHelper helper; helper
+#define stdcout Utility::WriteConsoleHelper()

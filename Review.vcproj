@@ -187,11 +187,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\DirectoryChangeMonitor.h"
+				RelativePath=".\FileChangeManager.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DirectoryChangeMonitorThread.h"
+				RelativePath=".\FileChangeMonitorThread.h"
 				>
 			</File>
 			<File
@@ -199,11 +199,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\IDirectoryChangeHandler.h"
+				RelativePath=".\IFileChangeHandler.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IDirectoryChangeMonitor.h"
+				RelativePath=".\IFileChangeManager.h"
 				>
 			</File>
 			<File
@@ -235,15 +235,47 @@
 			Name="src"
 			>
 			<File
-				RelativePath=".\DirectoryChangeMonitor.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DirectoryChangeMonitorThread.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\FileSystem.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="utilities"
+			>
+			<File
+				RelativePath=".\ConsoleUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ConsoleUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UnicodeUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UnicodeUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WriteConsoleHelper.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="FileChangeManager"
+			>
+			<File
+				RelativePath=".\FileChangeManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FileChangeMonitorThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IFileChangeManager.cpp"
 				>
 			</File>
 		</Filter>
