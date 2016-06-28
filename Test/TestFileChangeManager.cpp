@@ -42,12 +42,12 @@ void TestFileChangeManager::test2()
     };
 
     TestHandler handler1;
-    IFileChangeManager::instance().add_handler( L"C:\\Temp\\New folder\\x.txt", &handler1 );
+    IFileChangeManager::instance().add_handler( L"C:\\Temp\\New folder (2)\\x.txt", &handler1 );
     _getch();
     TestHandler handler2;
     IFileChangeManager::instance().add_handler( L"C:\\Temp\\aa.txt", &handler2 );
     _getch();
     IFileChangeManager::instance().remove_handler( L"C:\\Temp\\aa.txt", &handler2 );
     _getch();
-    IFileChangeManager::instance().remove_handler( L"C:\\Temp\\New folder\\x.txt", &handler1 );
+    IFileChangeManager::instance().remove_handler( L"C:\\Temp\\New folder (2)\\x.txt", &handler1 );
 }

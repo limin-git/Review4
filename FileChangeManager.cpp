@@ -6,8 +6,13 @@
 
 void FileChangeManager::add_handler( const boost::filesystem::path& file_path, IFileChangeHandler* handler )
 {
+    if ( !exists( file_path ) || is_directory( file_path ) )
+    {
+        return;
+    }
+
     FileChangeMonitorThread t;
-    t.initialize( file_path, handler );
+    t.initialize( file_path.is_complete() ? file_path : system_complete( file_path ), handler );
 
     BOOST_FOREACH( FileChangeMonitorThread& v, m_threads )
     {
