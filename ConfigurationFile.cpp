@@ -15,8 +15,9 @@ ConfigurationFile::ConfigurationFile()
 
         BOOST_FOREACH( const std::wstring& config_file, config_files )
         {
-            load_config_file( config_file );
-            IFileChangeManager::instance().add_handler( config_file, this );
+            boost::filesystem::path p = boost::filesystem::system_complete( config_file );
+            load_config_file( p );
+            IFileChangeManager::instance().add_handler( p, this );
         }
     }
 }

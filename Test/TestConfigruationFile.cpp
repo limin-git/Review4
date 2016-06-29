@@ -20,10 +20,26 @@ void TestConfigruationFile::test1()
 {
     struct TestObserver : IConfigurationFileObserver
     {
+        TestObserver( const std::string& option_name )
+            : m_option_name( option_name )
+        {
+            po::options_description desc;
+            desc.add_options()( m_option_name.c_str(), po::wvalue<std::wstring>(), m_option_name.c_str() );
+            IConfigurationFile::instance().add_options_description( desc );
+            IConfigurationFile::instance().add_observer( this );
+        }
+
         virtual void options_changed( const boost::program_options::variables_map& old_map, const boost::program_options::variables_map& new_map )
         {
             stdcout << "options_changed: " << "\n";
+
+            if ( new_map.count( m_option_name ) )
+            {
+                stdcout << m_option_name << " = "  << new_map[m_option_name].as<std::wstring>() << "\n";
+            }
         }
+
+        std::string m_option_name;
     };
 
     std::ofstream ofs( "test.txt" );
@@ -39,11 +55,8 @@ void TestConfigruationFile::test1()
     namespace po = boost::program_options;
 
     {
-        TestObserver observer;
-        po::options_description desc;
-        desc.add_options()( "foo", "foo" );
-        IConfigurationFile::instance().add_options_description( desc );
-        IConfigurationFile::instance().add_observer( &observer );
+        TestObserver foo( "foo" );
+        TestObserver bar( "bar" );
         _getch();
     }
 
