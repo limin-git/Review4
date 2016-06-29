@@ -279,6 +279,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="ConfigurationFile"
+			>
+			<File
+				RelativePath=".\ConfigurationFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IConfigurationFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IConfigurationFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IConfigurationFileObserver.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\main.cpp"
 			>
