@@ -179,6 +179,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\TestConfigruationFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestConfigruationFile.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TestFileChangeManager.cpp"
 				>
 			</File>
@@ -221,6 +229,14 @@
 			Name="Review"
 			>
 			<File
+				RelativePath="..\CommandLine.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\ConfigurationFile.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\ConsoleUtility.cpp"
 				>
 			</File>
@@ -238,6 +254,10 @@
 			</File>
 			<File
 				RelativePath="..\FileUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\IConfigurationFile.cpp"
 				>
 			</File>
 			<File

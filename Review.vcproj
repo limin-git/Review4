@@ -251,6 +251,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FileUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FileUtility.h"
+				>
+			</File>
+			<File
 				RelativePath=".\UnicodeUtility.cpp"
 				>
 			</File>
