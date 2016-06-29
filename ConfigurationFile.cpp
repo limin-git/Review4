@@ -38,7 +38,7 @@ void ConfigurationFile::add_options_description( boost::program_options::options
 
     BOOST_FOREACH( const ConfigurationFileMap::value_type& config_file, m_config_file_map )
     {
-        parse_config_file( config_file.first, true );
+        parse_config_file( config_file.first );
     }
 }
 
@@ -47,9 +47,10 @@ void ConfigurationFile::add_observer( IConfigurationFileObserver* observer )
 {
     m_observers.insert( observer );
 
-    BOOST_FOREACH( const ConfigurationFileMap::value_type& config_file, m_config_file_map )
+    BOOST_FOREACH( const FileVariablesMap::value_type& vm, m_variables_map )
     {
-        boost::thread t( boost::bind( &ConfigurationFile::notify_observer_thread, this, observer, config_file.first ) );
+        static const boost::program_options::variables_map empty;
+        observer->options_changed( vm.second, empty );
     }
 }
 
@@ -91,19 +92,11 @@ bool ConfigurationFile::load_config_file( const boost::filesystem::path& config_
 }
 
 
-void ConfigurationFile::parse_config_file( const boost::filesystem::path& config_file, bool clean_old )
+void ConfigurationFile::parse_config_file( const boost::filesystem::path& config_file )
 {
     std::wstringstream strm( m_config_file_map[config_file] );
+    m_variables_map[config_file].swap( m_variables_map_old[config_file] );
     boost::program_options::variables_map& vm = m_variables_map[config_file];
-
-    if ( clean_old )
-    {
-        m_variables_map_old[config_file].clear();
-    }
-    else
-    {
-        m_variables_map_old[config_file].swap( vm );
-    }
 
     try
     {
@@ -120,5 +113,5 @@ void ConfigurationFile::parse_config_file( const boost::filesystem::path& config
 
 void ConfigurationFile::notify_observer_thread( IConfigurationFileObserver* observer, boost::filesystem::path& config_file )
 {
-    observer->options_changed( m_variables_map_old[config_file], m_variables_map[config_file] );
+    observer->options_changed( m_variables_map[config_file], m_variables_map_old[config_file] );
 }

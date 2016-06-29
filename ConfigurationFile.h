@@ -21,7 +21,7 @@ protected:
 private:
 
     bool load_config_file( const boost::filesystem::path& config_file );
-    void parse_config_file( const boost::filesystem::path& config_file, bool clean_old = false );
+    void parse_config_file( const boost::filesystem::path& config_file );
     void notify_observer_thread( IConfigurationFileObserver* observer, boost::filesystem::path& p );
 
 private:

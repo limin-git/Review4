@@ -29,13 +29,15 @@ void TestConfigruationFile::test1()
             IConfigurationFile::instance().add_observer( this );
         }
 
-        virtual void options_changed( const boost::program_options::variables_map& old_map, const boost::program_options::variables_map& new_map )
+        virtual void options_changed( const boost::program_options::variables_map& vm, const boost::program_options::variables_map& old )
         {
-            stdcout << "options_changed: " << "\n";
-
-            if ( new_map.count( m_option_name ) )
+            if ( vm.count( m_option_name ) )
             {
-                stdcout << m_option_name << " = "  << new_map[m_option_name].as<std::wstring>() << "\n";
+                if ( old.empty() || ( vm[m_option_name].as<std::wstring>() != old[m_option_name].as<std::wstring>() ) )
+                {
+                    stdcout << "options_changed: " << "\n";
+                    stdcout << m_option_name << " = "  << vm[m_option_name].as<std::wstring>() << "\n";
+                }
             }
         }
 
