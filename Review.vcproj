@@ -280,8 +280,20 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="ConfigurationFile"
+			Name="Configuration"
 			>
+			<File
+				RelativePath=".\CommandLine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CommandLine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ConfigurationFile.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\ConfigurationFile.h"
 				>

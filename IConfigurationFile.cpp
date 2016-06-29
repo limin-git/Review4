@@ -6,16 +6,22 @@
 static IConfigurationFile* s_configuration_file = NULL;
 
 
-IConfigurationFile::IConfigurationFile& instance()
+IConfigurationFile& IConfigurationFile::instance()
 {
     if ( s_configuration_file == NULL )
     {
         s_configuration_file = new ConfigurationFile;
     }
+
+    return *s_configuration_file;
 }
 
 
 void IConfigurationFile::remove()
 {
-
+    if ( s_configuration_file != NULL )
+    {
+        delete s_configuration_file;
+        s_configuration_file = NULL;
+    }
 }

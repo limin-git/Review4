@@ -4,8 +4,8 @@
 
 struct ConfigurationFile : public IConfigurationFile
 {
-    virtual ~IConfigurationFile() {}
-    virtual void add_options_description( boost::program_options::options_description& desc ) = 0;
-    virtual void add_observer( IConfigurationFileObserver* observer ) = 0;
-    virtual void remove_observer( IConfigurationFileObserver* observer ) = 0;
+    virtual ~ConfigurationFile() {}
+    virtual void add_options_description( boost::program_options::options_description& desc );
+    virtual void add_observer( IConfigurationFileObserver* observer );
+    virtual void remove_observer( IConfigurationFileObserver* observer );
 };
