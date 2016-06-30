@@ -3,13 +3,10 @@
 namespace po = boost::program_options;
 
 
-CommandLine g_command_line;
-
-
 CommandLine::CommandLine()
-    : m_desc( "Usage" )
+    : m_options_description( "Usage" )
 {
-    m_desc.add_options()
+    m_options_description.add_options()
         ( "config-file,c", po::wvalue< std::vector<std::wstring> >()->multitoken(),  "configuration files." )
         ;
 }
@@ -17,13 +14,13 @@ CommandLine::CommandLine()
 
 void CommandLine::parse_command_line( int argc, wchar_t* argv[] )
 {
-    po::positional_options_description pdesc;
-    pdesc.add( "config-file", -1 );
+    po::positional_options_description desc;
+    desc.add( "config-file", -1 );
 
     try
     {
-        store( po::wcommand_line_parser( argc, argv ).options( m_desc ).positional( pdesc ).allow_unregistered().run(), m_vm );
-        notify( m_vm );
+        store( po::wcommand_line_parser( argc, argv ).options( m_options_description ).positional( desc ).allow_unregistered().run(), m_variables_map );
+        notify( m_variables_map );
     }
     catch ( std::exception& e)
     {

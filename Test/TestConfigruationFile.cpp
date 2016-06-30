@@ -5,7 +5,7 @@
 #include "WriteConsoleHelper.h"
 #include "IConfigurationFileObserver.h"
 #include "IConfigurationFile.h"
-#include "CommandLine.h"
+#include "ICommandLine.h"
 
 
 
@@ -52,7 +52,7 @@ void TestConfigruationFile::test1()
 
     wchar_t* argv[] = { L"place-holder", L"--config-file=test.txt" };
     int argc = sizeof( argv ) / sizeof( wchar_t* );
-    g_command_line.parse_command_line( argc, argv );
+    ICommandLine::instance().parse_command_line( argc, argv );
 
     namespace po = boost::program_options;
 

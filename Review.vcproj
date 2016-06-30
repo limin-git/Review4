@@ -307,6 +307,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ICommandLine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ICommandLine.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IConfigurationFile.cpp"
 				>
 			</File>
@@ -316,6 +324,30 @@
 			</File>
 			<File
 				RelativePath=".\IConfigurationFileObserver.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Input"
+			>
+			<File
+				RelativePath=".\IInput.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IInput.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IInputHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Input.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Input.h"
 				>
 			</File>
 		</Filter>

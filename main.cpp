@@ -1,19 +1,19 @@
 #include "stdafx.h"
-#include "CommandLine.h"
+#include "ICommandLine.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
 {
     if ( argc == 1 )
     {
-        std::cout << g_command_line.m_desc << std::endl;
+        std::cout << ICommandLine::instance().get_options_description() << std::endl;
         return 0;
     }
 
-    g_command_line.parse_command_line( argc, argv );
+    ICommandLine::instance().parse_command_line( argc, argv );
 
     namespace po = boost::program_options;
-    po::variables_map& vm = g_command_line.m_vm;
+    po::variables_map& vm = ICommandLine::instance().get_variables_map();
 
     if ( vm.count( "config-file" ) )
     {

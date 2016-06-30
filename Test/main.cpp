@@ -1,9 +1,7 @@
-// Test.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
 #include "TestFileChangeManager.h"
 #include "TestConfigruationFile.h"
+#include "TestInput.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -13,9 +11,14 @@ int _tmain(int argc, _TCHAR* argv[])
         TestFileChangeManager t;
     }
 
-    if ( 1 )
+    if ( 0 )
     {
         TestConfigruationFile t;
+    }
+
+    if ( 1 )
+    {
+        TestInput t;
     }
 
 	return 0;

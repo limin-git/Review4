@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include "ConfigurationFile.h"
-#include "CommandLine.h"
+#include "ICommandLine.h"
 #include "IFileChangeManager.h"
 #include "FileUtility.h"
 
 
 ConfigurationFile::ConfigurationFile()
 {
-    boost::program_options::variables_map& vm = g_command_line.m_vm;
+    boost::program_options::variables_map& vm = ICommandLine::instance().get_variables_map();
 
     if ( vm.count( "config-file" ) )
     {

@@ -194,6 +194,14 @@
 				RelativePath=".\TestFileChangeManager.h"
 				>
 			</File>
+			<File
+				RelativePath=".\TestInput.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestInput.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="include"
@@ -257,11 +265,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\ICommandLine.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\IConfigurationFile.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\IFileChangeManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\IInput.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Input.cpp"
 				>
 			</File>
 			<File
