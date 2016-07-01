@@ -6,7 +6,7 @@
 namespace Utility
 {
 
-    void show_console_cursor( BOOL visible, HANDLE handle )
+    void show_cursor( BOOL visible, HANDLE handle )
     {
         CONSOLE_CURSOR_INFO cursor_info;
         GetConsoleCursorInfo( handle, &cursor_info );
@@ -70,7 +70,7 @@ namespace Utility
     }
 
 
-    void disable_console_system_buttons()
+    void disable_system_buttons()
     {   
         HWND w = GetConsoleWindow();
         HMENU m = GetSystemMenu( w, FALSE );
@@ -81,7 +81,7 @@ namespace Utility
     }
 
 
-    void set_console_color( WORD color, HANDLE handle )
+    void set_color( WORD color, HANDLE handle )
     {
         DWORD written = 0;
         COORD coord = { 0, 0 };

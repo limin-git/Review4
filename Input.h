@@ -9,7 +9,7 @@ public:
     Input();
     virtual void run();
     virtual IInput& add_key_handler( IInputHandler* handler, bool key_down, WORD virtual_key_code, const Callback& callback );
-    virtual IInput& add_key_handler( IInputHandler* handler, bool key_down, WORD virtual_key_code_beg, WORD virtual_key_code_end, const Callback& callback );
+    virtual IInput& add_key_handler( IInputHandler* handler, bool key_down, WORD virtual_key_code_first, WORD virtual_key_code_last, const Callback& callback );
     virtual IInput& add_key_handler( IInputHandler* handler, bool key_down, const std::vector<WORD>& virtual_key_code_list, const Callback& callback );
     virtual IInput& remove_key_handler( IInputHandler* handler );
     virtual IInput& add_mouse_handler( IInputHandler* handler, DWORD event_flas, DWORD button_state, const Callback& callback );

@@ -80,9 +80,9 @@ IInput& Input::add_key_handler( IInputHandler* handler, bool key_down, WORD virt
 }
 
 
-IInput& Input::add_key_handler( IInputHandler* handler, bool key_down, WORD virtual_key_code_beg, WORD virtual_key_code_end, const Callback& callback )
+IInput& Input::add_key_handler( IInputHandler* handler, bool key_down, WORD virtual_key_code_first, WORD virtual_key_code_last, const Callback& callback )
 {
-    for ( size_t virtual_key_code = virtual_key_code_beg; virtual_key_code <= virtual_key_code_end; ++virtual_key_code )
+    for ( size_t virtual_key_code = virtual_key_code_first; virtual_key_code <= virtual_key_code_last; ++virtual_key_code )
     {
         m_key_handlers[key_down][virtual_key_code][handler] = callback;
     }
@@ -118,6 +118,8 @@ IInput& Input::remove_key_handler( IInputHandler* handler )
 
 IInput& Input::add_mouse_handler( IInputHandler* handler, DWORD event_flas, DWORD button_state, const Callback& callback )
 {
+    ( 0 == event_flas ? m_mouse_button_pressed_handlers[button_state][handler] : m_other_mouse_handlers[event_flas][handler] ) = callback;
+
     if ( 0 == event_flas )
     {
         m_mouse_button_pressed_handlers[button_state][handler] = callback;
