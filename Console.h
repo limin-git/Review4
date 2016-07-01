@@ -29,7 +29,7 @@ private:
     COORD calculate_center_coord( size_t string_length );
 
 private:
-    
+
     HANDLE m_cout;
     HANDLE m_stdout;
 };

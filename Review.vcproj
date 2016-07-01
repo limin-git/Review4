@@ -352,6 +352,18 @@
 			</File>
 		</Filter>
 		<Filter
+			Name="Log"
+			>
+			<File
+				RelativePath=".\ILog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Log.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="Console"
 			>
 			<File
@@ -370,24 +382,8 @@
 				RelativePath=".\IConsole.h"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="Log"
-			>
 			<File
-				RelativePath=".\ILog.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ILog.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Log.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Log.h"
+				RelativePath=".\IConsole.h"
 				>
 			</File>
 		</Filter>

@@ -161,7 +161,7 @@ void Console::set_font_size( SHORT font_size )
     f.cbSize = sizeof( CONSOLE_FONT_INFOEX );
     GetCurrentConsoleFontEx( m_cout, FALSE, &f );
 
-    if ( f.dwFontSize.Y != font_size )
+	if ( f.dwFontSize.Y != font_size )
     {
         f.dwFontSize.Y = font_size;
         SetCurrentConsoleFontEx( m_cout, FALSE, &f );
