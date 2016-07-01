@@ -32,7 +32,7 @@ ConfigurationFile::~ConfigurationFile()
 }
 
 
-void ConfigurationFile::add_options_description( boost::program_options::options_description& desc )
+IConfigurationFile& ConfigurationFile::add_options_description( boost::program_options::options_description& desc )
 {
     m_descriptions.add( desc );
 
@@ -40,10 +40,12 @@ void ConfigurationFile::add_options_description( boost::program_options::options
     {
         parse_config_file( config_file.first );
     }
+
+    return *this;
 }
 
 
-void ConfigurationFile::add_observer( IConfigurationFileObserver* observer )
+IConfigurationFile& ConfigurationFile::add_observer( IConfigurationFileObserver* observer )
 {
     m_observers.insert( observer );
 
@@ -52,6 +54,8 @@ void ConfigurationFile::add_observer( IConfigurationFileObserver* observer )
         static const boost::program_options::variables_map empty;
         observer->options_changed( vm.second, empty );
     }
+
+    return *this;
 }
 
 

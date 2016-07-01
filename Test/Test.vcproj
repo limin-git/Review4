@@ -187,6 +187,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TestConsole.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestConsole.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TestFileChangeManager.cpp"
 				>
 			</File>
@@ -200,6 +208,14 @@
 			</File>
 			<File
 				RelativePath=".\TestInput.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TestLog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestLog.h"
 				>
 			</File>
 		</Filter>
@@ -245,6 +261,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Console.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\ConsoleUtility.cpp"
 				>
 			</File>
@@ -273,6 +293,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\IConsole.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\IFileChangeManager.cpp"
 				>
 			</File>
@@ -281,7 +305,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\ILog.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Input.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Log.cpp"
 				>
 			</File>
 			<File

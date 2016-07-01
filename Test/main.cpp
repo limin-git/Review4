@@ -2,6 +2,8 @@
 #include "TestFileChangeManager.h"
 #include "TestConfigruationFile.h"
 #include "TestInput.h"
+#include "TestConsole.h"
+#include "TestLog.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -16,11 +18,20 @@ int _tmain(int argc, _TCHAR* argv[])
         TestConfigruationFile t;
     }
 
-    if ( 1 )
+    if ( 0 )
     {
         TestInput t;
     }
 
+    if ( 0 )
+    {
+        TestConsole t;
+    }
+
+    if ( 1 )
+    {
+        TestLog t;
+    }
+
 	return 0;
 }
-

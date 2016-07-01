@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="Review"
+	Name="Review4"
 	ProjectGUID="{1F81D3E6-184E-4216-8254-A06BA167C205}"
 	RootNamespace="Review"
 	Keyword="Win32Proj"
@@ -187,6 +187,14 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\CommandLine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ConfigurationFile.h"
+				>
+			</File>
+			<File
 				RelativePath=".\FileChangeManager.h"
 				>
 			</File>
@@ -199,11 +207,35 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ICommandLine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IConfigurationFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IConfigurationFileObserver.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IFileChangeHandler.h"
 				>
 			</File>
 			<File
 				RelativePath=".\IFileChangeManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IInput.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IInputHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Input.h"
 				>
 			</File>
 			<File
@@ -234,10 +266,6 @@
 		<Filter
 			Name="src"
 			>
-			<File
-				RelativePath=".\FileSystem.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="utilities"
@@ -248,6 +276,10 @@
 			</File>
 			<File
 				RelativePath=".\ConsoleUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FileSystem.cpp"
 				>
 			</File>
 			<File
@@ -295,15 +327,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CommandLine.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ConfigurationFile.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ConfigurationFile.h"
 				>
 			</File>
 			<File
@@ -311,19 +335,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ICommandLine.h"
-				>
-			</File>
-			<File
 				RelativePath=".\IConfigurationFile.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IConfigurationFile.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IConfigurationFileObserver.h"
 				>
 			</File>
 		</Filter>
@@ -335,19 +347,47 @@
 				>
 			</File>
 			<File
-				RelativePath=".\IInput.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IInputHandler.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Input.cpp"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="Console"
+			>
 			<File
-				RelativePath=".\Input.h"
+				RelativePath=".\Console.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Console.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IConsole.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IConsole.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Log"
+			>
+			<File
+				RelativePath=".\ILog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ILog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Log.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Log.h"
 				>
 			</File>
 		</Filter>

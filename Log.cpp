@@ -1,138 +1,79 @@
 #include "stdafx.h"
 #include "Log.h"
-#include "ProgramOptions.h"
+#include "IConfigurationFile.h"
+
 BOOST_LOG_ATTRIBUTE_KEYWORD(debug_level_attribute, "Level", std::wstring)
 
+lg::sources::wlogger g_log_always;
+lg::sources::wlogger g_log_error;
+lg::sources::wlogger g_log_info;
+lg::sources::wlogger g_log_debug;
+lg::sources::wlogger g_log_trace;
+lg::sources::wlogger g_log_test;
 
-boost::log::sources::wlogger m_log;
-boost::log::sources::wlogger m_log_error;
-boost::log::sources::wlogger m_log_info;
-boost::log::sources::wlogger m_log_debug;
-boost::log::sources::wlogger m_log_trace;
-boost::log::sources::wlogger m_log_test;
+bool g_with_error   = false;
+bool g_with_info    = false;
+bool g_with_debug   = false;
+bool g_with_trace   = false;
+bool g_with_test    = false;
+bool g_with_always  = false;
 
 
-using namespace boost::log;
-static boost::log::formatter m_formatter;
-static boost::shared_ptr< sinks::synchronous_sink<sinks::text_ostream_backend> > m_console_sink;
-static boost::shared_ptr< sinks::synchronous_sink<sinks::text_file_backend> > m_file_sink;
-static std::vector<std::wstring> m_debug_levels;
-
-
-boost::program_options::options_description Log::get_description()
+Log::Log()
+    : m_options_description( "Log" )
 {
-    boost::program_options::options_description desc( "Log Options" );
-    desc.add_options()
-        ( "log.ini", boost::program_options::wvalue<std::wstring>(), "log configuration file" )
-        ( "log.file", boost::program_options::wvalue<std::wstring>(), "log file name." )
-        ( "log.rotation-size", boost::program_options::value<size_t>(), "log rotation size." )
-        ( "log.levels", boost::program_options::wvalue< std::vector<std::wstring> >()->multitoken(), "error, info, debug, trace, *" )
-        ( "log.no-console", boost::program_options::wvalue<std::wstring>(), "true or false" )
+    m_options_description.add_options()
+        ( "log.file", po::wvalue<std::wstring>(), "log file name." )
+        ( "log.rotation-size", po::value<size_t>()->default_value( 20 * 1024 * 1024 ), "log rotation size." )
+        ( "log.levels", po::wvalue<std::wstring>()->multitoken(), "error,info,debug,trace,*" )
         ;
 
-    return desc;
+    g_log_error.add_attribute( "Level", lg::attributes::constant<std::wstring>( L"ERROR" ) );
+    g_log_info. add_attribute( "Level", lg::attributes::constant<std::wstring>( L"INFO" ) );
+    g_log_debug.add_attribute( "Level", lg::attributes::constant<std::wstring>( L"DEBUG" ) );
+    g_log_trace.add_attribute( "Level", lg::attributes::constant<std::wstring>( L"TRACE" ) );
+    g_log_test. add_attribute( "Level", lg::attributes::constant<std::wstring>( L"TEST" ) );
+
+    IConfigurationFile::instance()
+        .add_options_description( m_options_description )
+        .add_observer( this );
 }
 
 
-void Log::initialize( const boost::program_options::variables_map& vm )
+Log::~Log()
 {
-    using namespace boost::log;
+    m_formatter.reset();
+    m_sink.reset();
+}
 
-    m_log_error.add_attribute( "Level", boost::log::attributes::constant<std::wstring>( L"ERROR" ) );
-    m_log_info.add_attribute( "Level", boost::log::attributes::constant<std::wstring>( L"INFO" ) );
-    m_log_debug.add_attribute( "Level", boost::log::attributes::constant<std::wstring>( L"DEBUG" ) );
-    m_log_trace.add_attribute( "Level", boost::log::attributes::constant<std::wstring>( L"TRACE" ) );
-    m_log_test.add_attribute( "Level", boost::log::attributes::constant<std::wstring>( L"TEST" ) );
 
-    std::wstring log_ini;
-    std::wstring log_file_name;
-    size_t log_rotation_size = 20 * 1024 * 1024;
-
-    if ( vm.count( "log.ini" ) )
-    {
-        log_ini = vm["log.ini"].as<std::wstring>();
-    }
-
-    if ( vm.count( "log.file" ) )
-    {
-        log_file_name = vm["log.file"].as<std::wstring>();
-    }
-
-    if ( vm.count( "log.rotation-size" ) )
-    {
-        log_rotation_size = vm["log.rotation-size"].as<size_t>();
-    }
-
+void Log::setup_sink( const std::wstring& file_nam, size_t rotation_size )
+{
     try
     {
-        if ( false == log_ini.empty() )
-        {
-            std::ifstream is( log_ini.c_str() );
-            boost::log::init_from_stream( is );
-        }
-        else
-        {
-            // set formatter
-            m_formatter = expressions::stream
-                << "\t"
-                << expressions::format_date_time<boost::posix_time::ptime>( "TimeStamp", "%Y/%m/%d %H:%M:%S " )
-                << expressions::if_( expressions::has_attr<int>( "Severity" ) )
-                   [
-                       expressions::stream << "[" << expressions::attr<int>( "Severity" ) << "] "
-                   ]
-                << expressions::if_( expressions::has_attr<std::wstring>( "Process" ) )
-                   [
-                       expressions::stream << "[" << expressions::attr<std::wstring>( "Process" ) << "] "
-                   ]
-                //<< "[" << expressions::attr<process_id>("ProcessID") << "] "
-                //<< "[" << expressions::attr<thread_id>( "ThreadID" ) << "] "
-                << expressions::format_named_scope( "Scope", keywords::format = "%c" )
-                    << expressions::if_( expressions::has_attr<std::wstring>( "Channel" ) )
-                    [
-                        expressions::stream << "[" << expressions::attr<std::wstring>( "Channel" ) << "] "
-                    ]
-                << expressions::if_( expressions::has_attr<std::wstring>( "Level" ) )
-                    [
-                        expressions::stream << "[" << expressions::attr<std::wstring>( "Level" ) << "] "
-                    ]
-                << expressions::if_( expressions::has_attr<std::wstring>( "Tag" ) )
-                   [
-                       expressions::stream << "[" << expressions::attr<std::wstring>( "Tag" ) << "] "
-                   ]
-                << expressions::if_( expressions::has_attr<boost::posix_time::time_duration>( "Duration" ) )
-                   [
-                       expressions::stream << "[" << expressions::attr<boost::posix_time::time_duration>( "Duration" ) << "] "
-                   ]
-                << " "
-                << expressions::message;
+        std::locale loc = boost::locale::generator()("en_US.UTF-8");
+        m_formatter = lg::expressions::stream
+            << "\t"
+            << lg::expressions::format_date_time<boost::posix_time::ptime>( "TimeStamp", "%Y/%m/%d %H:%M:%S " )
+            //<< "[" << lg::expressions::attr<lg::thread_id>( "ThreadID" ) << "] "
+            << lg::expressions::if_( lg::expressions::has_attr<std::wstring>( "Level" ) )
+            [
+                lg::expressions::stream << "[" << lg::expressions::attr<std::wstring>( "Level" ) << "] "
+            ]
+        << " "
+        << lg::expressions::message;
 
-            if ( ( ! vm.count( "log.no-console" ) ) || ( vm["log.no-console"].as<std::wstring>() != L"true" ) )
-            {
-                // add sinks: console sink, file sink
-                m_console_sink = add_console_log();
-                m_console_sink->set_formatter( m_formatter );
-            }
+        m_sink = boost::log::add_file_log
+            (
+                lg::keywords::file_name = file_nam.c_str(),
+                lg::keywords::rotation_size = rotation_size,
+                lg::keywords::auto_flush = true
+            );
 
-            if ( false == log_file_name.empty() )
-            {
-                m_file_sink = boost::log::add_file_log
-                    (
-                        keywords::file_name = log_file_name.c_str(),
-                        keywords::rotation_size = log_rotation_size,
-                        keywords::auto_flush = true
-                    );
-
-                m_file_sink->set_formatter( m_formatter );
-                std::locale loc = boost::locale::generator()("en_US.UTF-8");
-                m_file_sink->imbue( loc );
-            }
-        }
-
-        ProgramOptions::connect_to_signal( &Log::update_option );
-
-        add_common_attributes();
-        //core::get()->add_global_attribute( "Scope", attributes::named_scope() );
-        //core::get()->add_global_attribute( "Process", attributes::current_process_name() );
+        m_sink->set_formatter( m_formatter );
+        m_sink->imbue( loc );
+        lg::add_common_attributes();
+        g_with_always = true;
     }
     catch ( std::exception& e )
     {
@@ -141,64 +82,84 @@ void Log::initialize( const boost::program_options::variables_map& vm )
 }
 
 
-void Log::update_option( const boost::program_options::variables_map& vm )
+void Log::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
-    std::vector<std::wstring> debug_levels;
-
-    if ( vm.count( "log.levels" ) )
+    if ( !m_sink )
     {
-        debug_levels = vm["log.levels"].as< std::vector<std::wstring> >();
+        std::wstring file_name;
+        size_t rotation_size = 20 * 1024 * 1024;
+
+        if ( vm.count( "log.file" ) )
+        {
+            file_name = vm["log.file"].as<std::wstring>();
+        }
+
+        if ( file_name.empty() )
+        {
+            return;
+        }
+
+        if ( vm.count( "log.rotation-size" ) )
+        {
+            rotation_size = vm["log.rotation-size"].as<size_t>();
+        }
+
+        setup_sink( file_name, rotation_size );
     }
 
-    std::sort( debug_levels.begin(), debug_levels.end() );
-    std::sort( m_debug_levels.begin(), m_debug_levels.end() );
-
-    if ( m_debug_levels == debug_levels )
+    if ( !m_sink )
     {
         return;
     }
 
-    m_debug_levels = debug_levels;
+    if ( vm.count( "log.levels" ) )
+    {
+        std::wstring levels = vm["log.levels"].as<std::wstring>();
+        std::transform( levels.begin(), levels.end(), levels.begin(), ::towlower );
 
-    bool with_error = std::find( m_debug_levels.begin(), m_debug_levels.end(), L"error" )    != m_debug_levels.end();
-    bool with_info  = std::find( m_debug_levels.begin(), m_debug_levels.end(), L"info" )     != m_debug_levels.end();
-    bool with_debug = std::find( m_debug_levels.begin(), m_debug_levels.end(), L"debug" )    != m_debug_levels.end();
-    bool with_trace = std::find( m_debug_levels.begin(), m_debug_levels.end(), L"trace" )    != m_debug_levels.end();
-    bool with_test  = std::find( m_debug_levels.begin(), m_debug_levels.end(), L"test" )     != m_debug_levels.end();
-    bool with_all   = std::find( m_debug_levels.begin(), m_debug_levels.end(), L"*" )        != m_debug_levels.end();
+        if ( levels.find( L"*" ) != std::wstring::npos )
+        {
+            levels = L"*";
+        }
 
-    filter fltr =
-        ( ! expressions::has_attr(debug_level_attribute) ) ||
-        ( expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"ERROR" && ( with_error || with_all ) ) ||
-        ( expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"INFO"  && ( with_info  || with_all ) ) ||
-        ( expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"DEBUG" && ( with_debug || with_all ) ) ||
-        ( expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"TRACE" && ( with_trace || with_all ) ) ||
-        ( expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"TEST" &&  ( with_test  || with_all ) )
+        if ( levels.empty() )
+        {
+            levels = L"info,error";
+        }
+
+        if ( levels == m_levels )
+        {
+            return;
+        }
+
+        std::wstring t1 = levels;
+        std::wstring t2 = m_levels;
+        std::sort( t1.begin(), t1.end() );
+        std::sort( t2.begin(), t2.end() );
+
+        if ( t1 == t2 )
+        {
+            return;
+        }
+
+        m_levels = levels;
+    }
+
+    bool with_all   = m_levels.find( L"*" )   != std::wstring::npos;
+    g_with_error = with_all || ( m_levels.find( L"error" )  != std::wstring::npos );
+    g_with_info  = with_all || ( m_levels.find( L"info" )   != std::wstring::npos );
+    g_with_debug = with_all || ( m_levels.find( L"debug" )  != std::wstring::npos );
+    g_with_trace = with_all || ( m_levels.find( L"trace" )  != std::wstring::npos );
+    g_with_test  = with_all || ( m_levels.find( L"test" )   != std::wstring::npos );
+
+    lg::filter filter =
+        ( ! lg::expressions::has_attr(debug_level_attribute) ) ||
+        ( lg::expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"ERROR" && ( g_with_error ) ) ||
+        ( lg::expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"INFO"  && ( g_with_info  ) ) ||
+        ( lg::expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"DEBUG" && ( g_with_debug ) ) ||
+        ( lg::expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"TRACE" && ( g_with_trace ) ) ||
+        ( lg::expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"TEST"  && ( g_with_test  ) )
         ;
 
-    if ( ( ! vm.count( "log.no-console" ) ) || ( vm["log.no-console"].as<std::wstring>() != L"true" ) )
-    {
-        if ( ! m_console_sink )
-        {
-            m_console_sink = add_console_log();
-            m_console_sink->set_formatter( m_formatter );
-        }
-    }
-    else
-    {
-        if ( m_console_sink )
-        {
-            m_console_sink.reset();
-        }
-    }
-
-    if ( m_console_sink )
-    {
-        m_console_sink->set_filter( fltr );
-    }
-
-    if ( m_file_sink )
-    {
-        m_file_sink->set_filter( fltr );
-    }
+    m_sink->set_filter( filter );
 }
