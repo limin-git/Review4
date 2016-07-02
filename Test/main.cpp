@@ -4,6 +4,9 @@
 #include "TestInput.h"
 #include "TestConsole.h"
 #include "TestLog.h"
+#include "TestSound.h"
+#include "TestSpeech.h"
+#include "TestEnglishPlayer.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -28,9 +31,24 @@ int _tmain(int argc, _TCHAR* argv[])
         TestConsole t;
     }
 
-    if ( 1 )
+    if ( 0 )
     {
         TestLog t;
+    }
+
+    if ( 0 )
+    {
+        TestSound t;
+    }
+
+    if ( 0 )
+    {
+        TestSpeech t;
+    }
+
+    if ( 1 )
+    {
+        TestEnglishPlayer t;
     }
 
 	return 0;

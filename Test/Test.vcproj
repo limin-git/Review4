@@ -180,6 +180,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\ISound.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TestConfigruationFile.cpp"
 				>
 			</File>
@@ -193,6 +197,14 @@
 			</File>
 			<File
 				RelativePath=".\TestConsole.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TestEnglishPlayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestEnglishPlayer.h"
 				>
 			</File>
 			<File
@@ -217,6 +229,22 @@
 			</File>
 			<File
 				RelativePath=".\TestLog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TestSound.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestSound.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TestSpeech.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestSpeech.h"
 				>
 			</File>
 		</Filter>
@@ -270,6 +298,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\EnglishPlayer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\FileChangeManager.cpp"
 				>
 			</File>
@@ -298,6 +330,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\IEnglishPlayer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\IFileChangeManager.cpp"
 				>
 			</File>
@@ -314,7 +350,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\ISpeech.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Log.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Sound.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Speech.cpp"
 				>
 			</File>
 			<File

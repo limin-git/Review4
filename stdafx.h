@@ -31,6 +31,7 @@
 #include <map>
 #include <set>
 #include <list>
+#include <queue>
 #include <fstream>
 #include <sstream>
 #include <boost/regex.hpp>

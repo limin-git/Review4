@@ -299,6 +299,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\QueueProcessor.h"
+				>
+			</File>
+			<File
 				RelativePath=".\UnicodeUtility.cpp"
 				>
 			</File>
@@ -392,6 +396,58 @@
 			</File>
 			<File
 				RelativePath=".\IConsole.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="EnglishPlayer"
+			>
+			<File
+				RelativePath=".\EnglishPlayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EnglishPlayer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IEnglishPlayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IEnglishPlayer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ISound.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ISound.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ISpeech.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ISpeech.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Sound.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Sound.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Speech.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Speech.h"
 				>
 			</File>
 		</Filter>
