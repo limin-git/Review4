@@ -3,20 +3,8 @@
 #include "IConfigurationFile.h"
 
 BOOST_LOG_ATTRIBUTE_KEYWORD(debug_level_attribute, "Level", std::wstring)
-
-lg::sources::wlogger g_log_always;
-lg::sources::wlogger g_log_error;
-lg::sources::wlogger g_log_info;
-lg::sources::wlogger g_log_debug;
-lg::sources::wlogger g_log_trace;
-lg::sources::wlogger g_log_test;
-
-bool g_with_error   = false;
-bool g_with_info    = false;
-bool g_with_debug   = false;
-bool g_with_trace   = false;
-bool g_with_test    = false;
-bool g_with_always  = false;
+lg::sources::wlogger* g_boost_wlogger[ LOG_NUM ] = { 0 };
+const wchar_t* g_log_keywords[] = { L"ERROR", L"INFO", L"DEBUG", L"TRACE", L"TEST" };
 
 
 Log::Log()
@@ -28,12 +16,6 @@ Log::Log()
         ( "log.levels", po::wvalue<std::wstring>()->multitoken(), "error,info,debug,trace,*" )
         ;
 
-    g_log_error.add_attribute( "Level", lg::attributes::constant<std::wstring>( L"ERROR" ) );
-    g_log_info. add_attribute( "Level", lg::attributes::constant<std::wstring>( L"INFO" ) );
-    g_log_debug.add_attribute( "Level", lg::attributes::constant<std::wstring>( L"DEBUG" ) );
-    g_log_trace.add_attribute( "Level", lg::attributes::constant<std::wstring>( L"TRACE" ) );
-    g_log_test. add_attribute( "Level", lg::attributes::constant<std::wstring>( L"TEST" ) );
-
     IConfigurationFile::instance()
         .add_options_description( m_options_description )
         .add_observer( this );
@@ -42,8 +24,13 @@ Log::Log()
 
 Log::~Log()
 {
-    m_formatter.reset();
-    m_sink.reset();
+    for ( size_t i = 0; i < LOG_NUM; ++i )
+    {
+        delete g_boost_wlogger[i];
+        g_boost_wlogger[i] = NULL;
+    }
+
+    boost::log::core::get()->remove_sink( m_sink );
 }
 
 
@@ -73,7 +60,6 @@ void Log::setup_sink( const std::wstring& file_nam, size_t rotation_size )
         m_sink->set_formatter( m_formatter );
         m_sink->imbue( loc );
         lg::add_common_attributes();
-        g_with_always = true;
     }
     catch ( std::exception& e )
     {
@@ -87,7 +73,6 @@ void Log::options_changed( const po::variables_map& vm, const po::variables_map&
     if ( !m_sink )
     {
         std::wstring file_name;
-        size_t rotation_size = 20 * 1024 * 1024;
 
         if ( vm.count( "log.file" ) )
         {
@@ -99,12 +84,7 @@ void Log::options_changed( const po::variables_map& vm, const po::variables_map&
             return;
         }
 
-        if ( vm.count( "log.rotation-size" ) )
-        {
-            rotation_size = vm["log.rotation-size"].as<size_t>();
-        }
-
-        setup_sink( file_name, rotation_size );
+        setup_sink( file_name, vm["log.rotation-size"].as<size_t>() );
     }
 
     if ( !m_sink )
@@ -115,16 +95,11 @@ void Log::options_changed( const po::variables_map& vm, const po::variables_map&
     if ( vm.count( "log.levels" ) )
     {
         std::wstring levels = vm["log.levels"].as<std::wstring>();
-        std::transform( levels.begin(), levels.end(), levels.begin(), ::towlower );
-
-        if ( levels.find( L"*" ) != std::wstring::npos )
-        {
-            levels = L"*";
-        }
+        std::transform( levels.begin(), levels.end(), levels.begin(), ::towupper );
 
         if ( levels.empty() )
         {
-            levels = L"info,error";
+            levels = L"INFO,ERROR";
         }
 
         if ( levels == m_levels )
@@ -145,21 +120,23 @@ void Log::options_changed( const po::variables_map& vm, const po::variables_map&
         m_levels = levels;
     }
 
-    bool with_all   = m_levels.find( L"*" )   != std::wstring::npos;
-    g_with_error = with_all || ( m_levels.find( L"error" )  != std::wstring::npos );
-    g_with_info  = with_all || ( m_levels.find( L"info" )   != std::wstring::npos );
-    g_with_debug = with_all || ( m_levels.find( L"debug" )  != std::wstring::npos );
-    g_with_trace = with_all || ( m_levels.find( L"trace" )  != std::wstring::npos );
-    g_with_test  = with_all || ( m_levels.find( L"test" )   != std::wstring::npos );
-
-    lg::filter filter =
-        ( ! lg::expressions::has_attr(debug_level_attribute) ) ||
-        ( lg::expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"ERROR" && ( g_with_error ) ) ||
-        ( lg::expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"INFO"  && ( g_with_info  ) ) ||
-        ( lg::expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"DEBUG" && ( g_with_debug ) ) ||
-        ( lg::expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"TRACE" && ( g_with_trace ) ) ||
-        ( lg::expressions::has_attr(debug_level_attribute) && debug_level_attribute == L"TEST"  && ( g_with_test  ) )
-        ;
-
-    m_sink->set_filter( filter );
+    for ( size_t i = 0; i < sizeof(g_log_keywords) / sizeof(wchar_t*); ++i )
+    {
+        if ( m_levels.find( g_log_keywords[i] ) != std::wstring::npos )
+        {
+            if ( g_boost_wlogger[i] == NULL )
+            {
+                g_boost_wlogger[i] = new lg::sources::wlogger;
+                g_boost_wlogger[i]->add_attribute( "Level", lg::attributes::constant<std::wstring>( g_log_keywords[i] ) );
+            }
+        }
+        else
+        {
+            if ( g_boost_wlogger[i] != NULL )
+            {
+                delete g_boost_wlogger[i];
+                g_boost_wlogger[i] = NULL;
+            }
+        }
+    }
 }

@@ -3,25 +3,25 @@
 #include "Log.h"
 
 
-static Log* g_log_instance = NULL;
+static Log* g_log = NULL;
 
 
 ILog& ILog::instance()
 {
-    if ( g_log_instance == NULL )
+    if ( g_log == NULL )
     {
-        g_log_instance = new Log;
+        g_log = new Log;
     }
 
-    return *g_log_instance;
+    return *g_log;
 }
 
 
 void ILog::remove()
 {
-    if ( g_log_instance != NULL )
+    if ( g_log != NULL )
     {
-        delete g_log_instance;
-        g_log_instance = NULL;
+        delete g_log;
+        g_log = NULL;
     }
 }

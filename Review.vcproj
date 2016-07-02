@@ -235,7 +235,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ILog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Input.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Log.h"
 				>
 			</File>
 			<File
