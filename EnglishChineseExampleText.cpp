@@ -54,10 +54,9 @@ void EnglishChineseExampleText::reload()
         const std::wstring& english = it->str(1);
         const std::wstring& chinese = it->str(2);
         const std::wstring& example = ( (*it)[3].matched ? it->str(3) : L"" );
-        ISlideshowPtr slideshow( new EceSlideshow( english, chinese, example ) );
         size_t key = hash( english );
         keys.insert( key );
-        slidshow_map[key] = slideshow;
+        slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example ) );
     }
 
     m_string.swap( s );

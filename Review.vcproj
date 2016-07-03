@@ -511,6 +511,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="History"
+			>
+			<File
+				RelativePath=".\History.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\History.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IHistory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IHistory.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\main.cpp"
 			>

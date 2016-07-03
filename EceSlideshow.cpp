@@ -4,8 +4,9 @@
 #include "IEnglishPlayer.h"
 
 
-EceSlideshow::EceSlideshow( const std::wstring& eng, const std::wstring& chs, const std::wstring& exp )
-    : m_english( eng ),
+EceSlideshow::EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp )
+    : m_key( key ),
+      m_english( eng ),
       m_chinese( chs ),
       m_example( exp ),
       m_stage( English )
@@ -43,4 +44,16 @@ bool EceSlideshow::show()
         m_stage = English;
         return true;
     }
+}
+
+
+size_t EceSlideshow::key()
+{
+    return m_key;
+}
+
+
+const std::wstring& EceSlideshow::key_string()
+{
+    return m_english;
 }
