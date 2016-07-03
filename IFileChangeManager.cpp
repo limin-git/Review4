@@ -3,25 +3,22 @@
 #include "FileChangeManager.h"
 
 
-static IFileChangeManager* g_file_change_manager = NULL;
+static IFileChangeManager* s_file_change_manager = NULL;
 
 
 IFileChangeManager& IFileChangeManager::instance()
 {
-    if ( NULL == g_file_change_manager )
+    if ( NULL == s_file_change_manager )
     {
-        g_file_change_manager = new FileChangeManager;
+        s_file_change_manager = new FileChangeManager;
     }
 
-    return *g_file_change_manager;
+    return *s_file_change_manager;
 }
 
 
 void remove()
 {
-    if ( g_file_change_manager != NULL )
-    {
-        delete g_file_change_manager;
-        g_file_change_manager = NULL;
-    }
+    delete s_file_change_manager;
+    s_file_change_manager = NULL;
 }

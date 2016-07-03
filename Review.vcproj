@@ -272,12 +272,64 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="src"
+			Name="Text"
 			>
+			<File
+				RelativePath=".\EceSlideshow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EceSlideshow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EnglishChineseExampleText.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EnglishChineseExampleText.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ISlideShow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IText.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IText.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ITextFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ITextFactory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TextFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TextFactory.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="utilities"
 			>
+			<File
+				RelativePath=".\AlgorithmUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\AlgorithmUtility.h"
+				>
+			</File>
 			<File
 				RelativePath=".\ConsoleUtility.cpp"
 				>
@@ -308,6 +360,14 @@
 			</File>
 			<File
 				RelativePath=".\UnicodeUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Utility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Utility.h"
 				>
 			</File>
 			<File

@@ -200,6 +200,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TestEnglishChineseExampleText.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestEnglishChineseExampleText.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TestEnglishPlayer.cpp"
 				>
 			</File>
@@ -247,6 +255,14 @@
 				RelativePath=".\TestSpeech.h"
 				>
 			</File>
+			<File
+				RelativePath=".\TestText.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestText.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="include"
@@ -282,6 +298,10 @@
 			Name="Review"
 			>
 			<File
+				RelativePath="..\AlgorithmUtility.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\CommandLine.cpp"
 				>
 			</File>
@@ -295,6 +315,14 @@
 			</File>
 			<File
 				RelativePath="..\ConsoleUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\EceSlideshow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\EnglishChineseExampleText.cpp"
 				>
 			</File>
 			<File
@@ -354,6 +382,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\IText.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\ITextFactory.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Log.cpp"
 				>
 			</File>
@@ -363,6 +399,10 @@
 			</File>
 			<File
 				RelativePath="..\Speech.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\TextFactory.cpp"
 				>
 			</File>
 			<File

@@ -19,9 +19,6 @@ IConfigurationFile& IConfigurationFile::instance()
 
 void IConfigurationFile::remove()
 {
-    if ( s_configuration_file != NULL )
-    {
-        delete s_configuration_file;
-        s_configuration_file = NULL;
-    }
+    delete s_configuration_file;
+    s_configuration_file = NULL;
 }

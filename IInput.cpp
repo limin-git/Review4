@@ -3,25 +3,22 @@
 #include "Input.h"
 
 
-IInput* g_input = NULL;
+static IInput* s_input = NULL;
 
 
 IInput& IInput::instance()
 {
-    if ( g_input == NULL )
+    if ( s_input == NULL )
     {
-        g_input = new Input;
+        s_input = new Input;
     }
 
-    return *g_input;
+    return *s_input;
 }
 
 
 void IInput::remove()
 {
-    if ( g_input != NULL )
-    {
-        delete g_input;
-        g_input = NULL;
-    }
+    delete s_input;
+    s_input = NULL;
 }

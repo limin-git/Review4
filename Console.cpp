@@ -22,7 +22,7 @@ Console::~Console()
 }
 
 
-void Console::cls()
+IConsole& Console::cls()
 {
     DWORD written = 0;
     COORD coord = { 0, 0 };
@@ -31,34 +31,39 @@ void Console::cls()
     std::wstring buf( csbi.dwSize.X * csbi.dwSize.Y, L' ' );
     WriteConsoleOutputCharacter( m_cout, buf.c_str(), buf.size(), coord, &written );
     SetConsoleCursorPosition( m_cout, coord );
+    return *this;
 }
 
 
-void Console::write( const std::string& s )
+IConsole& Console::write( const std::string& s )
 {
     WriteConsoleA( m_cout, s.c_str(), s.size(), 0, 0 );
+    return *this;
 }
 
 
-void Console::write( const std::wstring& ws )
+IConsole& Console::write( const std::wstring& ws )
 {
     WriteConsole( m_cout, ws.c_str(), ws.size(), 0, 0 );
+    return *this;
 }
 
 
-void Console::write_center( const std::string& s )
+IConsole& Console::write_center( const std::string& s )
 {
     DWORD written = 0;
     COORD coord = calculate_center_coord( s.size() );
     WriteConsoleOutputCharacterA( m_cout, s.c_str(), s.size(), coord, &written );
+    return *this;
 }
 
 
-void Console::write_center( const std::wstring& ws )
+IConsole& Console::write_center( const std::wstring& ws )
 {
     DWORD written = 0;
     COORD coord = calculate_center_coord( WideCharToMultiByte( CP_ACP, 0, ws.c_str(), ws.size(), 0, 0, 0, 0 ) );
     WriteConsoleOutputCharacter( m_cout, ws.c_str(), ws.size(), coord, &written );
+    return *this;
 }
 
 

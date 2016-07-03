@@ -7,6 +7,8 @@
 #include "TestSound.h"
 #include "TestSpeech.h"
 #include "TestEnglishPlayer.h"
+#include "TestEnglishPlayer.h"
+#include "TestEnglishChineseExampleText.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -46,9 +48,14 @@ int _tmain(int argc, _TCHAR* argv[])
         TestSpeech t;
     }
 
-    if ( 1 )
+    if ( 0 )
     {
         TestEnglishPlayer t;
+    }
+
+    if ( 1 )
+    {
+        TestEnglishChineseExampleText t;
     }
 
 	return 0;

@@ -8,11 +8,11 @@ public:
 
     Console();
     ~Console();
-    virtual void cls();
-    virtual void write( const std::string& s );
-    virtual void write( const std::wstring& ws );
-    virtual void write_center( const std::string& s );
-    virtual void write_center( const std::wstring& ws );
+    virtual IConsole& cls();
+    virtual IConsole& write( const std::string& s );
+    virtual IConsole& write( const std::wstring& ws );
+    virtual IConsole& write_center( const std::string& s );
+    virtual IConsole& write_center( const std::wstring& ws );
 
 private:
 

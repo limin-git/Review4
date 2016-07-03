@@ -65,6 +65,18 @@ void ConfigurationFile::remove_observer( IConfigurationFileObserver* observer )
 }
 
 
+po::options_description& ConfigurationFile::options_description()
+{
+    return m_descriptions;
+}
+
+
+po::variables_map& ConfigurationFile::variables_map()
+{
+    return m_all_variables_map;
+}
+
+
 void ConfigurationFile::last_write_time_changed( const boost::filesystem::path& config_file )
 {
     if ( load_config_file( config_file ) )
@@ -107,6 +119,7 @@ void ConfigurationFile::parse_config_file( const boost::filesystem::path& config
         vm.clear();
         store( boost::program_options::parse_config_file<wchar_t>( strm, m_descriptions, true ), vm );
         notify( vm );
+        merge_variables_map( m_all_variables_map, vm );
     }
     catch ( std::exception& e )
     {
@@ -118,4 +131,14 @@ void ConfigurationFile::parse_config_file( const boost::filesystem::path& config
 void ConfigurationFile::notify_observer_thread( IConfigurationFileObserver* observer, boost::filesystem::path& config_file )
 {
     observer->options_changed( m_variables_map[config_file], m_variables_map_old[config_file] );
+}
+
+
+void ConfigurationFile::merge_variables_map( po::variables_map& vm, const po::variables_map& rhs )
+{
+    BOOST_FOREACH( const po::variables_map::value_type& v, rhs )
+    {
+        vm.erase( v.first );
+        vm.insert( v );
+    }
 }
