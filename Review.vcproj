@@ -531,6 +531,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Schedule"
+			>
+			<File
+				RelativePath=".\ISchedule.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ISchedule.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Schedule.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Schedule.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\main.cpp"
 			>

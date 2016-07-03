@@ -6,6 +6,11 @@
 
 History::History()
 {
+    po::options_description desc;
+    desc.add_options()
+        ( "file.history", po::wvalue<std::wstring>(), "history file" )
+        ;
+    IConfigurationFile::instance().add_options_description( desc );
     m_file_name = IConfigurationFile::instance().variables_map()["file.history"].as<std::wstring>();
     load_history();
 }

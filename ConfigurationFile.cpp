@@ -34,6 +34,7 @@ ConfigurationFile::~ConfigurationFile()
 
 IConfigurationFile& ConfigurationFile::add_options_description( boost::program_options::options_description& desc )
 {
+    // TODO: just parse this description and then merge it to existings.
     m_descriptions.add( desc );
 
     BOOST_FOREACH( const ConfigurationFileMap::value_type& config_file, m_config_file_map )
