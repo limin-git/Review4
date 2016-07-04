@@ -24,7 +24,7 @@ private:
     bool is_finished( size_t key );
 
 private:
-    
+
     std::vector<std::time_t> m_schedule;
     std::set<size_t> m_candidates;
     typedef std::multimap<std::time_t, size_t> NextTimeMap;

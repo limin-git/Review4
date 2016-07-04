@@ -14,12 +14,12 @@ public:
     ~History();
     virtual const std::vector<std::time_t>& history( size_t key );
     virtual void write_history( size_t key, std::time_t t = ::time( NULL ) );
-    virtual void save_history_file();
     virtual void disabled( size_t key );
 
 private:
 
     void load_history();
+    virtual void save_history_file();
 
 private:
 

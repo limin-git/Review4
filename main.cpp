@@ -2,6 +2,7 @@
 #include "ICommandLine.h"
 #include "IReviewManager.h"
 #include "IInput.h"
+#include "IConsole.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -13,6 +14,7 @@ int _tmain(int argc, _TCHAR* argv[])
     }
 
     ICommandLine::instance().parse_command_line( argc, argv );
+    IConsole::instance();
     IReviewManager::instance().run();
     IInput::instance().run();
 

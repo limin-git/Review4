@@ -7,11 +7,11 @@
 
 History::History()
 {
-    po::options_description desc;
-    desc.add_options()
+    po::options_description options;
+    options.add_options()
         ( "file.history", po::wvalue<std::wstring>(), "history file" )
         ;
-    IConfigurationFile::instance().add_options_description( desc );
+    IConfigurationFile::instance().add_options_description( options );
     m_file_name = IConfigurationFile::instance().variables_map()["file.history"].as<std::wstring>();
     load_history();
     IDisable::instance().add_observer( this );
@@ -45,7 +45,7 @@ void History::save_history_file()
     {
         return;
     }
-    
+
     BOOST_FOREACH( HistoryRecord::value_type& v, m_history )
     {
         os << v.first << "\t";

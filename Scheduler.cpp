@@ -19,11 +19,11 @@ Scheduler::Scheduler()
       m_select_candidates_semaphore( 0 ),
       m_select_candidates_thread( NULL )
 {
-    po::options_description desc( "Scheduler" );
-    desc.add_options()
+    po::options_description options( "Scheduler" );
+    options.add_options()
         ( "review.schedule", po::wvalue<std::wstring>(), "schedule" )
         ;
-    IConfigurationFile::instance().add_options_description( desc );
+    IConfigurationFile::instance().add_options_description( options );
 
     std::wstring schedule_string = IConfigurationFile::instance().variables_map()["review.schedule"].as<std::wstring>();
 
@@ -116,7 +116,6 @@ void Scheduler::initialize_schedule()
     const std::set<size_t>& keys = IText::instance().keys();
     std::set<size_t> candidates;
     std::multimap<std::time_t, size_t> next_time_map;
-    // TODO: consider disabled keys
 
     BOOST_FOREACH( size_t key, keys )
     {

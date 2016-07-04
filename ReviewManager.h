@@ -18,6 +18,7 @@ private:
     void continue_handler();
     void next_handler();
     void back_handler();
+    void disable_handler();
 
 private:
 

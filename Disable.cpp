@@ -7,12 +7,12 @@ namespace po = boost::program_options;
 
 Disable::Disable()
 {
-    po::options_description desc;
-    desc.add_options()
+    po::options_description options;
+    options.add_options()
         ( "file.disabled", po::wvalue<std::wstring>(), "disabled file" )
         ;
     m_file_name = IConfigurationFile::instance()
-        .add_options_description( desc )
+        .add_options_description( options )
         .variables_map()["file.disabled"].as<std::wstring>();
     fs::system_complete( m_file_name );
     load_file();
@@ -28,6 +28,11 @@ Disable::~Disable()
 void Disable::disable( ISlideshowPtr slideshow )
 {
     // TODO: create 2 threads
+
+    if ( is_disabled( slideshow->key() ) )
+    {
+        return;
+    }
 
     std::wofstream os( m_file_name.wstring().c_str(), std::ios::app );
 

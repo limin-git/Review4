@@ -46,7 +46,7 @@ void FileChangeManager::remove_handler( const boost::filesystem::path& file_path
         if ( it->is_monitoring( file_path ) )
         {
             it->remove_handler( file_path, handler );
-            
+
             if ( it->empty() )
             {
                 m_threads.erase( it );

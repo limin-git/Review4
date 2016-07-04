@@ -14,10 +14,10 @@ public:
     ~EnglishChineseExampleText();
     virtual ISlideshowPtr slideshow( size_t key );
     virtual const std::set<size_t>& keys();
-    virtual void last_write_time_changed( const boost::filesystem::path& file );
-    virtual void disabled( size_t key );
     virtual void add_observer( ITextObserver* observer );
     virtual void remove_observer( ITextObserver* observer );
+    virtual void last_write_time_changed( const boost::filesystem::path& file );
+    virtual void disabled( size_t key );
 
 private:
 
@@ -26,7 +26,7 @@ private:
     void notify();
 
 private:
-    
+
     std::set<size_t> m_keys;
     std::map<size_t, ISlideshowPtr> m_slidshow_map;
     boost::filesystem::path m_file_path;

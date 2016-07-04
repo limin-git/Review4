@@ -59,8 +59,6 @@ void FileChangeMonitorThread::operator()()
         return;
     }
 
-    stdcout << "start monitoring " << m_dir.wstring() << "\n";
-
     while ( m_running )
     {
         DWORD status = ::WaitForSingleObject( m_handle, INFINITE );
@@ -84,8 +82,6 @@ void FileChangeMonitorThread::operator()()
             break;
         }
     }
-
-    stdcout << "stop monitoring " << m_dir.wstring() << "\n";
 }
 
 
@@ -111,19 +107,23 @@ void FileChangeMonitorThread::notify_handlers()
 }
 
 
-bool FileChangeMonitorThread::merge_child( const FileChangeMonitorThread& rhs )
+bool FileChangeMonitorThread::merge_child( const FileChangeMonitorThread& child )
 {
-    if ( !FileSystem::is_parent_path( m_dir, rhs.m_dir ) )
+    if ( m_dir == child.m_dir )
+    {
+        return true;
+    }
+    else if ( !FileSystem::is_parent_path( m_dir, child.m_dir ) )
     {
         return false;
     }
 
-    BOOST_FOREACH( const FileHandlerMap::value_type& v, rhs.m_file_handler_map )
+    BOOST_FOREACH( const FileHandlerMap::value_type& v, child.m_file_handler_map )
     {
         m_file_handler_map.insert( v );
     }
 
-    BOOST_FOREACH( const FileTimeMap::value_type& v, rhs.m_file_time_map )
+    BOOST_FOREACH( const FileTimeMap::value_type& v, child.m_file_time_map )
     {
         m_file_time_map.insert( v );
     }

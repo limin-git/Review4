@@ -320,7 +320,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Disable.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\EceSlideshow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\EmptySlideshow.cpp"
 				>
 			</File>
 			<File
@@ -348,6 +356,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\History.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\ICommandLine.cpp"
 				>
 			</File>
@@ -360,11 +372,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\IDisable.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\IEnglishPlayer.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\IFileChangeManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\IHistory.cpp"
 				>
 			</File>
 			<File
@@ -377,6 +397,14 @@
 			</File>
 			<File
 				RelativePath="..\Input.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\IReviewManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\IScheduler.cpp"
 				>
 			</File>
 			<File
@@ -396,6 +424,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\ReviewManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Scheduler.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Sound.cpp"
 				>
 			</File>
@@ -404,11 +440,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\StringUtility.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\TextFactory.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\TimeUtility.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\UnicodeUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Utility.cpp"
 				>
 			</File>
 		</Filter>

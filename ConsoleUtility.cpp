@@ -71,7 +71,7 @@ namespace Utility
 
 
     void disable_system_buttons()
-    {   
+    {
         HWND w = GetConsoleWindow();
         HMENU m = GetSystemMenu( w, FALSE );
         DeleteMenu( m, SC_CLOSE , MF_BYCOMMAND );
@@ -89,7 +89,7 @@ namespace Utility
         GetConsoleScreenBufferInfo( handle, &csbi );
         csbi.wAttributes = color;
         SetConsoleTextAttribute( handle, csbi.wAttributes );
-        FillConsoleOutputAttribute( handle, csbi.wAttributes, csbi.dwSize.X * csbi.dwSize.Y, coord, &written ); 
+        FillConsoleOutputAttribute( handle, csbi.wAttributes, csbi.dwSize.X * csbi.dwSize.Y, coord, &written );
     }
 
 

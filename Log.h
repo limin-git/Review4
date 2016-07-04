@@ -6,7 +6,7 @@ namespace lg = boost::log;
 namespace po = boost::program_options;
 
 
-struct Log : ILog, 
+struct Log : ILog,
              IConfigurationFileObserver
 {
 public:
@@ -16,7 +16,7 @@ public:
     virtual void options_changed( const po::variables_map& vm, const po::variables_map& old );
 
 private:
-    
+
     void setup_sink( const std::wstring& file_nam, size_t rotation_size );
 
 private:

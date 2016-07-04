@@ -14,12 +14,12 @@ CommandLine::CommandLine()
 
 void CommandLine::parse_command_line( int argc, wchar_t* argv[] )
 {
-    po::positional_options_description desc;
-    desc.add( "config-file", -1 );
+    po::positional_options_description options;
+    options.add( "config-file", -1 );
 
     try
     {
-        store( po::wcommand_line_parser( argc, argv ).options( m_options_description ).positional( desc ).allow_unregistered().run(), m_variables_map );
+        store( po::wcommand_line_parser( argc, argv ).options( m_options_description ).positional( options ).allow_unregistered().run(), m_variables_map );
         notify( m_variables_map );
     }
     catch ( std::exception& e)
