@@ -5,22 +5,11 @@
 namespace Utility
 {
 
-    size_t random_number( size_t lo, size_t hi )
+    size_t random( size_t lo, size_t hi )
     {
-        static boost::random::mt19937 gen( static_cast<boost::uint32_t>( std::time(0) ) );
-        static boost::random::uniform_int_distribution<> dist;
-        size_t x = dist( gen );
-
-        if ( lo != std::numeric_limits <size_t> ::min() || hi != std::numeric_limits <size_t> ::max() )
-        {
-            while ( x < lo || hi < x )
-            {
-                x %= hi;
-                x += lo;
-            }
-        }
-
-        return x;
+        boost::random::mt19937 gen( static_cast<boost::uint32_t>( std::time(0) ) );
+        boost::random::uniform_int_distribution<> dist( lo, hi );
+        return dist( gen );
     }
 
 

@@ -65,3 +65,4 @@
 #include <boost/variant.hpp>
 #include <boost/locale.hpp>
 #include <boost/foreach.hpp>
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>

@@ -3,7 +3,7 @@
 #include "Log.h"
 
 
-static Log* g_log = NULL;
+static ILog* g_log = NULL;
 
 
 ILog& ILog::instance()

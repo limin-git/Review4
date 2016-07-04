@@ -317,6 +317,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EmptySlideshow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EmptySlideshow.h"
+				>
+			</File>
+			<File
 				RelativePath=".\EnglishChineseExampleText.cpp"
 				>
 			</File>
@@ -550,22 +558,42 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Schedule"
+			Name="Scheduler"
 			>
 			<File
-				RelativePath=".\ISchedule.cpp"
+				RelativePath=".\IScheduler.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ISchedule.h"
+				RelativePath=".\IScheduler.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Schedule.cpp"
+				RelativePath=".\Scheduler.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Schedule.h"
+				RelativePath=".\Scheduler.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Disable"
+			>
+			<File
+				RelativePath=".\Disable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Disable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IDisable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IDisable.h"
 				>
 			</File>
 		</Filter>
