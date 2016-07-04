@@ -50,6 +50,7 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4995;4819;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -132,6 +133,7 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4995;4819;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -187,11 +189,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\AlgorithmUtility.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CommandLine.h"
 				>
 			</File>
 			<File
 				RelativePath=".\ConfigurationFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ConsoleUtility.h"
 				>
 			</File>
 			<File
@@ -204,6 +214,10 @@
 			</File>
 			<File
 				RelativePath=".\FileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FileUtility.h"
 				>
 			</File>
 			<File
@@ -270,6 +284,26 @@
 				RelativePath=".\stdafx.h"
 				>
 			</File>
+			<File
+				RelativePath=".\StringUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TimeUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UnicodeUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Utility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WriteConsoleHelper.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Text"
@@ -327,15 +361,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\AlgorithmUtility.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ConsoleUtility.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ConsoleUtility.h"
 				>
 			</File>
 			<File
@@ -347,11 +373,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FileUtility.h"
+				RelativePath=".\QueueProcessor.h"
 				>
 			</File>
 			<File
-				RelativePath=".\QueueProcessor.h"
+				RelativePath=".\StringUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TimeUtility.cpp"
 				>
 			</File>
 			<File
@@ -359,19 +389,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\UnicodeUtility.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Utility.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Utility.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WriteConsoleHelper.h"
 				>
 			</File>
 		</Filter>

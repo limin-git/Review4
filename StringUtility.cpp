@@ -21,6 +21,22 @@ namespace Utility
     }
 
 
+    std::vector<std::string> split_string( const std::string& s, const std::string& separator )
+    {
+        std::vector<std::string> strings;
+        typedef boost::tokenizer< boost::char_separator<char>, std::string::const_iterator, std::string> tokenizer;
+        boost::char_separator<char> sep( separator.c_str() );
+        tokenizer tokens( s, sep );
+
+        for ( tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it )
+        {
+            strings.push_back( *it );
+        }
+
+        return strings;
+    }
+
+
     std::vector<std::wstring> split_string_to_lines( const std::wstring& s )
     {
         std::vector<std::wstring> vws;
