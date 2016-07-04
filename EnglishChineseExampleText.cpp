@@ -4,6 +4,8 @@
 #include "FileUtility.h"
 #include "AlgorithmUtility.h"
 #include "EceSlideshow.h"
+#include "EmptySlideshow.h"
+#include "IDisable.h"
 
 
 EnglishChineseExampleText::EnglishChineseExampleText( const boost::filesystem::path& file_path )
@@ -11,11 +13,23 @@ EnglishChineseExampleText::EnglishChineseExampleText( const boost::filesystem::p
 {
     reload();
     IFileChangeManager::instance().add_handler( file_path, this );
+    IDisable::instance().add_observer( this );
+}
+
+
+EnglishChineseExampleText::~EnglishChineseExampleText()
+{
+    IDisable::instance().remove_observer( this );
 }
 
 
 ISlideshowPtr EnglishChineseExampleText::slideshow( size_t key )
 {
+    if ( m_keys.find( key ) == m_keys.end() )
+    {
+        return ISlideshowPtr( new EmptySlideshow );
+    }
+
     return m_slidshow_map[key];
 }
 
@@ -26,13 +40,13 @@ const std::set<size_t>& EnglishChineseExampleText::keys()
 }
 
 
-void EnglishChineseExampleText::reload()
+bool EnglishChineseExampleText::reload()
 {
     std::wstring s = Utility::wstring_from_file( m_file_path.wstring().c_str() );
 
     if ( s == m_string )
     {
-        return;
+        return false;
     }
 
     std::set<size_t> keys;
@@ -55,13 +69,18 @@ void EnglishChineseExampleText::reload()
         const std::wstring& chinese = it->str(2);
         const std::wstring& example = ( (*it)[3].matched ? it->str(3) : L"" );
         size_t key = hash( english );
-        keys.insert( key );
-        slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example ) );
+
+        if ( !IDisable::instance().is_disabled( key ) )
+        {
+            keys.insert( key );
+            slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example ) );
+        }
     }
 
     m_string.swap( s );
     m_keys.swap( keys );
     m_slidshow_map.swap( slidshow_map );
+    return true;
 }
 
 
@@ -79,6 +98,37 @@ void EnglishChineseExampleText::last_write_time_changed( const boost::filesystem
 {
     if ( file == m_file_path )
     {
-        reload();
+        if ( reload() )
+        {
+            notify();
+        }
+    }
+}
+
+
+void EnglishChineseExampleText::disabled( size_t key )
+{
+    m_keys.erase( key );
+    m_slidshow_map.erase( key );
+}
+
+
+void EnglishChineseExampleText::add_observer( ITextObserver* observer )
+{
+    m_observers.insert( observer );
+}
+
+
+void EnglishChineseExampleText::remove_observer( ITextObserver* observer )
+{
+    m_observers.erase( observer );
+}
+
+
+void EnglishChineseExampleText::notify()
+{
+    BOOST_FOREACH( ITextObserver* observer, m_observers )
+    {
+        observer->text_changed( this );
     }
 }

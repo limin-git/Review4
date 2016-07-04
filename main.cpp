@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "ICommandLine.h"
+#include "IReviewManager.h"
+#include "IInput.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -11,21 +13,8 @@ int _tmain(int argc, _TCHAR* argv[])
     }
 
     ICommandLine::instance().parse_command_line( argc, argv );
-
-    namespace po = boost::program_options;
-    po::variables_map& vm = ICommandLine::instance().get_variables_map();
-
-    if ( vm.count( "config-file" ) )
-    {
-        std::vector<std::wstring> vs = vm[ "config-file" ].as< std::vector<std::wstring> >();
-
-        for ( size_t i = 0; i < vs.size(); ++i )
-        {
-            std::wcout << vs[i] << ", ";
-        }
-
-        std::cout << std::endl;
-    }
+    IReviewManager::instance().run();
+    IInput::instance().run();
 
 	return 0;
 }

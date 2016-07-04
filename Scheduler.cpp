@@ -7,6 +7,8 @@
 #include "IText.h"
 #include "Utility.h"
 #include "EmptySlideshow.h"
+#include "IDisable.h"
+#include "IText.h"
 
 namespace po = boost::program_options;
 static const std::time_t ONE_DAY = 12 * 3600;
@@ -37,7 +39,7 @@ Scheduler::Scheduler()
         return;
     }
 
-    size_t number = boost::lexical_cast<size_t>( schedule_string.substr( 0, pos ) );
+    size_t number = boost::lexical_cast<size_t>( boost::trim_copy( schedule_string.substr( 0, pos ) ) );
     std::vector<std::time_t> schedule = Utility::times_from_strings( Utility::split_string( schedule_string.substr( pos + 1 ) ) );
     number = ( 0 == number ? 100 : number );
 
@@ -58,6 +60,8 @@ Scheduler::Scheduler()
     initialize_schedule();
 
     m_select_candidates_thread = new boost::thread( boost::bind( &Scheduler::select_candidates_thread, this ) );
+    IDisable::instance().add_observer( this );
+    IText::instance().add_observer( this );
 }
 
 
@@ -67,6 +71,8 @@ Scheduler::~Scheduler()
     m_select_candidates_semaphore.post();
     m_select_candidates_thread->join();
     delete m_select_candidates_thread;
+    IDisable::instance().remove_observer( this );
+    IText::instance().remove_observer( this );
 }
 
 
@@ -189,4 +195,28 @@ std::time_t Scheduler::get_next_time( size_t key, const std::time_t current )
 bool Scheduler::is_finished( size_t key )
 {
     return ( m_schedule.size() + 1 <= IHistory::instance().history( key ).size() );
+}
+
+
+void Scheduler::disabled( size_t key )
+{
+    m_candidates.erase( key );
+
+    for ( std::multimap<std::time_t, size_t>::iterator it = m_next_time_map.begin(); it != m_next_time_map.end(); )
+    {
+        if ( it->second == key )
+        {
+            m_next_time_map.erase( it++ );
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
+
+void Scheduler::text_changed( IText* text )
+{
+    initialize_schedule();
 }

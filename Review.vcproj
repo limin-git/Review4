@@ -353,6 +353,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ITextObserver.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TextFactory.cpp"
 				>
 			</File>
@@ -594,6 +598,46 @@
 			</File>
 			<File
 				RelativePath=".\IDisable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IDisableObserver.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="ReviewManager"
+			>
+			<File
+				RelativePath=".\IReviewManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IReviewManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ReviewManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ReviewManager.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Test"
+			>
+			<File
+				RelativePath=".\test.cfg"
+				>
+			</File>
+			<File
+				RelativePath=".\test.disabled"
+				>
+			</File>
+			<File
+				RelativePath=".\test.ece"
 				>
 			</File>
 		</Filter>

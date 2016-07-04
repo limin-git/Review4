@@ -1,13 +1,19 @@
 #pragma once
 #include "IScheduler.h"
+#include "IDisableObserver.h"
+#include "ITextObserver.h"
 
 
-struct Scheduler : IScheduler
+struct Scheduler : IScheduler,
+                   IDisableObserver,
+                   ITextObserver
 {
 public:
     Scheduler();
     ~Scheduler();
     virtual ISlideshowPtr get_slideshow();
+    virtual void disabled( size_t key );
+    virtual void text_changed( IText* text );
 
 private:
 

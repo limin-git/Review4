@@ -2,6 +2,7 @@
 #include "History.h"
 #include "IConfigurationFile.h"
 #include "FileUtility.h"
+#include "IDisable.h"
 
 
 History::History()
@@ -13,12 +14,14 @@ History::History()
     IConfigurationFile::instance().add_options_description( desc );
     m_file_name = IConfigurationFile::instance().variables_map()["file.history"].as<std::wstring>();
     load_history();
+    IDisable::instance().add_observer( this );
 }
 
 
 History::~History()
 {
     save_history_file();
+    IDisable::instance().remove_observer( this );
 }
 
 
@@ -72,12 +75,22 @@ void History::load_history()
             strm.clear();
             strm.str( s );
             is >> key;
-            std::vector<std::time_t>& times = m_history[key];
 
-            while( strm >> t )
+            if ( !IDisable::instance().is_disabled( key ) )
             {
-                times.push_back( t );
+                std::vector<std::time_t>& times = m_history[key];
+
+                while( strm >> t )
+                {
+                    times.push_back( t );
+                }
             }
         }
     }
+}
+
+
+void History::disabled( size_t key )
+{
+    m_history.erase( key );
 }
