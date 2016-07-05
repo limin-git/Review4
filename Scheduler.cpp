@@ -11,7 +11,7 @@
 #include "IText.h"
 
 // dependency:
-// History
+// IHistory
 //     --> IConfigurationFile
 //     --> IDisable
 //     --> IText
@@ -88,7 +88,7 @@ ISlideshowPtr Scheduler::get_slideshow()
     if ( m_candidates.empty() )
     {
         m_select_candidates_semaphore.post();
-        return ISlideshowPtr( new EmptySlideshow );
+        return ISlideshowPtr( new EmptySlideshow( m_next_time_map.empty() ) );
     }
 
     std::set<size_t>::iterator it = m_candidates.begin();
@@ -102,18 +102,19 @@ ISlideshowPtr Scheduler::get_slideshow()
     size_t key = *it;
     m_candidates.erase( it );
     IHistory::instance().write_history( key );
+    ISlideshowPtr slideshow = IText::instance().slideshow( key );
 
-    if ( !is_finished( key ) )
+    if ( is_finished( key ) )
     {
-        schedule_next_time( key );
+        IDisable::instance().disable( slideshow ); // same as disabled
     }
     else
     {
-        // TODO: save to finished
+        schedule_next_time( key );
     }
 
     m_select_candidates_semaphore.post();
-    return IText::instance().slideshow( key );
+    return slideshow;
 }
 
 

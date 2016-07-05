@@ -23,9 +23,17 @@ int _tmain(int argc, _TCHAR* argv[])
     }
 
     ICommandLine::instance().parse_command_line( argc, argv );
-    IConsole::instance();
-    IReviewManager::instance().run();
-    IInput::instance().run();
+
+    try
+    {
+        IReviewManager::instance().run();
+    }
+    catch ( std::exception& e)
+    {
+        IConsole::remove();
+        std::cout << "error: " << e.what() << std::endl;
+        std::cout << IConfigurationFile::instance().options_description() << std::endl;
+    }
 
     {
         IReviewManager::remove();
@@ -33,13 +41,12 @@ int _tmain(int argc, _TCHAR* argv[])
         IHistory::remove();
         IText::remove();
         IDisable::remove();
-        IEnglishPlayer::remove();
-        ISpeech::remove(); ISound::remove();
+        IEnglishPlayer::remove(); ISpeech::remove(); ISound::remove();
         IInput::remove();
-        IConsole::remove();
-        ILog::remove();
         IConfigurationFile::remove();
         ICommandLine::remove();
+        IConsole::remove();
+        ILog::remove();
     }
 
 	return 0;

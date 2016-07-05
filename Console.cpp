@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Console.h"
+#include "IConfigurationFile.h"
+#include "Utility.h"
 
 
 Console::Console()
@@ -11,6 +13,19 @@ Console::Console()
     show_cursor( false );
     disable_system_buttons();
     set_ctrl_handler();
+
+    po::options_description options( "Console" );
+    options.add_options()
+        ( "console.font-name", po::wvalue<std::wstring>(), "console font name" )
+        ( "console.font-size", po::wvalue<size_t>(), "console font size" )
+        ( "console.width", po::value<size_t>(), "console layout: width" )
+        ( "console.height", po::value<size_t>(), "console layout: height" )
+        ( "console.color", po::wvalue<std::wstring>(), "console color" )
+        ;
+    IConfigurationFile::instance()
+        .add_options_description( options )
+        .add_observer( this )
+        ;
 }
 
 
@@ -85,57 +100,39 @@ COORD Console::calculate_center_coord( size_t string_length )
 }
 
 
-void Console::update_option( const boost::program_options::variables_map& vm )
+void Console::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
-#if 0
-    static OptionUpdateHelper option_helper;
-
-    if ( option_helper.update_one_option<std::wstring>( system_font_face_name, vm ) )
+    if ( Utility::updated<std::wstring>( "console.font-name", vm, old ) )
     {
-        std::wstring font_face_name = option_helper.get_value<std::wstring>( system_font_face_name );
-        set_font_face_name( font_face_name );
-        //LOG_DEBUG << "font-face-name: " << font_face_name;
+        set_font_face_name( vm["console.font-name"].as<std::wstring>() );
     }
 
-    if ( option_helper.update_one_option<SHORT>( system_font_size, vm ) )
+    if ( Utility::updated<size_t>( "console.font-size", vm, old ) )
     {
-        SHORT font_size = option_helper.get_value<SHORT>( system_font_size );
-        set_font_size( font_size );
-        //LOG_DEBUG << "font-size: " << font_size;
+        set_font_size( vm["console.font-size"].as<size_t>() );
     }
 
-    if ( option_helper.update_one_option<SHORT>( system_console_width, vm ) )
+    if ( Utility::updated<size_t>( "console.width", vm, old ) )
     {
-        SHORT width = option_helper.get_value<SHORT>( system_console_width );
-        set_width( width );
-        //LOG_DEBUG << "console-width: " << width;
+        set_width( vm["console.width"].as<size_t>() );
     }
 
-    if ( option_helper.update_one_option<SHORT>( system_console_height, vm ) )
+    if ( Utility::updated<size_t>( "console.height", vm, old ) )
     {
-        SHORT height = option_helper.get_value<SHORT>( system_console_height );
-        set_height( height );
-        //LOG_DEBUG << "console-height: " << height;
+        set_height( vm["console.height"].as<size_t>() );
     }
 
-    if ( option_helper.update_one_option<std::wstring>( system_console_color, vm ) )
+    if ( Utility::updated<std::wstring>( "console.color", vm, old ) )
     {
-        std::wstring color_str = option_helper.get_value<std::wstring>( system_console_color );
         WORD color = 0;
-        std::wstringstream strm;
-        strm << color_str;
+        std::wstringstream strm( vm["console.color"].as<std::wstring>() );
         strm >> std::hex >> color;
-
         if ( 0 == color )
         {
             color = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
-            //log_error << "wrong console-color: " << color_str;
         }
-
-        set_color( color );
-        //LOG_DEBUG << "console-color: " << color;
+        set_color( color);
     }
-#endif
 }
 
 
@@ -229,9 +226,13 @@ void Console::set_color( WORD color )
     COORD coord = { 0, 0 };
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo( m_cout, &csbi );
-    csbi.wAttributes = color;
-    SetConsoleTextAttribute( m_cout, csbi.wAttributes );
-    FillConsoleOutputAttribute( m_cout, csbi.wAttributes, csbi.dwSize.X * csbi.dwSize.Y, coord, &written );
+
+    if ( csbi.wAttributes != color )
+    {
+        csbi.wAttributes = color;
+        SetConsoleTextAttribute( m_cout, csbi.wAttributes );
+        FillConsoleOutputAttribute( m_cout, csbi.wAttributes, csbi.dwSize.X * csbi.dwSize.Y, coord, &written );
+    }
 }
 
 

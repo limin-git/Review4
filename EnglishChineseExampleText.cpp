@@ -61,9 +61,9 @@ bool EnglishChineseExampleText::reload()
     static const boost::wregex e
     (
         L"(?x)"
-        L"^ [ \t　]* ([^ \t　\\r\\n] [^\\r\\n]*?) [ \t　]* [\\r\\n]{1,2}"           // $1: english
-        L"^ [ \t　]* ([^ \t　\\r\\n] [^\\r\\n]*?) [ \t　]* [\\r\\n]{1,2}"           // $2: chinese
-        L"((?:^[ \t　]*  [^ \t　\\r\\n] [^\\r\\n]*?  [ \t　]* [\\r\\n]{1,2})*)"     // $3: example
+        L"  ^[ \t　]* ([^ \t　\\r\\n] [^\\r\\n]*?) [ \t　]* [\\r\\n]{1,2}"           // $1: english
+        L"  ^[ \t　]* ([^ \t　\\r\\n] [^\\r\\n]*?) [ \t　]* [\\r\\n]{1,2}"           // $2: chinese
+        L"((^[ \t　]*  [^ \t　\\r\\n] [^\\r\\n]*?  [ \t　]* [\\r\\n]{1,2})*)"        // $3: example
     );
 
     boost::wsregex_iterator it( s.begin(), s.end(), e );
@@ -84,8 +84,14 @@ bool EnglishChineseExampleText::reload()
     }
 
     m_string.swap( s );
-    m_keys.swap( keys );
     m_slidshow_map.swap( slidshow_map );
+
+    if ( m_keys == keys )
+    {
+        return false;
+    }
+
+    m_keys.swap( keys );
     return true;
 }
 

@@ -3,7 +3,8 @@
 #include "IConsole.h"
 
 
-EmptySlideshow::EmptySlideshow()
+EmptySlideshow::EmptySlideshow( bool finished )
+    : m_finished( finished )
 {
 }
 
@@ -12,7 +13,7 @@ bool EmptySlideshow::show()
 {
     IConsole::instance()
         .cls()
-        .write_center( "empty." );
+        .write_center( m_finished ? "finished." : "empty." );
     return true;
 }
 
@@ -26,5 +27,6 @@ size_t EmptySlideshow::key()
 const std::wstring& EmptySlideshow::key_string()
 {
     static const std::wstring empty = L"empty.";
-    return empty;
+    static const std::wstring finished = L"finished.";
+    return m_finished ? finished : empty;
 }

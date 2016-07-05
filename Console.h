@@ -1,8 +1,10 @@
 #pragma once
 #include "IConsole.h"
+#include "IConfigurationFileObserver.h"
 
 
-struct Console : IConsole
+struct Console : IConsole,
+                 IConfigurationFileObserver
 {
 public:
 
@@ -13,6 +15,10 @@ public:
     virtual IConsole& write( const std::wstring& ws );
     virtual IConsole& write_center( const std::string& s );
     virtual IConsole& write_center( const std::wstring& ws );
+
+public:
+
+    virtual void options_changed( const po::variables_map& vm, const po::variables_map& old );
 
 private:
 

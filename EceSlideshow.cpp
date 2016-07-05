@@ -47,6 +47,12 @@ bool EceSlideshow::show()
 }
 
 
+void EceSlideshow::clear_state()
+{
+    m_stage = English;
+}
+
+
 size_t EceSlideshow::key()
 {
     return m_key;

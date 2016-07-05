@@ -8,6 +8,7 @@ public:
 
     EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp );
     virtual bool show();
+    virtual void clear_state();
     virtual size_t key();
     virtual const std::wstring& key_string();
 

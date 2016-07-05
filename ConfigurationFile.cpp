@@ -63,9 +63,10 @@ IConfigurationFile& ConfigurationFile::add_observer( IConfigurationFileObserver*
 }
 
 
-void ConfigurationFile::remove_observer( IConfigurationFileObserver* observer )
+IConfigurationFile& ConfigurationFile::remove_observer( IConfigurationFileObserver* observer )
 {
     m_observers.erase( observer );
+    return *this;
 }
 
 

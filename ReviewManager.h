@@ -24,9 +24,12 @@ protected:
 private:
 
     void show();
+    void delete_review_history( size_t key );
+    void forward();
 
 private:
 
-    ISlideshowPtr m_slideshow;
+    //ISlideshowPtr m_slideshow;
     ISlideshowPtrList m_slideshow_history;
+    ISlideshowPtrList::iterator m_current;
 };
