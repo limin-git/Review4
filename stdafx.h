@@ -17,6 +17,7 @@
 #pragma  comment( lib, "Psapi.lib" )
 #include <dshow.h>
 #pragma comment(lib, "strmiids.lib") // For IID_IGraphBuilder, IID_IMediaControl, IID_IMediaEvent
+#include <ShellAPI.h>
 #include <atlbase.h>
 #include <atlcom.h>
 #include <sapi.h>

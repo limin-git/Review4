@@ -13,28 +13,27 @@ namespace Utility
     }
 
 
-    void set_system_wallpaper( const std::wstring& picture )
+    void set_system_wallpaper( const fs::path& picture )
     {
-        SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, const_cast<wchar_t*>( picture.c_str() ), SPIF_UPDATEINIFILE);
+        SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, const_cast<wchar_t*>( picture.wstring().c_str() ), SPIF_UPDATEINIFILE);
     }
 
 
-    std::vector<std::wstring> get_files_of_directory( const std::wstring& dir )
+    std::vector<fs::path> get_files_of_directory( const fs::path& dir )
     {
-        std::vector<std::wstring> files;
-        boost::filesystem::path dir_path( dir );
+        std::vector<fs::path> files;
 
-        if ( !exists( dir_path ) )
+        if ( !exists( dir ) )
         {
             return files;
         }
 
-        boost::filesystem::recursive_directory_iterator end;
-        for ( boost::filesystem::recursive_directory_iterator it( dir_path ); it != end; ++it )
+        fs::recursive_directory_iterator end;
+        for ( fs::recursive_directory_iterator it( dir ); it != end; ++it )
         {
             if ( false != is_directory( it->status() ) )
             {
-                files.push_back( it->path().wstring() );
+                files.push_back( it->path() );
             }
         }
 
@@ -42,9 +41,9 @@ namespace Utility
     }
 
 
-    bool is_picture( const std::wstring& file_name )
+    bool is_picture( const fs::path& file_path )
     {
-        std::ifstream is( file_name.c_str(), std::ios::in | std::ios::binary );
+        std::ifstream is( file_path.wstring().c_str(), std::ios::in | std::ios::binary );
 
         if ( !is )
         {
@@ -70,15 +69,33 @@ namespace Utility
         }
     }
 
-    bool remove_file( const std::wstring& file_name )
+    bool remove_file( const fs::path& file_path )
     {
-        boost::filesystem::path p( file_name );
+        fs::path p( file_path );
 
-        if ( exists( p ) )
+        if ( exists( file_path ) )
         {
             boost::system::error_code ec;
-            permissions(p, boost::filesystem::all_all);
-            remove( p, ec);
+            permissions( file_path, fs::all_all );
+            remove( file_path, ec );
+
+            if ( ec )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    bool rename_file( const fs::path& old_path, const fs::path& new_path )
+    {
+        if ( exists( old_path ) && ( !exists( new_path ) ) )
+        {
+            boost::system::error_code ec;
+            permissions( old_path, fs::all_all );
+            rename( old_path, new_path, ec );
 
             if ( ec )
             {

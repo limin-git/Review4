@@ -12,6 +12,9 @@
 #include "IConfigurationFile.h"
 #include "IText.h"
 #include "IDisable.h"
+#include "IWallpaper.h"
+#include "ITextFactory.h"
+#include "IMoviePlayer.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -27,6 +30,8 @@ int _tmain(int argc, _TCHAR* argv[])
     try
     {
         IReviewManager::instance().run();
+        IWallpaper::instance().run();
+        IInput::instance().run();
     }
     catch ( std::exception& e)
     {
@@ -37,11 +42,13 @@ int _tmain(int argc, _TCHAR* argv[])
 
     {
         IReviewManager::remove();
+        IWallpaper::remove();
         IScheduler::remove();
         IHistory::remove();
-        IText::remove();
+        IText::remove(); ITextFactory::remove();
         IDisable::remove();
         IEnglishPlayer::remove(); ISpeech::remove(); ISound::remove();
+        IMoviePlayer::remove();
         IInput::remove();
         IConfigurationFile::remove();
         ICommandLine::remove();

@@ -50,7 +50,6 @@ void ReviewManager::run()
         .add_mouse_handler( this, 0, FROM_LEFT_1ST_BUTTON_PRESSED,  boost::bind( &ReviewManager::continue_handler, this ) )
         .add_mouse_handler( this, MOUSE_HWHEELED, 0,                boost::bind( &ReviewManager::continue_handler, this ) )
         .add_mouse_handler( this, 0, RIGHTMOST_BUTTON_PRESSED,      boost::bind( &ReviewManager::previous_handler, this ) )
-        .run();
         ;
 }
 

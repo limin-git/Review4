@@ -14,9 +14,10 @@
 //     --> IConsole
 
 
-EnglishChineseExampleText::EnglishChineseExampleText( const boost::filesystem::path& file_path )
+EnglishChineseExampleText::EnglishChineseExampleText( const fs::path& file_path )
     : m_file_path( file_path )
 {
+    system_complete( m_file_path );
     reload();
     IFileChangeManager::instance().add_handler( file_path, this );
     IDisable::instance().add_observer( this );
@@ -106,7 +107,7 @@ size_t EnglishChineseExampleText::hash( std::wstring s )
 }
 
 
-void EnglishChineseExampleText::last_write_time_changed( const boost::filesystem::path& file )
+void EnglishChineseExampleText::last_write_time_changed( const fs::path& file )
 {
     if ( file == m_file_path )
     {

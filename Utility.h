@@ -12,14 +12,17 @@
 #undef min
 #endif
 
+namespace fs = boost::filesystem;
+
 
 namespace Utility
 {
     size_t random( size_t lo, size_t hi );
-    void set_system_wallpaper( const std::wstring& picture );
-    std::vector<std::wstring> get_files_of_directory( const std::wstring& dir );
-    bool is_picture( const std::wstring& file_name );
-    bool remove_file( const std::wstring& file_name );
+    void set_system_wallpaper( const fs::path& picture );
+    std::vector<fs::path> get_files_of_directory( const fs::path& dir );
+    bool is_picture( const fs::path& file_path );
+    bool remove_file( const fs::path& file_path );
+    bool rename_file( const fs::path& old_path, const fs::path& new_path );
 
     template<typename T>
     bool updated( const char* name, const boost::program_options::variables_map& vm, const boost::program_options::variables_map& old )

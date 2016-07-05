@@ -5,6 +5,7 @@
 Input::Input()
 {
     m_key_handlers.resize( 2 );
+    m_processor.set_callback( boost::bind( &Input::do_callback, this, _1 ) );
 }
 
 
@@ -53,7 +54,8 @@ void Input::run()
                     {
                         BOOST_FOREACH( CallbackMap::value_type& v, it->second )
                         {
-                            v.second();
+                            m_processor.queue_item( v.second );
+                            //v.second();
                         }
                     }
                 }
@@ -75,7 +77,8 @@ void Input::run()
                     {
                         BOOST_FOREACH( CallbackMap::value_type& v, it->second )
                         {
-                            v.second();
+                            m_processor.queue_item( v.second );
+                            //v.second();
                         }
                     }
                 }
@@ -165,4 +168,10 @@ IInput& Input::remove_mouse_handler( IInputHandler* handler )
     }
 
     return *this;
+}
+
+
+void Input::do_callback( const Callback& callback )
+{
+    callback();
 }

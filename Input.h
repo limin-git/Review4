@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "IInput.h"
+#include "QueueProcessor.h"
 
 
 struct Input : IInput
@@ -17,10 +18,15 @@ public:
 
 private:
 
+    void do_callback( const Callback& callback );
+
+private:
+
     typedef std::map<IInputHandler*, Callback> CallbackMap;
     typedef std::map<WORD, CallbackMap> KeyHandlerMap;
     std::vector<KeyHandlerMap> m_key_handlers;
     typedef std::map<DWORD, CallbackMap> MouseHandlerMap;
     MouseHandlerMap m_mouse_button_pressed_handlers;
     MouseHandlerMap m_other_mouse_handlers;
+    QueueProcessor<Callback> m_processor;
 };

@@ -309,27 +309,11 @@
 			Name="Text"
 			>
 			<File
-				RelativePath=".\EceSlideshow.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\EceSlideshow.h"
-				>
-			</File>
-			<File
 				RelativePath=".\EmptySlideshow.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\EmptySlideshow.h"
-				>
-			</File>
-			<File
-				RelativePath=".\EnglishChineseExampleText.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\EnglishChineseExampleText.h"
 				>
 			</File>
 			<File
@@ -364,6 +348,46 @@
 				RelativePath=".\TextFactory.h"
 				>
 			</File>
+			<Filter
+				Name="Ece"
+				>
+				<File
+					RelativePath=".\EceSlideshow.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\EceSlideshow.h"
+					>
+				</File>
+				<File
+					RelativePath=".\EnglishChineseExampleText.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\EnglishChineseExampleText.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Srt"
+				>
+				<File
+					RelativePath=".\SrtSlideshow.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SrtSlideshow.h"
+					>
+				</File>
+				<File
+					RelativePath=".\SrtSubtitleText.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SrtSubtitleText.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="utilities"
@@ -382,6 +406,14 @@
 			</File>
 			<File
 				RelativePath=".\FileUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\InputUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\InputUtility.h"
 				>
 			</File>
 			<File
@@ -662,6 +694,26 @@
 			</File>
 			<File
 				RelativePath=".\Wallpaper.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="MoviePlayer"
+			>
+			<File
+				RelativePath=".\IMoviePlayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IMoviePlayer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MpcPlayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MpcPlayer.h"
 				>
 			</File>
 		</Filter>
