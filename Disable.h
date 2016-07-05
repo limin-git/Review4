@@ -24,6 +24,7 @@ private:
 private:
 
     fs::path m_file_name;
+    std::wfstream m_file_stream;
     std::set<size_t> m_disabled;
     std::set<IDisableObserver*> m_observers;
 };

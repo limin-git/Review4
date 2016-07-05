@@ -10,6 +10,14 @@
 #include "IDisable.h"
 #include "IText.h"
 
+// dependency:
+// History
+//     --> IConfigurationFile
+//     --> IDisable
+//     --> IText
+//     --> IHistory
+//     --> IConsole
+
 namespace po = boost::program_options;
 static const std::time_t ONE_DAY = 12 * 3600;
 
@@ -23,10 +31,9 @@ Scheduler::Scheduler()
     options.add_options()
         ( "review.schedule", po::wvalue<std::wstring>(), "schedule" )
         ;
-    IConfigurationFile::instance().add_options_description( options );
-
-    std::wstring schedule_string = IConfigurationFile::instance().variables_map()["review.schedule"].as<std::wstring>();
-
+    std::wstring schedule_string = IConfigurationFile::instance()
+                                       .add_options_description( options )
+                                       .variables_map()["review.schedule"].as<std::wstring>();
     if ( schedule_string.empty() )
     {
         schedule_string = L"7 : 24 hours, 48 hours, 72 hours, 96 hours, 120 hours, 144 hours, 168 hours";
@@ -49,7 +56,7 @@ Scheduler::Scheduler()
 
         for ( size_t i = 0; i < number; ++i )
         {
-            m_schedule.push_back( ( i + 1 ) * schedule[0] );
+            m_schedule.push_back( schedule[0] );
         }
     }
     else

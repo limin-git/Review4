@@ -7,6 +7,12 @@
 #include "EmptySlideshow.h"
 #include "IDisable.h"
 
+// singleton dependency:
+// IText
+//     --> IFileChangeManager
+//     --> IDisable
+//     --> IConsole
+
 
 EnglishChineseExampleText::EnglishChineseExampleText( const boost::filesystem::path& file_path )
     : m_file_path( file_path )

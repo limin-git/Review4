@@ -19,9 +19,6 @@ ICommandLine& ICommandLine::instance()
 
 void ICommandLine::remove()
 {
-    if ( g_command_line != NULL )
-    {
-        delete g_command_line;
-        g_command_line = NULL;
-    }
+    delete g_command_line;
+    g_command_line = NULL;
 }

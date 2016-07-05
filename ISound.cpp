@@ -19,9 +19,6 @@ ISound& ISound::instance()
 
 void ISound::remove()
 {
-    if ( g_sound != NULL )
-    {
-        delete g_sound;
-        g_sound = NULL;
-    }
+    delete g_sound;
+    g_sound = NULL;
 }

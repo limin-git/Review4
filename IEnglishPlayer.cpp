@@ -19,9 +19,6 @@ IEnglishPlayer& IEnglishPlayer::instance()
 
 void IEnglishPlayer::remove()
 {
-    if ( g_english_player != NULL )
-    {
-        delete g_english_player;
-        g_english_player = NULL;
-    }
+    delete g_english_player;
+    g_english_player = NULL;
 }

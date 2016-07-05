@@ -80,7 +80,7 @@ struct QueueProcessor
         boost::unique_lock<boost::mutex> lock( m_mutex );
         T item;
 
-        while ( m_queue.empty() )
+        while ( m_queue.empty() && m_running )
         {
             m_condition.wait( lock );
         }

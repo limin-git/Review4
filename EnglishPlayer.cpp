@@ -25,9 +25,8 @@ EnglishPlayer::EnglishPlayer()
 
 EnglishPlayer::~EnglishPlayer()
 {
+    m_processor.terminate();
     IConfigurationFile::instance().remove_observer( this );
-    ISpeech::remove();
-    ISound::remove();
 }
 
 

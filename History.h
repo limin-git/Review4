@@ -26,4 +26,5 @@ private:
     typedef std::map< size_t, std::vector<std::time_t> > HistoryRecord;
     HistoryRecord m_history;
     fs::path m_file_name;
+    std::fstream m_file_stream;
 };

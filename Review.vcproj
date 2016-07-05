@@ -640,6 +640,10 @@
 				RelativePath=".\test.ece"
 				>
 			</File>
+			<File
+				RelativePath=".\test.history"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\main.cpp"

@@ -3,6 +3,7 @@
 
 
 Speech::Speech()
+    : m_sp_voice( NULL )
 {
     ::CoInitializeEx( NULL, COINIT_MULTITHREADED );
     ::CoCreateInstance( CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&m_sp_voice );
@@ -18,7 +19,10 @@ Speech::~Speech()
 
 void Speech::speak( const std::wstring& word )
 {
-    m_sp_voice->Speak( word.c_str(), 0, NULL );
+    if ( m_sp_voice )
+    {
+        m_sp_voice->Speak( word.c_str(), 0, NULL );
+    }
 }
 
 

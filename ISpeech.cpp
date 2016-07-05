@@ -19,9 +19,6 @@ ISpeech& ISpeech::instance()
 
 void ISpeech::remove()
 {
-    if ( g_speech != NULL )
-    {
-        delete g_speech;
-        g_speech = NULL;
-    }
+    delete g_speech;
+    g_speech = NULL;
 }

@@ -13,12 +13,17 @@ public:
     ~ReviewManager();
     virtual void run();
 
-private:
+protected:
 
+    // handlers
     void continue_handler();
     void next_handler();
     void back_handler();
     void disable_handler();
+
+private:
+
+    void show();
 
 private:
 

@@ -19,9 +19,6 @@ IDisable& IDisable::instance()
 
 void IDisable::remove()
 {
-    if ( g_disable != NULL )
-    {
-        delete g_disable;
-        g_disable = NULL;
-    }
+    delete g_disable;
+    g_disable = NULL;
 }
