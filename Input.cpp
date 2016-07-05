@@ -15,7 +15,7 @@ void Input::run()
     INPUT_RECORD input_buffer[size];
     DWORD num_read = 0;
 
-    SetConsoleMode( cin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS | ENABLE_PROCESSED_INPUT );
+    SetConsoleMode( cin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT );
 
     while ( true )
     {
@@ -28,11 +28,19 @@ void Input::run()
             case KEY_EVENT:
                 {
                     KEY_EVENT_RECORD& e = input.Event.KeyEvent;
-                    std::cout << "bKeyDown=" << e.bKeyDown << std::endl;
-                    std::cout << "wRepeatCount=" << e.wRepeatCount << std::endl;
-                    std::cout << "wVirtualKeyCode=" << std::hex << e.wVirtualKeyCode << std::endl;
-                    std::cout << "wRepeatCount=" << e.wRepeatCount << std::endl;
-                    std::cout << "uChar.AsciiChar=" << e.uChar.AsciiChar << std::endl << std::endl;
+
+                    if ( ( e.wRepeatCount != 1 ) || ( 0 == e.wVirtualKeyCode ) )
+                    {
+                        continue;
+                    }
+
+                    //TODO: in release version is very strange!!!
+                    //std::cout << "bKeyDown=" << e.bKeyDown << std::endl;
+                    //std::cout << "wRepeatCount=" << e.wRepeatCount << std::endl;
+                    //std::cout << "wVirtualKeyCode=" << std::hex << e.wVirtualKeyCode << std::endl;
+                    //std::cout << "wVirtualScanCode=" << std::hex << e.wVirtualScanCode << std::endl;
+                    //std::cout << "wRepeatCount=" << e.wRepeatCount << std::endl;
+                    //std::cout << "uChar.AsciiChar=" << e.uChar.AsciiChar << std::endl << std::endl;
 
                     if ( VK_ESCAPE == e.wVirtualKeyCode )
                     {

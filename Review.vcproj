@@ -645,6 +645,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="IWallpaper"
+			>
+			<File
+				RelativePath=".\IWallpaper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IWallpaper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Wallpaper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Wallpaper.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\main.cpp"
 			>
