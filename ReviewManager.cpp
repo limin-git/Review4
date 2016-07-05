@@ -13,6 +13,7 @@
 
 
 ReviewManager::ReviewManager()
+    : should_forward( false )
 {
 }
 
@@ -35,13 +36,20 @@ void ReviewManager::run()
     IInput::instance()
         .add_key_handler( this, true, 'A', 'Z',     boost::bind( &ReviewManager::continue_handler, this ) )
         .add_key_handler( this, true, VK_SPACE,     boost::bind( &ReviewManager::continue_handler, this ) )
+        .add_key_handler( this, true, VK_DOWN,      boost::bind( &ReviewManager::continue_handler, this ) )
+        .add_key_handler( this, true, VK_BACK,      boost::bind( &ReviewManager::continue_handler, this ) )
+        .add_key_handler( this, true, VK_RETURN,    boost::bind( &ReviewManager::continue_handler, this ) )
+        .add_key_handler( this, true, VK_OEM_3,     boost::bind( &ReviewManager::continue_handler, this ) )     // '`~' for US
+        .add_key_handler( this, true, VK_OEM_5,     boost::bind( &ReviewManager::continue_handler, this ) )     //  '\|' for US
         .add_key_handler( this, true, VK_RIGHT,     boost::bind( &ReviewManager::next_handler, this ) )
-        .add_key_handler( this, true, VK_DOWN,      boost::bind( &ReviewManager::next_handler, this ) )
         .add_key_handler( this, true, VK_NEXT,      boost::bind( &ReviewManager::next_handler, this ) )
-        .add_key_handler( this, true, VK_UP,        boost::bind( &ReviewManager::back_handler, this ) )
-        .add_key_handler( this, true, VK_LEFT,      boost::bind( &ReviewManager::back_handler, this ) )
-        .add_key_handler( this, true, VK_PRIOR,     boost::bind( &ReviewManager::back_handler, this ) )
+        .add_key_handler( this, true, VK_UP,        boost::bind( &ReviewManager::previous_handler, this ) )
+        .add_key_handler( this, true, VK_LEFT,      boost::bind( &ReviewManager::previous_handler, this ) )
+        .add_key_handler( this, true, VK_PRIOR,     boost::bind( &ReviewManager::previous_handler, this ) )
         .add_key_handler( this, true, VK_DELETE,    boost::bind( &ReviewManager::disable_handler, this ) )
+        .add_mouse_handler( this, 0, FROM_LEFT_1ST_BUTTON_PRESSED,  boost::bind( &ReviewManager::continue_handler, this ) )
+        .add_mouse_handler( this, MOUSE_HWHEELED, 0,                boost::bind( &ReviewManager::continue_handler, this ) )
+        .add_mouse_handler( this, 0, RIGHTMOST_BUTTON_PRESSED,      boost::bind( &ReviewManager::previous_handler, this ) )
         .run();
         ;
 }
@@ -60,12 +68,13 @@ void ReviewManager::next_handler()
 }
 
 
-void ReviewManager::back_handler()
+void ReviewManager::previous_handler()
 {
     if ( m_current != m_slideshow_history.begin() )
     {
         m_current--;
         (*m_current)->clear_state();
+        should_forward = false;
         show();
     }
 }
@@ -73,16 +82,25 @@ void ReviewManager::back_handler()
 
 void ReviewManager::show()
 {
-    if ( (*m_current)->show() )
+    if ( should_forward )
     {
         forward();
     }
+
+    should_forward = (*m_current)->show();
 }
 
 
 void ReviewManager::forward()
 {
-    ++m_current;
+    if ( (*m_current)->empty() )
+    {
+        (*m_current) = IScheduler::instance().get_slideshow();
+    }
+    else
+    {
+        ++m_current;
+    }
 
     if ( m_current == m_slideshow_history.end() )
     {

@@ -27,6 +27,7 @@ Scheduler::Scheduler()
       m_select_candidates_semaphore( 0 ),
       m_select_candidates_thread( NULL )
 {
+    //TODO: lock when keys wer pressed down for a long time.
     po::options_description options( "Scheduler" );
     options.add_options()
         ( "review.schedule", po::wvalue<std::wstring>(), "schedule" )

@@ -10,16 +10,16 @@ Input::Input()
 
 void Input::run()
 {
-    HANDLE cout = GetStdHandle(STD_INPUT_HANDLE);
+    HANDLE cin = GetStdHandle(STD_INPUT_HANDLE);
     const size_t size = 1024;
     INPUT_RECORD input_buffer[size];
     DWORD num_read = 0;
 
-    SetConsoleMode( cout, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS | ENABLE_PROCESSED_INPUT );
+    SetConsoleMode( cin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS | ENABLE_PROCESSED_INPUT );
 
     while ( true )
     {
-        ReadConsoleInput( cout, input_buffer, size, &num_read );
+        ReadConsoleInput( cin, input_buffer, size, &num_read );
 
         BOOST_FOREACH( INPUT_RECORD& input, input_buffer )
         {
@@ -28,15 +28,20 @@ void Input::run()
             case KEY_EVENT:
                 {
                     KEY_EVENT_RECORD& e = input.Event.KeyEvent;
+                    std::cout << "bKeyDown=" << e.bKeyDown << std::endl;
+                    std::cout << "wRepeatCount=" << e.wRepeatCount << std::endl;
+                    std::cout << "wVirtualKeyCode=" << std::hex << e.wVirtualKeyCode << std::endl;
+                    std::cout << "wRepeatCount=" << e.wRepeatCount << std::endl;
+                    std::cout << "uChar.AsciiChar=" << e.uChar.AsciiChar << std::endl << std::endl;
 
                     if ( VK_ESCAPE == e.wVirtualKeyCode )
                     {
                         return;
                     }
 
-                    KeyHandlerMap::iterator it = m_key_handlers[e.bKeyDown].find( e.wVirtualKeyCode );
+                    KeyHandlerMap::iterator it = m_key_handlers[e.bKeyDown != 0].find( e.wVirtualKeyCode );
 
-                    if ( it != m_key_handlers[e.bKeyDown].end() )
+                    if ( it != m_key_handlers[e.bKeyDown != 0].end() )
                     {
                         BOOST_FOREACH( CallbackMap::value_type& v, it->second )
                         {
@@ -49,6 +54,12 @@ void Input::run()
             case MOUSE_EVENT:
                 {
                     MOUSE_EVENT_RECORD& e = input.Event.MouseEvent;
+
+                    if ( MOUSE_MOVED == e.dwEventFlags )
+                    {
+                        break;
+                    }
+
                     MouseHandlerMap& mouse_handlers = ( 0 == e.dwEventFlags ? m_mouse_button_pressed_handlers : m_other_mouse_handlers );
                     MouseHandlerMap::iterator it = mouse_handlers.find( 0 == e.dwEventFlags ? e.dwButtonState : e.dwEventFlags );
 

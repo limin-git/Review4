@@ -3,17 +3,20 @@
 #include "IConfigurationFile.h"
 #include "ISpeech.h"
 #include "ISound.h"
+#include "Utility.h"
 
 
 EnglishPlayer::EnglishPlayer()
     : m_options_description( "Speech" ),
       m_speech( ISpeech::instance() ),
-      m_sound( ISound::instance() )
+      m_sound( ISound::instance() ),
+      m_disabled( false )
 {
     m_processor.set_callback( boost::bind( &EnglishPlayer::speak_impl, this, _1 ) );
 
     m_options_description.add_options()
         ( "speech.path", po::wvalue< std::vector<std::wstring> >(), "speech path with format 'path | .extension'" )
+        ( "speech.disable", po::wvalue<std::wstring>(), "disable speech (true/false)" )
         ;
 
     IConfigurationFile::instance()
@@ -32,7 +35,7 @@ EnglishPlayer::~EnglishPlayer()
 
 void EnglishPlayer::speak( const std::wstring& word )
 {
-    if ( word.empty() )
+    if ( m_disabled || word.empty() )
     {
         return;
     }
@@ -80,9 +83,9 @@ void EnglishPlayer::speak_impl( const Word& word )
 
 void EnglishPlayer::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
-    if ( vm.count( "speech.path" ) )
+    if ( Utility::updated< std::vector<std::wstring> >( "speech.path", vm, old ) )
     {
-        m_speech_directories.clear();
+        SpeechDirectory speech_directories;
         std::vector<std::wstring> dirs = vm["speech.path"].as< std::vector<std::wstring> >();
 
         for ( size_t i = 0; i < dirs.size(); ++i )
@@ -95,9 +98,17 @@ void EnglishPlayer::options_changed( const po::variables_map& vm, const po::vari
 
                 if ( exists( dr ) && is_directory( dr ) )
                 {
-                    m_speech_directories[dr] = boost::trim_copy( dirs[i].substr( pos + 1 ) );;
+                    speech_directories[dr] = boost::trim_copy( dirs[i].substr( pos + 1 ) );;
                 }
             }
         }
+
+        m_speech_directories.swap( speech_directories );
+    }
+
+    if ( Utility::updated<std::wstring>( "speech.disable", vm, old ) )
+    {
+        const std::wstring s = vm["speech.disable"].as<std::wstring>();
+        m_disabled = ( L"true" == s || L"1" == s || L"TRUE" == s || L"True" == s );
     }
 }

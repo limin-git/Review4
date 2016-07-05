@@ -38,4 +38,5 @@ private:
     po::options_description m_options_description;
     ISpeech& m_speech;
     ISound& m_sound;
+    bool m_disabled;
 };
