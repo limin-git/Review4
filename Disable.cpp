@@ -26,6 +26,7 @@ Disable::Disable()
 
 Disable::~Disable()
 {
+    m_file_stream.flush();
     m_file_stream.close();
 }
 
@@ -62,11 +63,11 @@ void Disable::notify( size_t key )
 
 void Disable::load_file()
 {
-    m_file_stream.open( m_file_name.wstring().c_str(), std::ios::in | std::ios::out | std::ios::app );
+    std::wifstream is( m_file_name.wstring().c_str() );
 
-    if ( m_file_stream )
+    if ( is )
     {
-        for ( std::wstring s; std::getline( m_file_stream, s ); )
+        for ( std::wstring s; std::getline( is, s ); )
         {
             if ( !s.empty() )
             {
@@ -86,12 +87,10 @@ void Disable::load_file()
             }
         }
 
-        m_file_stream.clear();
+        is.close();
     }
-    else
-    {
-        m_file_stream.open( m_file_name.wstring().c_str(), std::ios::out | std::ios::app );
-    }
+
+    m_file_stream.open( m_file_name.wstring().c_str(), std::ios::app );
 }
 
 

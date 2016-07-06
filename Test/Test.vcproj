@@ -396,7 +396,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\IMoviePlayer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Input.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\InputUtility.cpp"
 				>
 			</File>
 			<File
@@ -424,6 +432,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\MpcPlayer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\ReviewManager.cpp"
 				>
 			</File>
@@ -437,6 +449,14 @@
 			</File>
 			<File
 				RelativePath="..\Speech.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\SrtSlideshow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\SrtSubtitleText.cpp"
 				>
 			</File>
 			<File

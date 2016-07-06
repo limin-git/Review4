@@ -116,9 +116,11 @@ void ReviewManager::forward()
 
 void ReviewManager::disable_handler()
 {
-    IDisable::instance().disable( *m_current );
-    delete_review_history( (*m_current)->key() );
+    ISlideshowPtr slideshow = *m_current;
+    size_t key = slideshow->key();
     next_handler();
+    IDisable::instance().disable( slideshow );
+    delete_review_history( key );
 }
 
 
