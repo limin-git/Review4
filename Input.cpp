@@ -16,7 +16,8 @@ void Input::run()
     INPUT_RECORD input_buffer[size];
     DWORD num_read = 0;
 
-    SetConsoleMode( cin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT );
+    //SetConsoleMode( cin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT );
+    SetConsoleMode( cin, ENABLE_WINDOW_INPUT );
 
     while ( true )
     {

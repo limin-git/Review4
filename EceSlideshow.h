@@ -24,4 +24,5 @@ private:
     std::wstring m_english;
     std::wstring m_chinese;
     std::wstring m_example;
+    std::wstring m_cache;
 };

@@ -13,7 +13,7 @@
 
 
 ReviewManager::ReviewManager()
-    : should_forward( false )
+    : m_forward_before_show( false )
 {
 }
 
@@ -43,7 +43,7 @@ void ReviewManager::run()
         .add_key_handler( this, true, VK_OEM_5,     boost::bind( &ReviewManager::continue_handler, this ) )     //  '\|' for US
         .add_key_handler( this, true, VK_RIGHT,     boost::bind( &ReviewManager::next_handler, this ) )
         .add_key_handler( this, true, VK_NEXT,      boost::bind( &ReviewManager::next_handler, this ) )
-        .add_key_handler( this, true, VK_UP,        boost::bind( &ReviewManager::previous_handler, this ) )
+        .add_key_handler( this, true, VK_UP,        boost::bind( &ReviewManager::repeat_handler, this ) )
         .add_key_handler( this, true, VK_LEFT,      boost::bind( &ReviewManager::previous_handler, this ) )
         .add_key_handler( this, true, VK_PRIOR,     boost::bind( &ReviewManager::previous_handler, this ) )
         .add_key_handler( this, true, VK_DELETE,    boost::bind( &ReviewManager::disable_handler, this ) )
@@ -63,6 +63,7 @@ void ReviewManager::continue_handler()
 void ReviewManager::next_handler()
 {
     forward();
+    m_forward_before_show = false;
     show();
 }
 
@@ -73,7 +74,7 @@ void ReviewManager::previous_handler()
     {
         m_current--;
         (*m_current)->clear_state();
-        should_forward = false;
+        m_forward_before_show = false;
         show();
     }
 }
@@ -81,12 +82,12 @@ void ReviewManager::previous_handler()
 
 void ReviewManager::show()
 {
-    if ( should_forward )
+    if ( m_forward_before_show )
     {
         forward();
     }
 
-    should_forward = (*m_current)->show();
+    m_forward_before_show = (*m_current)->show();
 }
 
 
@@ -98,7 +99,7 @@ void ReviewManager::forward()
     }
     else
     {
-        ++m_current;
+        m_current++;
     }
 
     if ( m_current == m_slideshow_history.end() )
@@ -111,6 +112,13 @@ void ReviewManager::forward()
     {
         (*m_current)->clear_state();
     }
+}
+
+
+void ReviewManager::repeat_handler()
+{
+    (*m_current)->clear_state();
+    m_forward_before_show = (*m_current)->show();
 }
 
 
@@ -131,10 +139,9 @@ void ReviewManager::delete_review_history( size_t key )
         if ( (*it)->key() == key )
         {
             m_slideshow_history.erase( it++ );
+            continue;
         }
-        else
-        {
-            ++it;
-        }
+
+        it++;
     }
 }

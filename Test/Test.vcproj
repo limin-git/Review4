@@ -226,6 +226,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TestHotKey.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestHotKey.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TestInput.cpp"
 				>
 			</File>
@@ -360,6 +368,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\HotKey.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\ICommandLine.cpp"
 				>
 			</File>
@@ -385,6 +397,14 @@
 			</File>
 			<File
 				RelativePath="..\IHistory.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\IHotKey.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\IHotKeyHandler.cpp"
 				>
 			</File>
 			<File

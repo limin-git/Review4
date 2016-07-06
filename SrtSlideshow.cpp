@@ -18,10 +18,9 @@ SrtSubtitle::SrtSubtitle( size_t key, size_t num, Time start_t, Time stop_t, con
 bool SrtSubtitle::show()
 {
     IConsole::instance()
-        .cls()
-        .write( text )
-        .write( "\n" )
-        .write( text2 );
+        .cls().write( "\n" )
+        .write( "\t" ).write( text ).write( "\n" )
+        .write( "\t" ).write( text2 );
     Time& t = start_time;
     IMoviePlayer::instance().go_to( t.hour, t.minute, t.second, t.millisecond, stop_time.total_millisecond - t.total_millisecond );
     return true;

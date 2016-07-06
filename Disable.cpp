@@ -26,7 +26,6 @@ Disable::Disable()
 
 Disable::~Disable()
 {
-    m_file_stream.flush();
     m_file_stream.close();
 }
 
@@ -40,7 +39,7 @@ void Disable::disable( ISlideshowPtr slideshow )
         return;
     }
 
-    m_file_stream << slideshow->key() << L"\t" << slideshow->key_string() << std::endl;
+    m_file_stream << slideshow->key() /*<< L"\t" << slideshow->key_string()*/ << std::endl; // TODO: fix unicode fstream
     m_disabled.insert( slideshow->key() );
     notify( slideshow->key() );
 }
@@ -63,34 +62,33 @@ void Disable::notify( size_t key )
 
 void Disable::load_file()
 {
-    std::wifstream is( m_file_name.wstring().c_str() );
+    m_file_stream.open( m_file_name.wstring().c_str(), std::ios::in | std::ios::out | std::ios::app );
 
-    if ( is )
+    if ( m_file_stream )
     {
-        for ( std::wstring s; std::getline( is, s ); )
+        for ( std::wstring s; std::getline( m_file_stream, s ); )
         {
             if ( !s.empty() )
             {
                 size_t pos = s.find( '\t' );
 
-                if ( pos != std::wstring::npos )
+                try
                 {
-                    try
-                    {
-                        size_t key = boost::lexical_cast<size_t>( s.substr( 0, pos ) );
-                        m_disabled.insert( key );
-                    }
-                    catch ( std::exception& )
-                    {
-                    }
+                    size_t key = boost::lexical_cast<size_t>( s.substr( 0, pos ) );
+                    m_disabled.insert( key );
+                }
+                catch ( std::exception& )
+                {
                 }
             }
         }
 
-        is.close();
+        m_file_stream.clear();
     }
-
-    m_file_stream.open( m_file_name.wstring().c_str(), std::ios::app );
+    else
+    {
+        m_file_stream.open( m_file_name.wstring().c_str(), std::ios::out | std::ios::app );
+    }
 }
 
 

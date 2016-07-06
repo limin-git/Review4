@@ -717,6 +717,34 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="HotKey"
+			>
+			<File
+				RelativePath=".\HotKey.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HotKey.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IHotKey.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IHotKey.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IHotKeyHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IHotKeyHandler.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\main.cpp"
 			>

@@ -22,6 +22,7 @@ private:
     void schedule_next_time( size_t key );
     std::time_t get_next_time( size_t key, const std::time_t current = std::time( NULL ) );
     bool is_finished( size_t key );
+    void set_title();
 
 private:
 
@@ -32,4 +33,5 @@ private:
     boost::interprocess::interprocess_semaphore m_select_candidates_semaphore;
     bool m_running;
     boost::thread* m_select_candidates_thread;
+    bool m_once_per_session;
 };

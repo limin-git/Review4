@@ -41,6 +41,12 @@ ISlideshowPtr EnglishChineseExampleText::slideshow( size_t key )
 }
 
 
+const fs::path& EnglishChineseExampleText::get_file_path()
+{
+    return m_file_path;
+}
+
+
 const std::set<size_t>& EnglishChineseExampleText::keys()
 {
     return m_keys;

@@ -6,7 +6,7 @@ struct EmptySlideshow : ISlideshow
 {
 public:
 
-    EmptySlideshow( bool finished = false );
+    EmptySlideshow( const std::wstring& message = L"empty." );
     virtual bool show();
     virtual void clear_state() {};
     virtual size_t key();
@@ -15,5 +15,5 @@ public:
 
 private:
 
-    bool m_finished;
+    std::wstring m_message;
 };

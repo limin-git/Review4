@@ -6,6 +6,8 @@
 
 Console::Console()
 {
+    m_hwnd = GetConsoleWindow();
+    m_style = GetWindowLong( m_hwnd, GWL_STYLE );
     m_stdout = GetStdHandle( STD_INPUT_HANDLE );
     m_cout = CreateConsoleScreenBuffer( GENERIC_READ | GENERIC_WRITE, 0, 0, CONSOLE_TEXTMODE_BUFFER, 0 );
     SetStdHandle( STD_OUTPUT_HANDLE, m_cout );
@@ -34,6 +36,7 @@ Console::~Console()
     SetStdHandle( STD_OUTPUT_HANDLE, m_stdout );
     SetConsoleActiveScreenBuffer( m_stdout );
     CloseHandle( m_cout );
+    SetWindowLong( m_hwnd, GWL_STYLE, m_style );
 }
 
 
@@ -78,6 +81,13 @@ IConsole& Console::write_center( const std::wstring& ws )
     DWORD written = 0;
     COORD coord = calculate_center_coord( WideCharToMultiByte( CP_ACP, 0, ws.c_str(), ws.size(), 0, 0, 0, 0 ) );
     WriteConsoleOutputCharacter( m_cout, ws.c_str(), ws.size(), coord, &written );
+    return *this;
+}
+
+
+IConsole& Console::title( const std::wstring& title )
+{
+    SetConsoleTitle( title.c_str() );
     return *this;
 }
 
@@ -250,6 +260,14 @@ void Console::show_cursor( BOOL visible )
 
 
 void Console::disable_system_buttons()
+{
+    LONG style = GetWindowLong( m_hwnd, GWL_STYLE );
+    style &= ~(WS_SYSMENU|WS_SIZEBOX); // no menu, no sizing
+    SetWindowLong( m_hwnd, GWL_STYLE, style );
+}
+
+
+void Console::disable_system_buttons2()
 {
     HWND w = GetConsoleWindow();
     HMENU m = GetSystemMenu( w, FALSE );

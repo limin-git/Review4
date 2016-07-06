@@ -29,7 +29,14 @@ namespace Utility
     {
         if ( vm.count( name ) )
         {
-            if ( ( !old.count( name ) ) || ( vm[name].as<T>() != old[name].as<T>() ) )
+            T new_value = vm[name].as<T>();
+
+            if ( old.count( name ) )
+            {
+                T old_value = old[name].as<T>();
+                return ( new_value != old_value );
+            }
+            else
             {
                 return true;
             }

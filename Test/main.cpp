@@ -9,6 +9,7 @@
 #include "TestEnglishPlayer.h"
 #include "TestEnglishPlayer.h"
 #include "TestEnglishChineseExampleText.h"
+#include "TestHotKey.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -23,7 +24,7 @@ int _tmain(int argc, _TCHAR* argv[])
         TestConfigruationFile t;
     }
 
-    if ( 1 )
+    if ( 0 )
     {
         TestInput t;
     }
@@ -56,6 +57,11 @@ int _tmain(int argc, _TCHAR* argv[])
     if ( 0 )
     {
         TestEnglishChineseExampleText t;
+    }
+
+    if ( 1 )
+    {
+        TestHotKey t;
     }
 
 	return 0;

@@ -15,6 +15,7 @@ public:
     virtual IConsole& write( const std::wstring& ws );
     virtual IConsole& write_center( const std::string& s );
     virtual IConsole& write_center( const std::wstring& ws );
+    virtual IConsole& title( const std::wstring& title );
 
 public:
 
@@ -30,6 +31,7 @@ private:
     void set_color( WORD color );
     void show_cursor( BOOL visible = true );
     void disable_system_buttons();
+    void disable_system_buttons2();
     void update_option( const boost::program_options::variables_map& vm );
     void set_ctrl_handler();
     COORD calculate_center_coord( size_t string_length );
@@ -38,4 +40,6 @@ private:
 
     HANDLE m_cout;
     HANDLE m_stdout;
+    HWND m_hwnd;
+    LONG m_style;
 };

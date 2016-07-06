@@ -51,16 +51,19 @@ void History::save_history_file()
     m_file_stream.close();
     m_file_stream.open( m_file_name.wstring().c_str(), std::ios::out | std::ios::trunc );
 
-    if ( !m_file_stream )
+    if ( ! m_file_stream )
     {
         return;
     }
 
     BOOST_FOREACH( HistoryRecord::value_type& v, m_history )
     {
-        m_file_stream << v.first << "\t";
-        BOOST_FOREACH( std::time_t t, v.second ) { m_file_stream << t << "\t"; }
-        m_file_stream << "\n";
+        if ( ! v.second.empty() )
+        {
+            m_file_stream << v.first << "\t";
+            BOOST_FOREACH( std::time_t t, v.second ) { m_file_stream << t << "\t"; }
+            m_file_stream << "\n";
+        }
     }
 
     m_file_stream.close();

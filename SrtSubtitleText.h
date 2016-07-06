@@ -12,6 +12,7 @@ public:
 
     SrtSubtitleText( const fs::path& file_path );
     virtual ISlideshowPtr slideshow( size_t key );
+    virtual const fs::path& get_file_path();
     virtual const std::set<size_t>& keys();
     virtual void add_observer( ITextObserver* observer );
     virtual void remove_observer( ITextObserver* observer );

@@ -19,6 +19,7 @@ protected:
     void continue_handler();
     void next_handler();
     void previous_handler();
+    void repeat_handler();
     void disable_handler();
 
 private:
@@ -32,5 +33,5 @@ private:
     //ISlideshowPtr m_slideshow;
     ISlideshowPtrList m_slideshow_history;
     ISlideshowPtrList::iterator m_current;
-    bool should_forward;
+    bool m_forward_before_show;
 };

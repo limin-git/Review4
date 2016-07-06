@@ -9,6 +9,7 @@
 #include "EmptySlideshow.h"
 #include "IDisable.h"
 #include "IText.h"
+#include "IConsole.h"
 
 // dependency:
 // IHistory
@@ -25,16 +26,24 @@ static const std::time_t ONE_DAY = 12 * 3600;
 Scheduler::Scheduler()
     : m_running( true ),
       m_select_candidates_semaphore( 0 ),
-      m_select_candidates_thread( NULL )
+      m_select_candidates_thread( NULL ),
+      m_once_per_session( false )
 {
     //TODO: lock when keys wer pressed down for a long time.
     po::options_description options( "Scheduler" );
     options.add_options()
         ( "review.schedule", po::wvalue<std::wstring>(), "schedule" )
+        ( "review.once-per-session", po::wvalue<std::wstring>(), "once per session" )
         ;
-    std::wstring schedule_string = IConfigurationFile::instance()
-                                       .add_options_description( options )
-                                       .variables_map()["review.schedule"].as<std::wstring>();
+    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
+    m_once_per_session = ( L"true" == vm["review.once-per-session"].as<std::wstring>() );
+    std::wstring schedule_string;
+
+    if ( vm.count( "review.schedule" ) )
+    {
+        schedule_string = vm["review.schedule"].as<std::wstring>();
+    }
+
     if ( schedule_string.empty() )
     {
         schedule_string = L"7 : 24 hours, 48 hours, 72 hours, 96 hours, 120 hours, 144 hours, 168 hours";
@@ -86,10 +95,15 @@ Scheduler::~Scheduler()
 
 ISlideshowPtr Scheduler::get_slideshow()
 {
+    if ( m_schedule.empty() )
+    {
+        return ISlideshowPtr( new EmptySlideshow( L"wrong schedule, check configuration!!!" ) );
+    }
+
     if ( m_candidates.empty() )
     {
         m_select_candidates_semaphore.post();
-        return ISlideshowPtr( new EmptySlideshow( m_next_time_map.empty() ) );
+        return ISlideshowPtr( new EmptySlideshow( m_next_time_map.empty() ? L"finished." : L"empty." ) );
     }
 
     std::set<size_t>::iterator it = m_candidates.begin();
@@ -111,9 +125,13 @@ ISlideshowPtr Scheduler::get_slideshow()
     }
     else
     {
-        schedule_next_time( key );
+        if ( ! m_once_per_session )
+        {
+            schedule_next_time( key );
+        }
     }
 
+    set_title();
     m_select_candidates_semaphore.post();
     return slideshow;
 }
@@ -176,6 +194,7 @@ void Scheduler::select_candidates_thread()
         if ( !candidates.empty() )
         {
             m_candidates.insert( candidates.begin(), candidates.end() );
+            set_title();
         }
     }
 }
@@ -227,4 +246,12 @@ void Scheduler::disabled( size_t key )
 void Scheduler::text_changed( IText* text )
 {
     initialize_schedule();
+}
+
+
+void Scheduler::set_title()
+{
+    std::wstringstream strm;
+    strm << IText::instance().get_file_path().filename().wstring() << " - " << m_candidates.size();
+    IConsole::instance().title( strm.str() );
 }

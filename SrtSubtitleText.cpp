@@ -93,6 +93,12 @@ ISlideshowPtr SrtSubtitleText::slideshow( size_t key )
 }
 
 
+const fs::path& SrtSubtitleText::get_file_path()
+{
+    return m_file_path;
+}
+
+
 const std::set<size_t>& SrtSubtitleText::keys()
 {
     return m_keys;
