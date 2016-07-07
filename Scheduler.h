@@ -2,13 +2,15 @@
 #include "IScheduler.h"
 #include "IDisableObserver.h"
 #include "ITextObserver.h"
+#include "IConfigurationFileObserver.h"
 
 typedef std::list<size_t> KeyList;
 
 
 struct Scheduler : IScheduler,
                    IDisableObserver,
-                   ITextObserver
+                   ITextObserver,
+                   IConfigurationFileObserver
 {
 public:
     Scheduler();
@@ -16,6 +18,7 @@ public:
     virtual ISlideshowPtr get_slideshow();
     virtual void disabled( size_t key );
     virtual void text_changed( IText* text );
+    virtual void options_changed( const po::variables_map& vm, const po::variables_map& old );
 
 private:
 

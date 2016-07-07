@@ -341,6 +341,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\StartEndTime.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TextFactory.cpp"
 				>
 			</File>
@@ -385,6 +389,26 @@
 				</File>
 				<File
 					RelativePath=".\SrtSubtitleText.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Ass"
+				>
+				<File
+					RelativePath=".\AssSlideshow.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\AssSlideshow.h"
+					>
+				</File>
+				<File
+					RelativePath=".\AssSubtitleText.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\AssSubtitleText.h"
 					>
 				</File>
 			</Filter>

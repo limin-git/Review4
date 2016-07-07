@@ -16,7 +16,7 @@ HotKey::HotKey()
 HotKey::~HotKey()
 {
     m_running = false;
-    IInputSender::instance().key( 'Q', true, true, true );
+    IInputSender::instance().Ctrl_Alt_Shift_key( 'Q' );
     m_thread->join();
     delete m_thread;
 }
@@ -26,7 +26,7 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
 {
     RegisterHandlerInfo info = { handler, fsModifiers, vk, callback };
     m_register_handler = info;
-    IInputSender::instance().key( 'R', true, true, true );
+    IInputSender::instance().Ctrl_Alt_Shift_key( 'R' );
     Sleep( 5 );
     return *this;
 }
@@ -35,7 +35,7 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
 IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
 {
     m_unregister_handler = handler;
-    IInputSender::instance().key( 'U', true, true, true );
+    IInputSender::instance().Ctrl_Alt_Shift_key( 'U' );
     return *this;
 }
 

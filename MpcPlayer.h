@@ -37,11 +37,12 @@ private:
     fs::path m_player;
     fs::path m_movie;
     fs::path m_subtitle;
-    bool m_load_subtitle;
-    bool m_auto_stop;
     HWND m_hwnd;
     HWND m_console;
     STARTUPINFO m_si;
     PROCESS_INFORMATION m_pi;
     QueueProcessor<GotoInfo> m_processor;
+    bool m_load_subtitle;
+    bool m_auto_stop;
+    size_t m_wait_startup;
 };

@@ -49,8 +49,8 @@ void SrtSubtitleText::parse()
         }
 
         size_t number = boost::lexical_cast<size_t>( it->str(1) );
-        Time start_time;
-        Time stop_time;
+        StartEndTime start_time;
+        StartEndTime end_time;
         std::wstring time_string = it->str(2);
         boost::wsmatch m;
 
@@ -60,13 +60,13 @@ void SrtSubtitleText::parse()
             start_time.minute         = boost::lexical_cast<size_t>( m.str(2) );
             start_time.second         = boost::lexical_cast<size_t>( m.str(3) );
             start_time.millisecond    = boost::lexical_cast<size_t>( m.str(4) );
-            start_time.total_millisecond = ( start_time.hour*3600 + start_time.minute*60 + start_time.second ) * 1000 + start_time.millisecond;
+            start_time.milliseconds = ( start_time.hour*3600 + start_time.minute*60 + start_time.second ) * 1000 + start_time.millisecond;
 
-            stop_time.hour             = boost::lexical_cast<size_t>( m.str(5) );
-            stop_time.minute           = boost::lexical_cast<size_t>( m.str(6) );
-            stop_time.second           = boost::lexical_cast<size_t>( m.str(7) );
-            stop_time.millisecond      = boost::lexical_cast<size_t>( m.str(8) );
-            stop_time.total_millisecond = ( stop_time.hour*3600 + stop_time.minute*60 + stop_time.second ) * 1000 + stop_time.millisecond;
+            end_time.hour             = boost::lexical_cast<size_t>( m.str(5) );
+            end_time.minute           = boost::lexical_cast<size_t>( m.str(6) );
+            end_time.second           = boost::lexical_cast<size_t>( m.str(7) );
+            end_time.millisecond      = boost::lexical_cast<size_t>( m.str(8) );
+            end_time.milliseconds = ( end_time.hour*3600 + end_time.minute*60 + end_time.second ) * 1000 + end_time.millisecond;
         }
 
         std::wstring text2;
@@ -77,7 +77,7 @@ void SrtSubtitleText::parse()
         }
 
         m_keys.push_back( key );
-        m_slidshow_map[key] = ISlideshowPtr( new SrtSubtitle( key, number, start_time, stop_time, text, text2 ) );
+        m_slidshow_map[key] = ISlideshowPtr( new SrtSlideshow( key, number, start_time, end_time, text, text2 ) );
     }
 }
 

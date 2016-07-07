@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MpcPlayer.h"
 #include "IConfigurationFile.h"
+#include "IInputSender.h"
 #include "InputUtility.h"
 
 
@@ -17,6 +18,7 @@ MpcPlayer::MpcPlayer()
         ( "movie.movie", po::wvalue<std::wstring>(), "the movie path" )
         ( "movie.load-subtitle", po::wvalue<std::wstring>(), "load subtitle?" )
         ( "movie.auto-stop", po::wvalue<std::wstring>(), "auto stop?" )
+        ( "movie.wait-player-startup", po::value<size_t>()->default_value( 3 ), "wait the play to startup in seconds" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
 
@@ -48,6 +50,11 @@ MpcPlayer::MpcPlayer()
         m_auto_stop = ( L"true" == vm["movie.auto-stop"].as<std::wstring>() );
     }
 
+    if ( vm.count( "movie.wait-player-startup" ) )
+    {
+        m_wait_startup = vm["movie.wait-player-startup"].as<size_t>();
+    }
+
     initialize();
 }
 
@@ -75,7 +82,7 @@ bool MpcPlayer::go_to( size_t hour, size_t minute, size_t second, size_t millise
 void MpcPlayer::go_to_thread( const GotoInfo& info )
 {
     SetForegroundWindow( m_hwnd );
-    Utility::send_input_ctrl( 'G' );
+    IInputSender::instance().Ctrl_key( 'G' );
 
     {
         std::wstring class_name = L"#32770";
@@ -101,24 +108,20 @@ void MpcPlayer::go_to_thread( const GotoInfo& info )
         }
     }
 
-    std::stringstream strm;
-    strm << std::setw(2) << std::setfill('0') << info.hour;
-    strm << std::setw(2) << std::setfill('0') << info.minute;
-    strm << std::setw(2) << std::setfill('0') << info.second;
-    strm << std::setw(3) << std::setfill('0') << info.millisecond;
-
-    Utility::send_input( strm.str() );
-    Utility::send_input_enter();
+    std::stringstream ss;
+    ss  << std::setfill('0')
+        << std::setw(2) << info.hour
+        << std::setw(2) << info.minute
+        << std::setw(2) << info.second
+        << std::setw(3) << info.millisecond
+        ;
+    IInputSender::instance().string( ss.str() ).key( VK_RETURN );
 
     if ( m_auto_stop )
     {
-        Utility::send_input( VK_SPACE );
-        Sleep( 5 );
-        SetForegroundWindow( m_console );
+        IInputSender::instance().key( VK_SPACE );
         Sleep( info.duration );
-        SetForegroundWindow( m_hwnd );
-        Utility::send_input( VK_SPACE );
-        Sleep( 5 );
+        IInputSender::instance().key( VK_SPACE );
     }
 
     SetForegroundWindow( m_console );
@@ -127,9 +130,12 @@ void MpcPlayer::go_to_thread( const GotoInfo& info )
 
 void MpcPlayer::close()
 {
-    TerminateProcess( m_pi.hProcess, 0 );
-    CloseHandle( m_pi.hProcess );
-    CloseHandle( m_pi.hThread );
+    if ( m_pi.hProcess )
+    {
+        TerminateProcess( m_pi.hProcess, 0 );
+        CloseHandle( m_pi.hProcess );
+        CloseHandle( m_pi.hThread );
+    }
 }
 
 
@@ -145,6 +151,10 @@ void MpcPlayer::initialize()
 
 bool MpcPlayer::open_player()
 {
+    ZeroMemory( &m_si, sizeof(m_si) );
+    m_si.cb = sizeof(m_si);
+    ZeroMemory( &m_pi, sizeof(m_pi) );
+
     if ( m_player.empty() || m_movie.empty() || m_subtitle.empty() )
     {
         return false;
@@ -159,10 +169,6 @@ bool MpcPlayer::open_player()
     }
 
     std::wstring cmd = cmd_strm.str();
-
-    ZeroMemory( &m_si, sizeof(m_si) );
-    m_si.cb = sizeof(m_si);
-    ZeroMemory( &m_pi, sizeof(m_pi) );
 
     return CreateProcess( NULL, const_cast<wchar_t*>( cmd.c_str() ), 0, 0, 0, 0, 0, 0,&m_si,&m_pi ) != 0;
 }
@@ -184,6 +190,6 @@ void MpcPlayer::locate_player()
 
     if ( m_hwnd )
     {
-        Sleep( 3000 );
+        Sleep( m_wait_startup * 1000 );
     }
 }

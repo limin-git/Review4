@@ -1,26 +1,24 @@
 #include "stdafx.h"
-#include "SrtSlideshow.h"
+#include "AssSlideshow.h"
 #include "IConsole.h"
 #include "IMoviePlayer.h"
 
 
-SrtSlideshow::SrtSlideshow( size_t key, size_t num, StartEndTime start_t, StartEndTime end_t, const std::wstring& txt, const std::wstring& txt2 )
+AssSlideshow::AssSlideshow( size_t key, const StartEndTime& start_t, const StartEndTime& end_t, const std::wstring& txt )
     : m_key( key ),
-      number( num ),
       start_time( start_t ),
       end_time( end_t ),
-      text( txt ),
-      text2( txt2 )
+      text( txt )
 {
 }
 
 
-bool SrtSlideshow::show()
+bool AssSlideshow::show()
 {
     IConsole::instance()
         .cls().write( "\n" )
-        .write( "\t" ).write( text ).write( "\n" )
-        .write( "\t" ).write( text2 );
+        .write( "\n" ).write( text )
+        ;
     StartEndTime& s = start_time;
     StartEndTime& e = end_time;
     size_t duration = ( s.milliseconds < e.milliseconds ? e.milliseconds - s.milliseconds : 1000 );
@@ -29,18 +27,18 @@ bool SrtSlideshow::show()
 }
 
 
-void SrtSlideshow::clear_state()
+void AssSlideshow::clear_state()
 {
 }
 
 
-size_t SrtSlideshow::key()
+size_t AssSlideshow::key()
 {
     return m_key;
 }
 
 
-const std::wstring& SrtSlideshow::key_string()
+const std::wstring& AssSlideshow::key_string()
 {
     return text;
 }

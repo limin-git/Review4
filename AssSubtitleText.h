@@ -1,32 +1,31 @@
 #pragma once
 #include "IText.h"
-#include "IFileChangeHandler.h"
 #include "IDisableObserver.h"
 
+namespace fs = boost::filesystem;
 
-struct EnglishChineseExampleText : IText,
-                                   IFileChangeHandler,
-                                   IDisableObserver
+
+struct AssSubtitleText : IText,
+                         IDisableObserver
 {
 public:
 
-    EnglishChineseExampleText( const fs::path& file_path );
-    ~EnglishChineseExampleText();
+    AssSubtitleText( const fs::path& file_path );
     virtual ISlideshowPtr slideshow( size_t key );
     virtual const fs::path& get_file_path();
     virtual const KeyList& keys();
     virtual void add_observer( ITextObserver* observer );
     virtual void remove_observer( ITextObserver* observer );
-    virtual void last_write_time_changed( const fs::path& file );
     virtual void disabled( size_t key );
 
 private:
 
-    bool reload();
-    size_t hash( const std::wstring& s );
+    void parse();
+    size_t hash( std::wstring s );
     void notify();
+    void trim_text( std::wstring& text );
 
-private:
+public:
 
     KeyList m_keys;
     std::map<size_t, ISlideshowPtr> m_slidshow_map;
@@ -34,5 +33,4 @@ private:
     std::wstring m_string;
     boost::hash<std::wstring> m_hash;
     std::set<ITextObserver*> m_observers;
-    bool m_hash_without_symbols;
 };

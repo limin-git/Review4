@@ -6,6 +6,9 @@
 #include "EceSlideshow.h"
 #include "EmptySlideshow.h"
 #include "IDisable.h"
+#include "IConfigurationFile.h"
+
+namespace po = boost::program_options;
 
 // singleton dependency:
 // IText
@@ -15,9 +18,22 @@
 
 
 EnglishChineseExampleText::EnglishChineseExampleText( const fs::path& file_path )
-    : m_file_path( file_path )
+    : m_file_path( file_path ),
+      m_hash_without_symbols( true )
 {
     system_complete( m_file_path );
+
+    po::options_description options( "Advanced" );
+    options.add_options()
+        ( "advanced.hash-without-symbols", po::wvalue<std::wstring>(), "trim symbols when hash the key string" )
+        ;
+    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
+
+    if ( vm.count( "advanced.hash-without-symbols" ) )
+    {
+        m_hash_without_symbols = L"true" == vm[ "advanced.hash-without-symbols" ].as<std::wstring>();
+    }
+
     reload();
     IFileChangeManager::instance().add_handler( file_path, this );
     IDisable::instance().add_observer( this );
@@ -103,12 +119,18 @@ bool EnglishChineseExampleText::reload()
 }
 
 
-size_t EnglishChineseExampleText::hash( std::wstring s )
+size_t EnglishChineseExampleText::hash( const std::wstring& s )
 {
-    static const wchar_t* symbols =
-        L" \"\',.?:;!-/#()|<>{}[]~`@$%^&*+\n\t\r"
-        L"¡¡£¬¡£¡¢£¿£¡£»£º¡¤£®¡°¡±¡®¡¯£à£­£½¡«£À£££¤£¥£ª£ß£«£ü¡ª¡ª¡ª¡­¡­¡­¡¶¡·£¨£¨¡¾¡¿¡¸¡¹¡º¡»¡¼¡½¡´¡µ£û£ý";
-    Utility::remove_if_is_any_of( s, symbols );
+    if ( m_hash_without_symbols )
+    {
+        std::wstring ts = s;
+        static const wchar_t* symbols =
+            L" \"\',.?:;!-/#()|<>{}[]~`@$%^&*+\n\t\r"
+            L"¡¡£¬¡£¡¢£¿£¡£»£º¡¤£®¡°¡±¡®¡¯£à£­£½¡«£À£££¤£¥£ª£ß£«£ü¡ª¡ª¡ª¡­¡­¡­¡¶¡·£¨£¨¡¾¡¿¡¸¡¹¡º¡»¡¼¡½¡´¡µ£û£ý";
+        Utility::remove_if_is_any_of( ts, symbols );
+        return m_hash( ts );
+    }
+
     return m_hash( s );
 }
 

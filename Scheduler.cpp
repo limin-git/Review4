@@ -37,9 +37,11 @@ Scheduler::Scheduler()
         ( "review.once-per-session", po::wvalue<std::wstring>(), "once per session" )
         ( "review.randomize", po::wvalue<std::wstring>(), "randomize or not" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
-    m_once_per_session = ( L"true" == vm["review.once-per-session"].as<std::wstring>() );
-    m_randomize = ( L"true" == vm["review.randomize"].as<std::wstring>() );
+    po::variables_map& vm = IConfigurationFile::instance()
+        .add_options_description( options )
+        .add_observer( this )
+        .variables_map()
+        ;
     std::wstring schedule_string;
 
     if ( vm.count( "review.schedule" ) )
@@ -260,4 +262,18 @@ void Scheduler::set_title()
     std::wstringstream strm;
     strm << IText::instance().get_file_path().filename().wstring() << " - " << m_candidates.size();
     IConsole::instance().title( strm.str() );
+}
+
+
+void Scheduler::options_changed( const po::variables_map& vm, const po::variables_map& old )
+{
+    if ( Utility::updated<std::wstring>( "review.once-per-session", vm, old ) )
+    {
+        m_once_per_session = ( L"true" == vm["review.once-per-session"].as<std::wstring>() );
+    }
+
+    if ( Utility::updated<std::wstring>( "review.randomize", vm, old ) )
+    {
+        m_randomize = ( L"true" == vm["review.randomize"].as<std::wstring>() );
+    }
 }
