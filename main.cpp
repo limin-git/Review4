@@ -15,6 +15,7 @@
 #include "IWallpaper.h"
 #include "ITextFactory.h"
 #include "IMoviePlayer.h"
+#include "IHotKey.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -49,7 +50,7 @@ int _tmain(int argc, _TCHAR* argv[])
         IDisable::remove();
         IEnglishPlayer::remove(); ISpeech::remove(); ISound::remove();
         IMoviePlayer::remove();
-        IInput::remove();
+        IInput::remove(); IHotKey::remove();
         IConfigurationFile::remove();
         ICommandLine::remove();
         IConsole::remove();

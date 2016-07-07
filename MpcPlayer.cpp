@@ -9,6 +9,8 @@ MpcPlayer::MpcPlayer()
       m_load_subtitle( false ),
       m_auto_stop( true )
 {
+    m_console = GetConsoleWindow();
+
     po::options_description options( "Movie" );
     options.add_options()
         ( "movie.player", po::wvalue<std::wstring>(), "mpc player path" )
@@ -53,6 +55,7 @@ MpcPlayer::MpcPlayer()
 MpcPlayer::~MpcPlayer()
 {
     close();
+    m_processor.terminate();
 }
 
 
@@ -63,6 +66,14 @@ bool MpcPlayer::go_to( size_t hour, size_t minute, size_t second, size_t millise
         return false;
     }
 
+    GotoInfo info = { hour, minute, second, millisecond, duration };
+    m_processor.queue_item( info );
+    return true;
+}
+
+
+void MpcPlayer::go_to_thread( const GotoInfo& info )
+{
     SetForegroundWindow( m_hwnd );
     Utility::send_input_ctrl( 'G' );
 
@@ -86,15 +97,15 @@ bool MpcPlayer::go_to( size_t hour, size_t minute, size_t second, size_t millise
 
         if ( hwnd == NULL )
         {
-            return false;
+            return;
         }
     }
 
     std::stringstream strm;
-    strm << std::setw(2) << std::setfill('0') << hour;
-    strm << std::setw(2) << std::setfill('0') << minute;
-    strm << std::setw(2) << std::setfill('0') << second;
-    strm << std::setw(3) << std::setfill('0') << millisecond;
+    strm << std::setw(2) << std::setfill('0') << info.hour;
+    strm << std::setw(2) << std::setfill('0') << info.minute;
+    strm << std::setw(2) << std::setfill('0') << info.second;
+    strm << std::setw(3) << std::setfill('0') << info.millisecond;
 
     Utility::send_input( strm.str() );
     Utility::send_input_enter();
@@ -102,18 +113,15 @@ bool MpcPlayer::go_to( size_t hour, size_t minute, size_t second, size_t millise
     if ( m_auto_stop )
     {
         Utility::send_input( VK_SPACE );
-        Sleep( duration );
+        Sleep( 5 );
+        SetForegroundWindow( m_console );
+        Sleep( info.duration );
+        SetForegroundWindow( m_hwnd );
         Utility::send_input( VK_SPACE );
-        SetForegroundWindow( GetConsoleWindow() );
+        Sleep( 5 );
     }
 
-    return true;
-}
-
-
-void MpcPlayer::pause()
-{
-    Utility::send_input( VK_SPACE );
+    SetForegroundWindow( m_console );
 }
 
 
@@ -130,6 +138,7 @@ void MpcPlayer::initialize()
     if ( open_player() )
     {
         locate_player();
+        m_processor.set_callback( boost::bind( &MpcPlayer::go_to_thread, this, _1 ) );
     }
 }
 

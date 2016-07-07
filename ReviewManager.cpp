@@ -3,6 +3,7 @@
 #include "IInput.h"
 #include "IScheduler.h"
 #include "IDisable.h"
+#include "IHotKey.h"
 
 // singleton dependency:
 // IReviewManager
@@ -22,7 +23,9 @@ ReviewManager::~ReviewManager()
 {
     IInput::instance()
         .remove_key_handler( this )
-        .remove_mouse_handler( this );
+        .remove_mouse_handler( this )
+        ;
+    IHotKey::instance().unregister_handler( this );
 }
 
 
@@ -50,6 +53,12 @@ void ReviewManager::run()
         .add_mouse_handler( this, 0, FROM_LEFT_1ST_BUTTON_PRESSED,  boost::bind( &ReviewManager::continue_handler, this ) )
         .add_mouse_handler( this, MOUSE_HWHEELED, 0,                boost::bind( &ReviewManager::continue_handler, this ) )
         .add_mouse_handler( this, 0, RIGHTMOST_BUTTON_PRESSED,      boost::bind( &ReviewManager::previous_handler, this ) )
+        ;
+    IHotKey::instance()
+        .register_handler( this, 0, VK_LEFT,    boost::bind( &ReviewManager::previous_handler, this ) )
+        .register_handler( this, 0, VK_RIGHT,   boost::bind( &ReviewManager::next_handler, this ) )
+        .register_handler( this, 0, VK_UP,      boost::bind( &ReviewManager::repeat_handler, this ) )
+        .register_handler( this, 0, VK_DOWN,    boost::bind( &ReviewManager::continue_handler, this ) )
         ;
 }
 

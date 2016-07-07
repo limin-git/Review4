@@ -8,8 +8,8 @@ public:
 
     HotKey();
     ~HotKey();
-    virtual void register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, HotKeyCallback callback );
-    virtual void unregister_handler( IHotKeyHandler* handler );
+    virtual IHotKey& register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, HotKeyCallback callback );
+    virtual IHotKey& unregister_handler( IHotKeyHandler* handler );
 
 private:
 
@@ -17,9 +17,21 @@ private:
 
 private:
 
+    struct RegisterHandlerInfo
+    {
+        IHotKeyHandler* handler;
+        UINT modifiers;
+        UINT vk;
+        HotKeyCallback callback;
+    };
+
+    RegisterHandlerInfo m_register_handler;
+    IHotKeyHandler* m_unregister_handler;
+
+private:
+
     std::map< IHotKeyHandler*, std::set<size_t> > m_handlers;
     std::map<size_t, HotKeyCallback> m_callbacks;
-    HWND m_hwnd;
     boost::thread* m_thread;
     bool m_running;
 };

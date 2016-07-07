@@ -661,6 +661,10 @@
 			Name="Test"
 			>
 			<File
+				RelativePath=".\test-ste.cfg"
+				>
+			</File>
+			<File
 				RelativePath=".\test.cfg"
 				>
 			</File>
@@ -742,6 +746,26 @@
 			</File>
 			<File
 				RelativePath=".\IHotKeyHandler.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="InputSender"
+			>
+			<File
+				RelativePath=".\IInputSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IInputSender.h"
+				>
+			</File>
+			<File
+				RelativePath=".\InputSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\InputSender.h"
 				>
 			</File>
 		</Filter>

@@ -2,10 +2,12 @@
 #include "IReviewManager.h"
 #include "IInputHandler.h"
 #include "ISlideShow.h"
+#include "IHotKeyHandler.h"
 
 
 struct ReviewManager : IReviewManager,
-                       IInputHandler
+                       IInputHandler,
+                       IHotKeyHandler
 {
 public:
 
