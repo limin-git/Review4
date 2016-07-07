@@ -22,6 +22,11 @@ private:
 
 private:
 
+    void debug_print_key_event( const KEY_EVENT_RECORD& e );
+    void debug_print_mouse_event( const MOUSE_EVENT_RECORD& e );
+
+private:
+
     typedef std::map<IInputHandler*, Callback> CallbackMap;
     typedef std::map<WORD, CallbackMap> KeyHandlerMap;
     std::vector<KeyHandlerMap> m_key_handlers;

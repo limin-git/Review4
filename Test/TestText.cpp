@@ -40,7 +40,7 @@ void TestText::test1()
     }
 
     IText& text = IText::instance();
-    const std::set<size_t>& keys = text.keys();
+    const KeyList& keys = text.keys();
 
     BOOST_FOREACH( size_t key, keys )
     {

@@ -28,7 +28,6 @@ void TestHotKey::test1()
     HotKeyHandler h;
     IHotKey::instance().register_handler( &h, 0, 'A', boost::bind( &HotKeyHandler::handle_browser_back, &h ) );
     IHotKey::instance().register_handler( &h, 0, 'B', boost::bind( &HotKeyHandler::handle_browser_forward, &h ) );
-    IHotKey::instance().run();
     while ( true )
     {
         if ( 'q' == _getch() ) break;;

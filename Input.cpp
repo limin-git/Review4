@@ -16,8 +16,8 @@ void Input::run()
     INPUT_RECORD input_buffer[size];
     DWORD num_read = 0;
 
-    //SetConsoleMode( cin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT );
-    SetConsoleMode( cin, ENABLE_WINDOW_INPUT );
+    SetConsoleMode( cin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT );
+    //SetConsoleMode( cin, ENABLE_WINDOW_INPUT );
 
     while ( true )
     {
@@ -31,18 +31,13 @@ void Input::run()
                 {
                     KEY_EVENT_RECORD& e = input.Event.KeyEvent;
 
-                    if ( ( e.wRepeatCount != 1 ) || ( 0 == e.wVirtualKeyCode ) )
+                    // For release version
+                    if ( ( e.wRepeatCount != 1 ) || ( 0 == e.wVirtualKeyCode ) || ( 1 < e.bKeyDown ) )
                     {
                         continue;
                     }
 
-                    //TODO: in release version is very strange!!!
-                    //std::cout << "bKeyDown=" << e.bKeyDown << std::endl;
-                    //std::cout << "wRepeatCount=" << e.wRepeatCount << std::endl;
-                    //std::cout << "wVirtualKeyCode=" << std::hex << e.wVirtualKeyCode << std::endl;
-                    //std::cout << "wVirtualScanCode=" << std::hex << e.wVirtualScanCode << std::endl;
-                    //std::cout << "wRepeatCount=" << e.wRepeatCount << std::endl;
-                    //std::cout << "uChar.AsciiChar=" << e.uChar.AsciiChar << std::endl << std::endl;
+                    //debug_print_key_event( e );
 
                     if ( VK_ESCAPE == e.wVirtualKeyCode )
                     {
@@ -68,8 +63,16 @@ void Input::run()
 
                     if ( MOUSE_MOVED == e.dwEventFlags )
                     {
-                        break;
+                        continue;
                     }
+
+                    // For release version
+                    if ( ( FROM_LEFT_4TH_BUTTON_PRESSED < e.dwButtonState ) || ( MOUSE_HWHEELED < e.dwEventFlags ) || ( 0x01FF < e.dwControlKeyState ) )
+                    {
+                        continue;
+                    }
+
+                    //debug_print_mouse_event( e );
 
                     MouseHandlerMap& mouse_handlers = ( 0 == e.dwEventFlags ? m_mouse_button_pressed_handlers : m_other_mouse_handlers );
                     MouseHandlerMap::iterator it = mouse_handlers.find( 0 == e.dwEventFlags ? e.dwButtonState : e.dwEventFlags );
@@ -175,4 +178,35 @@ IInput& Input::remove_mouse_handler( IInputHandler* handler )
 void Input::do_callback( const Callback& callback )
 {
     callback();
+}
+
+
+void Input::debug_print_key_event( const KEY_EVENT_RECORD& e )
+{
+    static size_t i = 0;
+    std::stringstream strm;
+    strm
+        << std::setw(3) << std::setfill('0') << ++i << "\n"
+        << "bKeyDown=" << e.bKeyDown << "\n"
+        << "wRepeatCount=" << e.wRepeatCount << "\n"
+        << "wVirtualKeyCode=" << std::hex << e.wVirtualKeyCode << "\n"
+        << "wVirtualScanCode=" << std::hex << e.wVirtualScanCode << "\n"
+        << "wRepeatCount=" << e.wRepeatCount << "\n"
+        << "uChar.AsciiChar=" << e.uChar.AsciiChar << "\n\n"
+        ;
+    std::cout << strm.str() << std::endl;
+}
+
+
+void Input::debug_print_mouse_event( const MOUSE_EVENT_RECORD& e )
+{
+    static size_t i = 0;
+    std::stringstream strm;
+    strm
+        << std::setw(3) << std::setfill('0') << ++i << "\n"
+        << "dwButtonState=" << std::hex << e.dwButtonState << "\n"
+        << "dwControlKeyState=" << std::hex << e.dwControlKeyState << "\n"
+        << "dwEventFlags=" << std::hex << e.dwEventFlags << "\n\n"
+        ;
+    std::cout << strm.str() << std::endl;
 }

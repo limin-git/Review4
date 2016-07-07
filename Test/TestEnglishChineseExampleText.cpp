@@ -39,7 +39,7 @@ void TestEnglishChineseExampleText::test1()
     }
 
     EnglishChineseExampleText text( "test.ece" );
-    const std::set<size_t>& keys = text.keys();
+    const KeyList& keys = text.keys();
 
     BOOST_FOREACH( size_t key, keys )
     {

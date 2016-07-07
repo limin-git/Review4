@@ -24,7 +24,7 @@ int _tmain(int argc, _TCHAR* argv[])
         TestConfigruationFile t;
     }
 
-    if ( 0 )
+    if ( 1 )
     {
         TestInput t;
     }
@@ -59,7 +59,7 @@ int _tmain(int argc, _TCHAR* argv[])
         TestEnglishChineseExampleText t;
     }
 
-    if ( 1 )
+    if ( 0 )
     {
         TestHotKey t;
     }
