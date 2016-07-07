@@ -32,7 +32,7 @@ EnglishChineseExampleText::~EnglishChineseExampleText()
 
 ISlideshowPtr EnglishChineseExampleText::slideshow( size_t key )
 {
-    if ( m_keys.find( key ) == m_keys.end() )
+    if ( std::find( m_keys.begin(), m_keys.end(), key ) == m_keys.end() )
     {
         return ISlideshowPtr( new EmptySlideshow );
     }
@@ -47,7 +47,7 @@ const fs::path& EnglishChineseExampleText::get_file_path()
 }
 
 
-const std::set<size_t>& EnglishChineseExampleText::keys()
+const KeyList& EnglishChineseExampleText::keys()
 {
     return m_keys;
 }
@@ -62,7 +62,7 @@ bool EnglishChineseExampleText::reload()
         return false;
     }
 
-    std::set<size_t> keys;
+    KeyList keys;
     std::map<size_t, ISlideshowPtr> slidshow_map;
 
     static const boost::wregex e
@@ -85,7 +85,7 @@ bool EnglishChineseExampleText::reload()
 
         if ( !IDisable::instance().is_disabled( key ) )
         {
-            keys.insert( key );
+            keys.push_back( key );
             slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example ) );
         }
     }
@@ -127,7 +127,7 @@ void EnglishChineseExampleText::last_write_time_changed( const fs::path& file )
 
 void EnglishChineseExampleText::disabled( size_t key )
 {
-    m_keys.erase( key );
+    m_keys.remove( key );
     m_slidshow_map.erase( key );
 }
 

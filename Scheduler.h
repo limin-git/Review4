@@ -3,6 +3,8 @@
 #include "IDisableObserver.h"
 #include "ITextObserver.h"
 
+typedef std::list<size_t> KeyList;
+
 
 struct Scheduler : IScheduler,
                    IDisableObserver,
@@ -27,11 +29,12 @@ private:
 private:
 
     std::vector<std::time_t> m_schedule;
-    std::set<size_t> m_candidates;
+    KeyList m_candidates;
     typedef std::multimap<std::time_t, size_t> NextTimeMap;
     std::multimap<std::time_t, size_t> m_next_time_map;
     boost::interprocess::interprocess_semaphore m_select_candidates_semaphore;
     bool m_running;
     boost::thread* m_select_candidates_thread;
     bool m_once_per_session;
+    bool m_randomize;
 };

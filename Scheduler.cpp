@@ -27,16 +27,19 @@ Scheduler::Scheduler()
     : m_running( true ),
       m_select_candidates_semaphore( 0 ),
       m_select_candidates_thread( NULL ),
-      m_once_per_session( false )
+      m_once_per_session( false ),
+      m_randomize( false )
 {
     //TODO: lock when keys wer pressed down for a long time.
     po::options_description options( "Scheduler" );
     options.add_options()
         ( "review.schedule", po::wvalue<std::wstring>(), "schedule" )
         ( "review.once-per-session", po::wvalue<std::wstring>(), "once per session" )
+        ( "review.randomize", po::wvalue<std::wstring>(), "randomize or not" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
     m_once_per_session = ( L"true" == vm["review.once-per-session"].as<std::wstring>() );
+    m_randomize = ( L"true" == vm["review.randomize"].as<std::wstring>() );
     std::wstring schedule_string;
 
     if ( vm.count( "review.schedule" ) )
@@ -106,12 +109,15 @@ ISlideshowPtr Scheduler::get_slideshow()
         return ISlideshowPtr( new EmptySlideshow( m_next_time_map.empty() ? L"finished." : L"empty." ) );
     }
 
-    std::set<size_t>::iterator it = m_candidates.begin();
+    KeyList::iterator it = m_candidates.begin();
 
-    if ( 1 < m_candidates.size() )
+    if ( m_randomize )
     {
-        size_t random = Utility::random( 0, m_candidates.size() - 1 );
-        std::advance( it, random );
+        if ( 1 < m_candidates.size() )
+        {
+            size_t random = Utility::random( 0, m_candidates.size() - 1 );
+            std::advance( it, random );
+        }
     }
 
     size_t key = *it;
@@ -140,8 +146,8 @@ ISlideshowPtr Scheduler::get_slideshow()
 void Scheduler::initialize_schedule()
 {
     std::time_t current = std::time( NULL );
-    const std::set<size_t>& keys = IText::instance().keys();
-    std::set<size_t> candidates;
+    const KeyList& keys = IText::instance().keys();
+    KeyList candidates;
     std::multimap<std::time_t, size_t> next_time_map;
 
     BOOST_FOREACH( size_t key, keys )
@@ -150,7 +156,7 @@ void Scheduler::initialize_schedule()
 
         if ( next_time <= current )
         {
-            candidates.insert( key );
+            candidates.push_back( key );
         }
         else if ( next_time - current < ONE_DAY )
         {
@@ -175,14 +181,14 @@ void Scheduler::select_candidates_thread()
             return;
         }
 
-        std::set<size_t> candidates;
+        KeyList candidates;
         std::time_t current = std::time( NULL );
 
         for ( std::multimap<std::time_t, size_t>::iterator it = m_next_time_map.begin(); it != m_next_time_map.end(); )
         {
             if ( it->first <= current )
             {
-                candidates.insert( it->second );
+                candidates.push_back( it->second );
                 m_next_time_map.erase( it++ );
             }
             else
@@ -193,7 +199,7 @@ void Scheduler::select_candidates_thread()
 
         if ( !candidates.empty() )
         {
-            m_candidates.insert( candidates.begin(), candidates.end() );
+            m_candidates.insert( m_candidates.end(), candidates.begin(), candidates.end() );
             set_title();
         }
     }
@@ -227,7 +233,7 @@ bool Scheduler::is_finished( size_t key )
 
 void Scheduler::disabled( size_t key )
 {
-    m_candidates.erase( key );
+    m_candidates.remove( key );
 
     for ( std::multimap<std::time_t, size_t>::iterator it = m_next_time_map.begin(); it != m_next_time_map.end(); )
     {

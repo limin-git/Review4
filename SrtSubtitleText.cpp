@@ -76,7 +76,7 @@ void SrtSubtitleText::parse()
             text2 = it->str(4);
         }
 
-        m_keys.insert( key );
+        m_keys.push_back( key );
         m_slidshow_map[key] = ISlideshowPtr( new SrtSubtitle( key, number, start_time, stop_time, text, text2 ) );
     }
 }
@@ -84,7 +84,9 @@ void SrtSubtitleText::parse()
 
 ISlideshowPtr SrtSubtitleText::slideshow( size_t key )
 {
-    if ( m_keys.find( key ) == m_keys.end() )
+    KeyList::iterator it = std::find( m_keys.begin(), m_keys.end(), key );
+
+    if ( it == m_keys.end() )
     {
         return ISlideshowPtr( new EmptySlideshow );
     }
@@ -99,7 +101,7 @@ const fs::path& SrtSubtitleText::get_file_path()
 }
 
 
-const std::set<size_t>& SrtSubtitleText::keys()
+const KeyList& SrtSubtitleText::keys()
 {
     return m_keys;
 }
@@ -119,6 +121,6 @@ void SrtSubtitleText::remove_observer( ITextObserver* observer )
 
 void SrtSubtitleText::disabled( size_t key )
 {
-    m_keys.erase( key );
+    m_keys.remove( key );
     m_slidshow_map.erase( key );
 }

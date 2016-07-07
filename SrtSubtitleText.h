@@ -13,7 +13,7 @@ public:
     SrtSubtitleText( const fs::path& file_path );
     virtual ISlideshowPtr slideshow( size_t key );
     virtual const fs::path& get_file_path();
-    virtual const std::set<size_t>& keys();
+    virtual const KeyList& keys();
     virtual void add_observer( ITextObserver* observer );
     virtual void remove_observer( ITextObserver* observer );
     virtual void disabled( size_t key );
@@ -26,7 +26,7 @@ private:
 
 public:
 
-    std::set<size_t> m_keys;
+    KeyList m_keys;
     std::map<size_t, ISlideshowPtr> m_slidshow_map;
     fs::path m_file_path;
     std::wstring m_string;
