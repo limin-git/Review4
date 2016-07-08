@@ -18,7 +18,7 @@ public:
 
 private:
 
-    void do_callback( const Callback& callback );
+    void callback_thread( const Callback& callback );
 
 private:
 

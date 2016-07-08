@@ -64,8 +64,7 @@ MpcPlayer::MpcPlayer()
 
 MpcPlayer::~MpcPlayer()
 {
-    close();
-    m_processor.terminate();
+    terminate_player();
 }
 
 
@@ -100,7 +99,7 @@ bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
 
 bool MpcPlayer::hide_goto_dialog( size_t timeout )
 {
-    for ( size_t i = 0; i < timeout; ++i )
+    for ( size_t i = 0, step = 1; i < timeout; i+= step )
     {
         HWND hwnd = FindWindow( L"#32770", L"×ªµ½..." );
 
@@ -110,7 +109,7 @@ bool MpcPlayer::hide_goto_dialog( size_t timeout )
             return true;
         }
 
-        Sleep( 1 );
+        Sleep( step );
     }
 
     return false;
@@ -125,12 +124,12 @@ void MpcPlayer::play_thread( const ISubtitleSlideshowPtr& subtitle )
 
     for ( size_t i = 0, step = 5; i < duration; i += step )
     {
+        Sleep( step );
+
         if ( m_subtitle != subtitle )
         {
             return;
         }
-
-        Sleep( step );
     }
 
     pause();
@@ -154,13 +153,13 @@ void MpcPlayer::pause()
     {
         SetForegroundWindow( m_player_hwnd );
         IInputSender::instance().key( VK_SPACE );
-        m_playing = false;
         SetForegroundWindow( m_console );
+        m_playing = false;
     }
 }
 
 
-void MpcPlayer::close()
+void MpcPlayer::terminate_player()
 {
     if ( m_pi.hProcess )
     {

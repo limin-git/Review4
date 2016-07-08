@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "FileChangeMonitorThread.h"
-#include "FileSystem.h"
-#include "WriteConsoleHelper.h"
+#include "FileSystemUtility.h"
 
 
 FileChangeMonitorThread::FileChangeMonitorThread()
@@ -34,10 +33,7 @@ void FileChangeMonitorThread::start()
 
 void FileChangeMonitorThread::terminate()
 {
-    if ( m_running )
-    {
-        m_running = false;
-    }
+    m_running = false;
 
     if ( m_handle != NULL && m_thread != NULL )
     {
@@ -91,8 +87,7 @@ void FileChangeMonitorThread::notify_handlers()
     {
         const fs::path& file = v.first;
         FileChangeHandlerList& handlers = v.second;
-
-        std::time_t t = boost::filesystem::last_write_time( file );
+        std::time_t t = fs::last_write_time( file );
 
         if ( t != m_file_time_map[file] )
         {
@@ -113,7 +108,7 @@ bool FileChangeMonitorThread::merge_child( const FileChangeMonitorThread& child 
     {
         return true;
     }
-    else if ( !FileSystem::is_parent_path( m_dir, child.m_dir ) )
+    else if ( ! Utility::is_parent_path( m_dir, child.m_dir ) )
     {
         return false;
     }

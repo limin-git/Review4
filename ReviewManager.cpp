@@ -4,6 +4,9 @@
 #include "IScheduler.h"
 #include "IDisable.h"
 #include "IHotKey.h"
+#include "IConfigurationFile.h"
+
+namespace po = boost::program_options;
 
 // singleton dependency:
 // IReviewManager
@@ -14,8 +17,22 @@
 
 
 ReviewManager::ReviewManager()
-    : m_forward_before_show( false )
+    : m_forward_before_show( false ),
+      m_register_hot_keys( false )
 {
+    po::options_description options( "" );
+    options.add_options()
+        ( "advanced.register-hot-keys", po::wvalue<std::wstring>(), "register hot keys?" )
+        ;
+    po::variables_map& vm = IConfigurationFile::instance()
+        .add_options_description( options )
+        .variables_map()
+        ;
+
+    if ( vm.count( "advanced.register-hot-keys" ) )
+    {
+        m_register_hot_keys = L"true" == vm["advanced.register-hot-keys"].as<std::wstring>();
+    }
 }
 
 
@@ -52,12 +69,16 @@ void ReviewManager::run()
         .add_mouse_handler( this, MOUSE_HWHEELED, 0,                boost::bind( &ReviewManager::continue_handler, this ) )
         .add_mouse_handler( this, 0, RIGHTMOST_BUTTON_PRESSED,      boost::bind( &ReviewManager::previous_handler, this ) )
         ;
-    IHotKey::instance()
-        .register_handler( this, 0, VK_LEFT,    boost::bind( &ReviewManager::previous_handler, this ) )
-        .register_handler( this, 0, VK_RIGHT,   boost::bind( &ReviewManager::next_handler, this ) )
-        .register_handler( this, 0, VK_UP,      boost::bind( &ReviewManager::repeat_handler, this ) )
-        .register_handler( this, 0, VK_DOWN,    boost::bind( &ReviewManager::continue_handler, this ) )
-        ;
+
+    if ( m_register_hot_keys )
+    {
+        IHotKey::instance()
+            .register_handler( this, 0, VK_LEFT,    boost::bind( &ReviewManager::previous_handler, this ) )
+            .register_handler( this, 0, VK_RIGHT,   boost::bind( &ReviewManager::next_handler, this ) )
+            .register_handler( this, 0, VK_UP,      boost::bind( &ReviewManager::repeat_handler, this ) )
+            .register_handler( this, 0, VK_DOWN,    boost::bind( &ReviewManager::continue_handler, this ) )
+            ;
+    }
 }
 
 

@@ -32,8 +32,8 @@ private:
 
 private:
 
-    //ISlideshowPtr m_slideshow;
     ISlideshowPtrList m_slideshow_history;
     ISlideshowPtrList::iterator m_current;
     bool m_forward_before_show;
+    bool m_register_hot_keys;
 };

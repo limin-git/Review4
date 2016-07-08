@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "Wallpaper.h"
 #include "IConfigurationFile.h"
-#include "Utility.h"
+#include "SystemUtility.h"
+#include "AlgorithmUtility.h"
+#include "FileSystemUtility.h"
 #include "IInput.h"
 
 namespace po = boost::program_options;
@@ -14,8 +16,10 @@ Wallpaper::Wallpaper()
         ( "wallpaper.path", po::wvalue<std::wstring>(), "picture directory path" )
         ( "wallpaper.recycle-path", po::wvalue<std::wstring>(), "recycle directory path" )
         ;
-    IConfigurationFile::instance().add_options_description( options );
-    po::variables_map& vm = IConfigurationFile::instance().variables_map();
+    po::variables_map& vm = IConfigurationFile::instance()
+        .add_options_description( options )
+        .variables_map()
+        ;
 
     if ( vm.count( "wallpaper.path" ) )
     {
@@ -27,13 +31,20 @@ Wallpaper::Wallpaper()
     {
         m_recycle_directory =vm["wallpaper.recycle-path"].as<std::wstring>();
         system_complete( m_recycle_directory );
+
+        if ( ! m_recycle_directory.empty() && ! exists( m_recycle_directory ) )
+        {
+            boost::system::error_code ec;
+            if ( ! create_directories( m_recycle_directory, ec ) )
+            {
+                m_recycle_directory.clear();
+            }
+        }
     }
 
-    if ( !m_directory.empty() )
-    {
-        search_pictures();
-    }
+    m_pictures = Utility::get_files_of_directory( m_directory );
 }
+
 
 Wallpaper::~Wallpaper()
 {
@@ -41,8 +52,8 @@ Wallpaper::~Wallpaper()
     {
         IInput::instance()
             .remove_key_handler( this )
-            .remove_mouse_handler( this );
-
+            .remove_mouse_handler( this )
+            ;
         Utility::set_system_wallpaper( L"C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );
     }
 }
@@ -58,20 +69,15 @@ void Wallpaper::run()
     set_wallpaper();
 
     IInput::instance()
-        .add_key_handler( this, true, 'Z', 'Z',     boost::bind( &Wallpaper::remove_current_picture, this ) )
-        .add_key_handler( this, true, 'A', 'Y',     boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_SPACE,     boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_DOWN,      boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_BACK,      boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_RETURN,    boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_OEM_3,     boost::bind( &Wallpaper::set_wallpaper, this ) )     // '`~' for US
-        .add_key_handler( this, true, VK_OEM_5,     boost::bind( &Wallpaper::set_wallpaper, this ) )     //  '\|' for US
-        .add_key_handler( this, true, VK_RIGHT,     boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_NEXT,      boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_UP,        boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_LEFT,      boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_PRIOR,     boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_DELETE,    boost::bind( &Wallpaper::set_wallpaper, this ) )
+        .add_key_handler( this, true, 'Z', 'Z',                     boost::bind( &Wallpaper::remove_current_picture, this ) )
+        .add_key_handler( this, true, VK_LEFT, VK_DOWN,             boost::bind( &Wallpaper::set_wallpaper, this ) )
+        .add_key_handler( this, true, VK_BACK,                      boost::bind( &Wallpaper::set_wallpaper, this ) )
+        .add_key_handler( this, true, VK_RETURN,                    boost::bind( &Wallpaper::set_wallpaper, this ) )
+        .add_key_handler( this, true, VK_OEM_3,                     boost::bind( &Wallpaper::set_wallpaper, this ) )     // '`~' for US
+        .add_key_handler( this, true, VK_OEM_5,                     boost::bind( &Wallpaper::set_wallpaper, this ) )     //  '\|' for US
+        .add_key_handler( this, true, VK_NEXT,                      boost::bind( &Wallpaper::set_wallpaper, this ) )
+        .add_key_handler( this, true, VK_PRIOR,                     boost::bind( &Wallpaper::set_wallpaper, this ) )
+        .add_key_handler( this, true, VK_DELETE,                    boost::bind( &Wallpaper::set_wallpaper, this ) )
         .add_mouse_handler( this, 0, FROM_LEFT_1ST_BUTTON_PRESSED,  boost::bind( &Wallpaper::set_wallpaper, this ) )
         .add_mouse_handler( this, 0, RIGHTMOST_BUTTON_PRESSED,      boost::bind( &Wallpaper::set_wallpaper, this ) )
         ;
@@ -117,8 +123,17 @@ void Wallpaper::remove_current_picture()
     if ( m_current != m_pictures.end() )
     {
         fs::path p = *m_current;
-        Utility::rename_file( *m_current, m_recycle_directory / p.filename() );
-        m_pictures.erase( m_current++ );
+
+        if ( m_recycle_directory.empty() )
+        {
+            Utility::remove_file( *m_current );
+        }
+        else
+        {
+            Utility::rename_file( *m_current, m_recycle_directory / p.filename() );
+        }
+
+        m_pictures.erase( m_current );
         set_wallpaper();
     }
 }

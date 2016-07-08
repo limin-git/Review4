@@ -5,7 +5,6 @@
 Input::Input()
 {
     m_key_handlers.resize( 2 );
-    m_processor.set_callback( boost::bind( &Input::do_callback, this, _1 ) );
 }
 
 
@@ -15,9 +14,9 @@ void Input::run()
     const size_t size = 1024;
     INPUT_RECORD input_buffer[size];
     DWORD num_read = 0;
+    m_processor.set_callback( boost::bind( &Input::callback_thread, this, _1 ) );
 
     SetConsoleMode( cin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT );
-    //SetConsoleMode( cin, ENABLE_WINDOW_INPUT );
 
     while ( true )
     {
@@ -37,8 +36,6 @@ void Input::run()
                         continue;
                     }
 
-                    //debug_print_key_event( e );
-
                     if ( VK_ESCAPE == e.wVirtualKeyCode )
                     {
                         return;
@@ -51,7 +48,6 @@ void Input::run()
                         BOOST_FOREACH( CallbackMap::value_type& v, it->second )
                         {
                             m_processor.queue_item( v.second );
-                            //v.second();
                         }
                     }
                 }
@@ -72,8 +68,6 @@ void Input::run()
                         continue;
                     }
 
-                    //debug_print_mouse_event( e );
-
                     MouseHandlerMap& mouse_handlers = ( 0 == e.dwEventFlags ? m_mouse_button_pressed_handlers : m_other_mouse_handlers );
                     MouseHandlerMap::iterator it = mouse_handlers.find( 0 == e.dwEventFlags ? e.dwButtonState : e.dwEventFlags );
 
@@ -82,7 +76,6 @@ void Input::run()
                         BOOST_FOREACH( CallbackMap::value_type& v, it->second )
                         {
                             m_processor.queue_item( v.second );
-                            //v.second();
                         }
                     }
                 }
@@ -175,7 +168,7 @@ IInput& Input::remove_mouse_handler( IInputHandler* handler )
 }
 
 
-void Input::do_callback( const Callback& callback )
+void Input::callback_thread( const Callback& callback )
 {
     callback();
 }

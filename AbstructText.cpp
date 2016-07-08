@@ -12,6 +12,12 @@ AbstructText::AbstructText( const fs::path& file_path )
 }
 
 
+AbstructText::~AbstructText()
+{
+    IDisable::instance().remove_observer( this );
+}
+
+
 ISlideshowPtr AbstructText::slideshow( size_t key )
 {
     std::map<size_t, ISlideshowPtr>::iterator it = m_slidshow_map.find( key );

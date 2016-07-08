@@ -17,7 +17,7 @@ private:
     void initialize();
     bool open_player();
     void locate_player();
-    void close();
+    void terminate_player();
     void play();
     void pause();
     void play_thread( const ISubtitleSlideshowPtr& info );

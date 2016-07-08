@@ -8,6 +8,7 @@ struct AbstructText : IText,
 {
 public:
     AbstructText( const fs::path& file_path );
+    ~AbstructText();
     virtual ISlideshowPtr slideshow( size_t key );
     virtual const fs::path& get_file_path();
     virtual const KeyList& keys();

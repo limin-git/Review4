@@ -18,7 +18,7 @@ namespace po = boost::program_options;
 
 
 EnglishChineseExampleText::EnglishChineseExampleText( const fs::path& file_path )
-    : m_file_path( file_path ),
+    : AbstructText( file_path ),
       m_hash_without_symbols( true )
 {
     system_complete( m_file_path );
@@ -35,37 +35,6 @@ EnglishChineseExampleText::EnglishChineseExampleText( const fs::path& file_path 
     }
 
     reload();
-    IFileChangeManager::instance().add_handler( file_path, this );
-    IDisable::instance().add_observer( this );
-}
-
-
-EnglishChineseExampleText::~EnglishChineseExampleText()
-{
-    IDisable::instance().remove_observer( this );
-}
-
-
-ISlideshowPtr EnglishChineseExampleText::slideshow( size_t key )
-{
-    if ( std::find( m_keys.begin(), m_keys.end(), key ) == m_keys.end() )
-    {
-        return ISlideshowPtr( new EmptySlideshow );
-    }
-
-    return m_slidshow_map[key];
-}
-
-
-const fs::path& EnglishChineseExampleText::get_file_path()
-{
-    return m_file_path;
-}
-
-
-const KeyList& EnglishChineseExampleText::keys()
-{
-    return m_keys;
 }
 
 
@@ -137,32 +106,10 @@ size_t EnglishChineseExampleText::hash( const std::wstring& s )
 
 void EnglishChineseExampleText::last_write_time_changed( const fs::path& file )
 {
-    if ( file == m_file_path )
+    if ( reload() )
     {
-        if ( reload() )
-        {
-            notify();
-        }
+        notify();
     }
-}
-
-
-void EnglishChineseExampleText::disabled( size_t key )
-{
-    m_keys.remove( key );
-    m_slidshow_map.erase( key );
-}
-
-
-void EnglishChineseExampleText::add_observer( ITextObserver* observer )
-{
-    m_observers.insert( observer );
-}
-
-
-void EnglishChineseExampleText::remove_observer( ITextObserver* observer )
-{
-    m_observers.erase( observer );
 }
 
 

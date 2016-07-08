@@ -5,6 +5,8 @@
 #include "ISpeech.h"
 #include "ISound.h"
 
+namespace fs = boost::filesystem;
+
 
 struct EnglishPlayer : IEnglishPlayer,
                        IConfigurationFileObserver
@@ -28,11 +30,10 @@ private:
     typedef std::vector<Word> Words;
 
     void speak_impl( const Word& word );
-    //void speak_impl( const Words& words );
 
 private:
 
-    typedef std::map<boost::filesystem::path, std::wstring> SpeechDirectory;
+    typedef std::map<fs::path, std::wstring> SpeechDirectory;
     SpeechDirectory m_speech_directories; // path, extension
     QueueProcessor<Word> m_processor;
     po::options_description m_options_description;

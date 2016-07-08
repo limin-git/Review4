@@ -316,6 +316,14 @@
 			Name="Review"
 			>
 			<File
+				RelativePath="..\AbstructSubtitleSlidshow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\AbstructText.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\AlgorithmUtility.cpp"
 				>
 			</File>

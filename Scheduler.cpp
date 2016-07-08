@@ -5,6 +5,7 @@
 #include "StringUtility.h"
 #include "IHistory.h"
 #include "IText.h"
+#include "AlgorithmUtility.h"
 #include "Utility.h"
 #include "EmptySlideshow.h"
 #include "IDisable.h"

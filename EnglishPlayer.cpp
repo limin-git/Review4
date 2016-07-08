@@ -42,11 +42,11 @@ void EnglishPlayer::speak( const std::wstring& word )
 
     Word w;
     w.word = word;
-    boost::filesystem::path initial = word.substr( 0, 1 );
+    fs::path initial = word.substr( 0, 1 );
 
     BOOST_FOREACH( SpeechDirectory::value_type& dir, m_speech_directories )
     {
-        boost::filesystem::path p = dir.first / initial / ( word + dir.second );
+        fs::path p = dir.first / initial / ( word + dir.second );
 
         if ( exists( p ) )
         {
@@ -94,7 +94,7 @@ void EnglishPlayer::options_changed( const po::variables_map& vm, const po::vari
 
             if ( pos != std::wstring::npos )
             {
-                boost::filesystem::path dr = boost::trim_copy( dirs[i].substr( 0, pos ) );
+                fs::path dr = boost::trim_copy( dirs[i].substr( 0, pos ) );
 
                 if ( exists( dr ) && is_directory( dr ) )
                 {

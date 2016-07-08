@@ -16,10 +16,10 @@ History::History()
     options.add_options()
         ( "file.history", po::wvalue<std::wstring>(), "history file" )
         ;
-    m_file_name =
-        IConfigurationFile::instance()
-            .add_options_description( options )
-            .variables_map()["file.history"].as<std::wstring>();
+    m_file_name = IConfigurationFile::instance()
+        .add_options_description( options )
+        .variables_map()["file.history"].as<std::wstring>()
+        ;
     system_complete( m_file_name );
     load_history();
     IDisable::instance().add_observer( this );

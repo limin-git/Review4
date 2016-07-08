@@ -257,7 +257,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FileSystem.h"
+				RelativePath=".\FileSystemUtility.h"
 				>
 			</File>
 			<File
@@ -569,7 +569,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FileSystem.cpp"
+				RelativePath=".\FileSystemUtility.cpp"
 				>
 			</File>
 			<File
@@ -590,6 +590,10 @@
 			</File>
 			<File
 				RelativePath=".\StringUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SystemUtility.cpp"
 				>
 			</File>
 			<File
