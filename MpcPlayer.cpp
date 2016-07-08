@@ -3,12 +3,15 @@
 #include "IConfigurationFile.h"
 #include "IInputSender.h"
 #include "InputUtility.h"
+#include "IConsole.h"
+#include "ILog.h"
 
 
 MpcPlayer::MpcPlayer()
-    : m_hwnd( NULL ),
+    : m_player_hwnd( NULL ),
       m_load_subtitle( false ),
-      m_auto_stop( true )
+      m_auto_stop( true ),
+      m_playing( false )
 {
     m_console = GetConsoleWindow();
 
@@ -36,8 +39,8 @@ MpcPlayer::MpcPlayer()
 
     if ( vm.count( "file.name" ) )
     {
-        m_subtitle = vm["file.name"].as<std::wstring>();
-        system_complete( m_subtitle );
+        m_subtitle_path = vm["file.name"].as<std::wstring>();
+        system_complete( m_subtitle_path );
     }
 
     if ( vm.count( "movie.load-subtitle" ) )
@@ -66,65 +69,94 @@ MpcPlayer::~MpcPlayer()
 }
 
 
-bool MpcPlayer::go_to( size_t hour, size_t minute, size_t second, size_t millisecond, size_t duration )
+bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
 {
-    if ( m_hwnd == NULL )
+    if ( m_player_hwnd == NULL )
     {
         return false;
     }
 
-    GotoInfo info = { hour, minute, second, millisecond, duration };
-    m_processor.queue_item( info );
-    return true;
-}
-
-
-void MpcPlayer::go_to_thread( const GotoInfo& info )
-{
-    SetForegroundWindow( m_hwnd );
+    SetForegroundWindow( m_player_hwnd );
     IInputSender::instance().Ctrl_key( 'G' );
 
+    if ( ! hide_goto_dialog() )
     {
-        std::wstring class_name = L"#32770";
-        std::wstring window_name = L"转到...";
-        HWND hwnd = NULL;
-
-        for ( size_t i = 0; i < 200; ++i )
-        {
-            hwnd = FindWindow( class_name.c_str(), window_name.c_str() );
-
-            if ( hwnd != NULL )
-            {
-                ShowWindow( hwnd, SW_HIDE );
-                break;
-            }
-
-            Sleep( 1 );
-        }
-
-        if ( hwnd == NULL )
-        {
-            return;
-        }
+        return false;
     }
 
     std::stringstream ss;
     ss  << std::setfill('0')
-        << std::setw(2) << info.hour
-        << std::setw(2) << info.minute
-        << std::setw(2) << info.second
-        << std::setw(3) << info.millisecond
+        << std::setw(2) << subtitle->hour()
+        << std::setw(2) << subtitle->minute()
+        << std::setw(2) << subtitle->second()
+        << std::setw(3) << subtitle->millisecond()
         ;
     IInputSender::instance().string( ss.str() ).key( VK_RETURN );
+    m_subtitle = subtitle;
+    m_processor.queue_item( m_subtitle );
+    return true;
+}
 
-    if ( m_auto_stop )
+
+bool MpcPlayer::hide_goto_dialog( size_t timeout )
+{
+    for ( size_t i = 0; i < timeout; ++i )
     {
-        IInputSender::instance().key( VK_SPACE );
-        Sleep( info.duration );
-        IInputSender::instance().key( VK_SPACE );
+        HWND hwnd = FindWindow( L"#32770", L"转到..." );
+
+        if ( hwnd != NULL )
+        {
+            ShowWindow( hwnd, SW_HIDE );
+            return true;
+        }
+
+        Sleep( 1 );
     }
 
-    SetForegroundWindow( m_console );
+    return false;
+}
+
+
+void MpcPlayer::play_thread( const ISubtitleSlideshowPtr& subtitle )
+{
+    play();
+
+    size_t duration = subtitle->duration();
+
+    for ( size_t i = 0, step = 5; i < duration; i += step )
+    {
+        if ( m_subtitle != subtitle )
+        {
+            return;
+        }
+
+        Sleep( step );
+    }
+
+    pause();
+}
+
+
+void MpcPlayer::play()
+{
+    if ( ! m_playing )
+    {
+        SetForegroundWindow( m_player_hwnd );
+        IInputSender::instance().key( VK_SPACE );
+        m_playing = true;
+    }
+}
+
+
+void MpcPlayer::pause()
+{
+    if ( m_playing )
+    {
+        SetForegroundWindow( m_player_hwnd );
+        IInputSender::instance().key( VK_SPACE );
+        m_playing = false;
+        SetForegroundWindow( m_console );
+    }
 }
 
 
@@ -144,7 +176,7 @@ void MpcPlayer::initialize()
     if ( open_player() )
     {
         locate_player();
-        m_processor.set_callback( boost::bind( &MpcPlayer::go_to_thread, this, _1 ) );
+        m_processor.set_callback( boost::bind( &MpcPlayer::play_thread, this, _1 ) );
     }
 }
 
@@ -155,7 +187,7 @@ bool MpcPlayer::open_player()
     m_si.cb = sizeof(m_si);
     ZeroMemory( &m_pi, sizeof(m_pi) );
 
-    if ( m_player.empty() || m_movie.empty() || m_subtitle.empty() )
+    if ( m_player.empty() || m_movie.empty() || m_subtitle_path.empty() )
     {
         return false;
     }
@@ -165,7 +197,7 @@ bool MpcPlayer::open_player()
 
     if ( m_load_subtitle )
     {
-        cmd_strm << " /sub " << m_subtitle;
+        cmd_strm << " /sub " << m_subtitle_path;
     }
 
     std::wstring cmd = cmd_strm.str();
@@ -176,19 +208,19 @@ bool MpcPlayer::open_player()
 
 void MpcPlayer::locate_player()
 {
-    for ( size_t i = 0; i < 500; ++i )
+    for ( size_t i = 0, step = 10; i < 5000; i += step )
     {
-        m_hwnd = FindWindow( L"MediaPlayerClassicW", m_movie.filename().c_str() );
+        m_player_hwnd = FindWindow( L"MediaPlayerClassicW", m_movie.filename().c_str() );
 
-        if ( m_hwnd != NULL )
+        if ( m_player_hwnd != NULL )
         {
             break;
         }
 
-        Sleep( 10 );
+        Sleep( step );
     }
 
-    if ( m_hwnd )
+    if ( m_player_hwnd )
     {
         Sleep( m_wait_startup * 1000 );
     }

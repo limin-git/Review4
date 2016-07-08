@@ -1,9 +1,9 @@
 #pragma once
-#include "ISlideShow.h"
+#include "ISubtitleSlideshow.h"
 #include "StartEndTime.h"
 
 
-struct SrtSlideshow : ISlideshow
+struct SrtSlideshow : ISubtitleSlideshow
 {
 public:
 
@@ -13,6 +13,12 @@ public:
     virtual size_t key();
     virtual const std::wstring& key_string();
     virtual bool empty() { return false; }
+
+    virtual size_t hour() { return start_time.hour; }
+    virtual size_t minute() { return start_time.minute; }
+    virtual size_t second() { return start_time.second; }
+    virtual size_t millisecond() { return start_time.millisecond; }
+    virtual size_t duration() { return end_time.milliseconds - start_time.milliseconds; }
 
 public:
 

@@ -320,6 +320,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\AssSlideshow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\AssSubtitleText.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\CommandLine.cpp"
 				>
 			</File>

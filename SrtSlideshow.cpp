@@ -20,11 +20,9 @@ bool SrtSlideshow::show()
     IConsole::instance()
         .cls().write( "\n" )
         .write( "\t" ).write( text ).write( "\n" )
-        .write( "\t" ).write( text2 );
-    StartEndTime& s = start_time;
-    StartEndTime& e = end_time;
-    size_t duration = ( s.milliseconds < e.milliseconds ? e.milliseconds - s.milliseconds : 1000 );
-    IMoviePlayer::instance().go_to( s.hour, s.minute, s.second, s.millisecond, duration );
+        .write( "\t" ).write( text2 )
+        ;
+    IMoviePlayer::instance().play( ISubtitleSlideshowPtr( new SrtSlideshow(*this) ) );
     return true;
 }
 

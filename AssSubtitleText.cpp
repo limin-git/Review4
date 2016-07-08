@@ -1,19 +1,14 @@
 #include "stdafx.h"
 #include "AssSubtitleText.h"
 #include "FileUtility.h"
-#include "ConsoleUtility.h"
-#include "WriteConsoleHelper.h"
 #include "AssSlideshow.h"
 #include "IDisable.h"
-#include "EmptySlideshow.h"
 
 
 AssSubtitleText::AssSubtitleText( const fs::path& file_path )
-    : m_file_path( file_path )
+    : AbstructText( file_path )
 {
-    system_complete( m_file_path );
     parse();
-    IDisable::instance().add_observer( this );
 }
 
 
@@ -24,7 +19,7 @@ void AssSubtitleText::parse()
     boost::wregex e
     (
         L"(?x)"
-        //            Layer,  Start,   End,     Style,  Name,  MarginL, MarginR, MarginV, Effect, Text
+        // Format:      Layer,  Start,   End,     Style,  Name,  MarginL, MarginR, MarginV, Effect, Text
         L"Dialogue:[ ]* [0-9]+, ([^,]+), ([^,]+), [^,]+,  [^,]*, [^,]*,   [^,]*,   [^,]*,   [^,]*,  ([^\\n\\r]+) [\\n\\r]+"
     );
 
@@ -39,6 +34,13 @@ void AssSubtitleText::parse()
     for ( ; it != end; ++it )
     {
         std::wstring text = it->str(3);
+
+        if ( text.find( L"{\\p0}" ) != std::wstring::npos )
+        {
+            continue;
+        }
+
+        trim_text( text );
         size_t key = m_hash( text );
 
         if ( IDisable::instance().is_disabled( key ) )
@@ -71,7 +73,6 @@ void AssSubtitleText::parse()
             end_time.milliseconds = ( end_time.hour*3600 + end_time.minute*60 + end_time.second ) * 1000 + end_time.millisecond;
         }
 
-        trim_text( text );
         m_keys.push_back( key );
         m_slidshow_map[key] = ISlideshowPtr( new AssSlideshow( key, start_time, end_time, text ) );
     }
@@ -80,56 +81,17 @@ void AssSubtitleText::parse()
 
 void AssSubtitleText::trim_text( std::wstring& text )
 {
-    boost::wregex e
+    static const boost::wregex e
     (
         L"\\{[^\\{]+\\}"
     );
 
     text = boost::regex_replace( text, e, L"" );
-    boost::replace_all( text, L"\\n", "\n" );
-    boost::replace_all( text, L"\\N", "\n" );
-}
 
+    static const boost::wregex e2
+    (
+        L"[ \t]*\\\\[nN][ \t]*"
+    );
 
-ISlideshowPtr AssSubtitleText::slideshow( size_t key )
-{
-    KeyList::iterator it = std::find( m_keys.begin(), m_keys.end(), key );
-
-    if ( it == m_keys.end() )
-    {
-        return ISlideshowPtr( new EmptySlideshow );
-    }
-
-    return m_slidshow_map[key];
-}
-
-
-const fs::path& AssSubtitleText::get_file_path()
-{
-    return m_file_path;
-}
-
-
-const KeyList& AssSubtitleText::keys()
-{
-    return m_keys;
-}
-
-
-void AssSubtitleText::add_observer( ITextObserver* observer )
-{
-    m_observers.insert( observer );
-}
-
-
-void AssSubtitleText::remove_observer( ITextObserver* observer )
-{
-    m_observers.erase( observer );
-}
-
-
-void AssSubtitleText::disabled( size_t key )
-{
-    m_keys.remove( key );
-    m_slidshow_map.erase( key );
+    text = boost::regex_replace( text, e2, L"\n\t" );
 }

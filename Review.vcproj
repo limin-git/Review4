@@ -309,6 +309,14 @@
 			Name="Text"
 			>
 			<File
+				RelativePath=".\AbstructText.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\AbstructText.h"
+				>
+			</File>
+			<File
 				RelativePath=".\EmptySlideshow.cpp"
 				>
 			</File>
@@ -318,6 +326,10 @@
 			</File>
 			<File
 				RelativePath=".\ISlideShow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ISubtitleSlideshow.h"
 				>
 			</File>
 			<File

@@ -30,6 +30,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
     try
     {
+        ILog::instance();
         IReviewManager::instance().run();
         IWallpaper::instance().run();
         IInput::instance().run();
@@ -39,8 +40,10 @@ int _tmain(int argc, _TCHAR* argv[])
         IConsole::remove();
         std::cout << "error: " << e.what() << std::endl;
         std::cout << IConfigurationFile::instance().options_description() << std::endl;
+        system( "pause" );
     }
 
+    try
     {
         IReviewManager::remove();
         IWallpaper::remove();
@@ -55,6 +58,11 @@ int _tmain(int argc, _TCHAR* argv[])
         ICommandLine::remove();
         IConsole::remove();
         ILog::remove();
+    }
+    catch ( std::exception& e)
+    {
+        std::cout << "error: " << e.what() << std::endl;
+        system( "pause" );
     }
 
 	return 0;

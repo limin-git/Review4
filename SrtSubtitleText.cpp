@@ -1,19 +1,14 @@
 #include "stdafx.h"
 #include "SrtSubtitleText.h"
 #include "FileUtility.h"
-#include "ConsoleUtility.h"
-#include "WriteConsoleHelper.h"
 #include "SrtSlideshow.h"
 #include "IDisable.h"
-#include "EmptySlideshow.h"
 
 
 SrtSubtitleText::SrtSubtitleText( const fs::path& file_path )
-    : m_file_path( file_path )
+    : AbstructText( file_path )
 {
-    system_complete( m_file_path );
     parse();
-    IDisable::instance().add_observer( this );
 }
 
 
@@ -79,48 +74,4 @@ void SrtSubtitleText::parse()
         m_keys.push_back( key );
         m_slidshow_map[key] = ISlideshowPtr( new SrtSlideshow( key, number, start_time, end_time, text, text2 ) );
     }
-}
-
-
-ISlideshowPtr SrtSubtitleText::slideshow( size_t key )
-{
-    KeyList::iterator it = std::find( m_keys.begin(), m_keys.end(), key );
-
-    if ( it == m_keys.end() )
-    {
-        return ISlideshowPtr( new EmptySlideshow );
-    }
-
-    return m_slidshow_map[key];
-}
-
-
-const fs::path& SrtSubtitleText::get_file_path()
-{
-    return m_file_path;
-}
-
-
-const KeyList& SrtSubtitleText::keys()
-{
-    return m_keys;
-}
-
-
-void SrtSubtitleText::add_observer( ITextObserver* observer )
-{
-    m_observers.insert( observer );
-}
-
-
-void SrtSubtitleText::remove_observer( ITextObserver* observer )
-{
-    m_observers.erase( observer );
-}
-
-
-void SrtSubtitleText::disabled( size_t key )
-{
-    m_keys.remove( key );
-    m_slidshow_map.erase( key );
 }

@@ -17,12 +17,9 @@ bool AssSlideshow::show()
 {
     IConsole::instance()
         .cls().write( "\n" )
-        .write( "\n" ).write( text )
+        .write( "\t" ).write( text )
         ;
-    StartEndTime& s = start_time;
-    StartEndTime& e = end_time;
-    size_t duration = ( s.milliseconds < e.milliseconds ? e.milliseconds - s.milliseconds : 1000 );
-    IMoviePlayer::instance().go_to( s.hour, s.minute, s.second, s.millisecond, duration );
+    IMoviePlayer::instance().play( ISubtitleSlideshowPtr( new AssSlideshow(*this) ) );
     return true;
 }
 

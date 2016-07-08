@@ -10,39 +10,32 @@ public:
 
     MpcPlayer();
     ~MpcPlayer();
-    virtual bool go_to( size_t hour, size_t minute, size_t second, size_t millisecond, size_t duration );
+    virtual bool play( ISubtitleSlideshowPtr subtitle );
 
 private:
 
-    void close();
     void initialize();
     bool open_player();
     void locate_player();
-
-public:
-
-    struct GotoInfo
-    {
-        size_t hour;
-        size_t minute;
-        size_t second;
-        size_t millisecond;
-        size_t duration;
-    };
-
-    void go_to_thread( const GotoInfo& info );
+    void close();
+    void play();
+    void pause();
+    void play_thread( const ISubtitleSlideshowPtr& info );
+    bool hide_goto_dialog( size_t timeout = 200 );
 
 private:
     
     fs::path m_player;
     fs::path m_movie;
-    fs::path m_subtitle;
-    HWND m_hwnd;
+    fs::path m_subtitle_path;
+    HWND m_player_hwnd;
     HWND m_console;
     STARTUPINFO m_si;
     PROCESS_INFORMATION m_pi;
-    QueueProcessor<GotoInfo> m_processor;
+    QueueProcessor<ISubtitleSlideshowPtr> m_processor;
     bool m_load_subtitle;
     bool m_auto_stop;
     size_t m_wait_startup;
+    volatile bool m_playing;
+    ISubtitleSlideshowPtr m_subtitle;
 };
