@@ -189,6 +189,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\AbstructSubtitleSlidshow.h"
+				>
+			</File>
+			<File
 				RelativePath=".\AbstructText.h"
 				>
 			</File>
@@ -501,10 +505,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StartEndTime.h"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -530,6 +530,10 @@
 			</File>
 			<File
 				RelativePath=".\StringUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SubTime.h"
 				>
 			</File>
 			<File
@@ -628,6 +632,10 @@
 		<Filter
 			Name="src"
 			>
+			<File
+				RelativePath=".\AbstructSubtitleSlidshow.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\AbstructText.cpp"
 				>

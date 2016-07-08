@@ -22,7 +22,7 @@ void SrtSubtitleText::parse()
         L"^ ([0-9]+) [\\r\\n]+"         // $1: number
         L"^ ([^\\r\\n]+) [\\r\\n]+"     // $2 start-stop time
         L"^ ([^\\r\\n]+) [\\r\\n]+"     // $3 text
-        L"^ ([^\\r\\n]+)?"              // $4 ?text2
+        L"^ ([^\\r\\n]+)*"              // $4 text2
     );
 
     boost::wregex time_e
@@ -44,8 +44,8 @@ void SrtSubtitleText::parse()
         }
 
         size_t number = boost::lexical_cast<size_t>( it->str(1) );
-        StartEndTime start_time;
-        StartEndTime end_time;
+        SubTime start_time;
+        SubTime end_time;
         std::wstring time_string = it->str(2);
         boost::wsmatch m;
 

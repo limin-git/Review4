@@ -48,8 +48,8 @@ void AssSubtitleText::parse()
             continue;
         }
 
-        StartEndTime start_time;
-        StartEndTime end_time;
+        SubTime start_time;
+        SubTime end_time;
         std::wstring start_time_str = it->str(1);
         std::wstring end_time_str = it->str(2);
         boost::wsmatch m;

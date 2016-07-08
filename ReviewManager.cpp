@@ -37,8 +37,6 @@ void ReviewManager::run()
     show();
 
     IInput::instance()
-        .add_key_handler( this, true, 'A', 'Z',     boost::bind( &ReviewManager::continue_handler, this ) )
-        .add_key_handler( this, true, VK_SPACE,     boost::bind( &ReviewManager::continue_handler, this ) )
         .add_key_handler( this, true, VK_DOWN,      boost::bind( &ReviewManager::continue_handler, this ) )
         .add_key_handler( this, true, VK_BACK,      boost::bind( &ReviewManager::continue_handler, this ) )
         .add_key_handler( this, true, VK_RETURN,    boost::bind( &ReviewManager::continue_handler, this ) )
