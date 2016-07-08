@@ -189,7 +189,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\AbstructText.h"
+				>
+			</File>
+			<File
 				RelativePath=".\AlgorithmUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AssSlideshow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AssSubtitleText.h"
 				>
 			</File>
 			<File
@@ -201,7 +213,35 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Console.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ConsoleUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Disable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EceSlideshow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EmptySlideshow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EmptySlideshow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EnglishChineseExampleText.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EnglishPlayer.h"
 				>
 			</File>
 			<File
@@ -221,7 +261,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\History.h"
+				>
+			</File>
+			<File
+				RelativePath=".\HotKey.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ICommandLine.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ICommandLine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IConfigurationFile.cpp"
 				>
 			</File>
 			<File
@@ -233,11 +289,75 @@
 				>
 			</File>
 			<File
+				RelativePath=".\IConsole.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IConsole.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IConsole.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IDisable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IDisable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IDisableObserver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IEnglishPlayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IEnglishPlayer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IFileChangeHandler.h"
 				>
 			</File>
 			<File
+				RelativePath=".\IFileChangeManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\IFileChangeManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IHistory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IHistory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IHotKey.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IHotKey.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IHotKeyHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IHotKeyHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IInput.cpp"
 				>
 			</File>
 			<File
@@ -249,7 +369,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\IInputSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IInputSender.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ILog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ILog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IMoviePlayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IMoviePlayer.h"
 				>
 			</File>
 			<File
@@ -257,7 +397,111 @@
 				>
 			</File>
 			<File
+				RelativePath=".\InputSender.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IReviewManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IReviewManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IScheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IScheduler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ISlideShow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ISound.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ISound.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ISpeech.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ISpeech.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ISubtitleSlideshow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IText.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IText.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ITextFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ITextFactory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ITextObserver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IWallpaper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IWallpaper.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Log.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MpcPlayer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ReviewManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Scheduler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Sound.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Speech.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SrtSlideshow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SrtSubtitleText.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StartEndTime.h"
 				>
 			</File>
 			<File
@@ -289,6 +533,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TextFactory.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TimeUtility.h"
 				>
 			</File>
@@ -301,139 +549,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Wallpaper.h"
+				>
+			</File>
+			<File
 				RelativePath=".\WriteConsoleHelper.h"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="Text"
-			>
-			<File
-				RelativePath=".\AbstructText.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\AbstructText.h"
-				>
-			</File>
-			<File
-				RelativePath=".\EmptySlideshow.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\EmptySlideshow.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ISlideShow.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ISubtitleSlideshow.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IText.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IText.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ITextFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ITextFactory.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ITextObserver.h"
-				>
-			</File>
-			<File
-				RelativePath=".\StartEndTime.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TextFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TextFactory.h"
-				>
-			</File>
-			<Filter
-				Name="Ece"
-				>
-				<File
-					RelativePath=".\EceSlideshow.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\EceSlideshow.h"
-					>
-				</File>
-				<File
-					RelativePath=".\EnglishChineseExampleText.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\EnglishChineseExampleText.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Srt"
-				>
-				<File
-					RelativePath=".\SrtSlideshow.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\SrtSlideshow.h"
-					>
-				</File>
-				<File
-					RelativePath=".\SrtSubtitleText.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\SrtSubtitleText.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Ass"
-				>
-				<File
-					RelativePath=".\AssSlideshow.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\AssSlideshow.h"
-					>
-				</File>
-				<File
-					RelativePath=".\AssSubtitleText.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\AssSubtitleText.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="utilities"
 			>
 			<File
 				RelativePath=".\AlgorithmUtility.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ConsoleUtility.cpp"
 				>
 			</File>
 			<File
@@ -474,226 +602,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="FileChangeManager"
-			>
-			<File
-				RelativePath=".\FileChangeManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\FileChangeMonitorThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IFileChangeManager.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Configuration"
-			>
-			<File
-				RelativePath=".\CommandLine.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ConfigurationFile.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ICommandLine.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IConfigurationFile.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Input"
-			>
-			<File
-				RelativePath=".\IInput.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Input.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Log"
-			>
-			<File
-				RelativePath=".\ILog.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Log.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Console"
-			>
-			<File
-				RelativePath=".\Console.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Console.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IConsole.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IConsole.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IConsole.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="EnglishPlayer"
-			>
-			<File
-				RelativePath=".\EnglishPlayer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\EnglishPlayer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IEnglishPlayer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IEnglishPlayer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ISound.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ISound.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ISpeech.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ISpeech.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Sound.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Sound.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Speech.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Speech.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="History"
-			>
-			<File
-				RelativePath=".\History.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\History.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IHistory.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IHistory.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Scheduler"
-			>
-			<File
-				RelativePath=".\IScheduler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IScheduler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Scheduler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Scheduler.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Disable"
-			>
-			<File
-				RelativePath=".\Disable.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Disable.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IDisable.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IDisable.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IDisableObserver.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="ReviewManager"
-			>
-			<File
-				RelativePath=".\IReviewManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IReviewManager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ReviewManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ReviewManager.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Test"
 			>
 			<File
@@ -718,82 +626,66 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="IWallpaper"
+			Name="src"
 			>
 			<File
-				RelativePath=".\IWallpaper.cpp"
+				RelativePath=".\AbstructText.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\IWallpaper.h"
+				RelativePath=".\AssSlideshow.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Wallpaper.cpp"
+				RelativePath=".\AssSubtitleText.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Wallpaper.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="MoviePlayer"
-			>
-			<File
-				RelativePath=".\IMoviePlayer.cpp"
+				RelativePath=".\CommandLine.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\IMoviePlayer.h"
+				RelativePath=".\ConfigurationFile.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MpcPlayer.cpp"
+				RelativePath=".\Console.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MpcPlayer.h"
+				RelativePath=".\Disable.cpp"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="HotKey"
-			>
+			<File
+				RelativePath=".\EceSlideshow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EnglishChineseExampleText.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EnglishPlayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FileChangeManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FileChangeMonitorThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\History.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\HotKey.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\HotKey.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IHotKey.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IHotKey.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IHotKeyHandler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IHotKeyHandler.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="InputSender"
-			>
-			<File
-				RelativePath=".\IInputSender.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IInputSender.h"
+				RelativePath=".\Input.cpp"
 				>
 			</File>
 			<File
@@ -801,7 +693,43 @@
 				>
 			</File>
 			<File
-				RelativePath=".\InputSender.h"
+				RelativePath=".\Log.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MpcPlayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ReviewManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Scheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Sound.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Speech.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SrtSlideshow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SrtSubtitleText.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TextFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Wallpaper.cpp"
 				>
 			</File>
 		</Filter>
