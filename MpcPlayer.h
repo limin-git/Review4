@@ -28,9 +28,10 @@ private:
     void pause();
     void play_thread( const ISubtitleSlideshowPtr& info );
     bool hide_goto_dialog( size_t timeout = 5000 );
+    void monitor_player_process_thread();
 
 private:
-    
+
     fs::path m_player;
     fs::path m_movie;
     fs::path m_subtitle_path;
@@ -38,7 +39,7 @@ private:
     HWND m_console;
     STARTUPINFO m_si;
     PROCESS_INFORMATION m_pi;
-    QueueProcessor<ISubtitleSlideshowPtr> m_processor;
+    QueueProcessor m_processor;
     bool m_load_subtitle;
     bool m_auto_stop;
     size_t m_wait_startup;
@@ -47,4 +48,5 @@ private:
     volatile bool m_playing;
     volatile bool m_running;
     ISubtitleSlideshowPtr m_subtitle;
+    boost::thread m_monitor_player_thread;
 };

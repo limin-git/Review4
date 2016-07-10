@@ -1,14 +1,13 @@
 #pragma once
 
 
-template<typename T>
 struct QueueProcessor
 {
-    typedef boost::function<void (const T&)> Callback;
+    typedef boost::function<void()> Callable;
 
-    QueueProcessor( const Callback& callback = Callback() )
-        : m_callback( callback )
+    QueueProcessor()
     {
+        m_busy = false;
         m_running = true;
         m_thread = boost::thread( boost::bind( &QueueProcessor::run, this ) );
     }
@@ -18,23 +17,20 @@ struct QueueProcessor
         terminate();
     }
 
-    void set_callback( const Callback& callback )
-    {
-        m_callback = callback;
-    }
-
     void terminate()
     {
         m_running = false;
         m_condition.notify_one();
         m_thread.join();
+        m_busy = false;
     }
 
-    void queue_item( const T& item )
+    void queue_item( const Callable& item )
     {
         boost::unique_lock<boost::mutex> lock( m_mutex );
         m_queue.push( item );
         m_condition.notify_one();
+        m_busy = true;
     }
 
     template<typename U>
@@ -44,12 +40,13 @@ struct QueueProcessor
         {
             boost::unique_lock<boost::mutex> lock( m_mutex );
 
-            BOOST_FOREACH( const T& item, items )
+            BOOST_FOREACH( const Callable& item, items )
             {
                 m_queue.push( item );
             }
 
             m_condition.notify_one();
+            m_busy = true;
         }
     }
 
@@ -59,11 +56,12 @@ struct QueueProcessor
         {
             try
             {
-                T item = get_item();
+                Callable item = get_item();
 
                 if ( m_running )
                 {
-                    m_callback( item );
+                    item();
+                    m_busy = ( ! m_queue.empty() );
                 }
             }
             catch ( std::exception& )
@@ -75,10 +73,10 @@ struct QueueProcessor
         }
     }
 
-    T get_item()
+    Callable get_item()
     {
         boost::unique_lock<boost::mutex> lock( m_mutex );
-        T item;
+        Callable item;
 
         while ( m_queue.empty() && m_running )
         {
@@ -87,7 +85,7 @@ struct QueueProcessor
 
         if ( m_queue.empty() )
         {
-            return T();
+            return Callable();
         }
 
         item = m_queue.front();
@@ -95,12 +93,18 @@ struct QueueProcessor
         return item;
     }
 
+
+    bool busy()
+    {
+        return m_busy;
+    }
+
 public:
 
-    std::queue<T> m_queue;
+    std::queue<Callable> m_queue;
     boost::thread m_thread;
     volatile bool m_running;
+    volatile bool m_busy;
     boost::mutex m_mutex;
     boost::condition_variable m_condition;
-    boost::function<void (const T&)> m_callback;
 };

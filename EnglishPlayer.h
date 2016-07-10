@@ -4,6 +4,7 @@
 #include "IConfigurationFileObserver.h"
 #include "ISpeech.h"
 #include "ISound.h"
+#include "Singleton.h"
 
 namespace fs = boost::filesystem;
 
@@ -35,9 +36,9 @@ private:
 
     typedef std::map<fs::path, std::wstring> SpeechDirectory;
     SpeechDirectory m_speech_directories; // path, extension
-    QueueProcessor<Word> m_processor;
+    QueueProcessor m_processor;
     po::options_description m_options_description;
-    ISpeech& m_speech;
-    ISound& m_sound;
+    Singleton<ISpeech> m_speech;
+    Singleton<ISound> m_sound;
     bool m_disabled;
 };

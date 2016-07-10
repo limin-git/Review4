@@ -23,14 +23,12 @@ Wallpaper::Wallpaper()
 
     if ( vm.count( "wallpaper.path" ) )
     {
-        m_directory =vm["wallpaper.path"].as<std::wstring>();
-        system_complete( m_directory );
+        m_directory = fs::system_complete( vm["wallpaper.path"].as<std::wstring>() );
     }
 
     if ( vm.count( "wallpaper.recycle-path" ) )
     {
-        m_recycle_directory =vm["wallpaper.recycle-path"].as<std::wstring>();
-        system_complete( m_recycle_directory );
+        m_recycle_directory = fs::system_complete( vm["wallpaper.recycle-path"].as<std::wstring>() );
 
         if ( ! m_recycle_directory.empty() && ! exists( m_recycle_directory ) )
         {

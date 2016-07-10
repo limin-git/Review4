@@ -18,7 +18,7 @@ Disable::Disable()
     m_file_name = IConfigurationFile::instance()
         .add_options_description( options )
         .variables_map()["file.disabled"].as<std::wstring>();
-    fs::system_complete( m_file_name );
+    m_file_name = system_complete( m_file_name );
     load_file();
     //TODO: support multiple disable files
 }

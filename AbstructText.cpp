@@ -7,7 +7,7 @@
 AbstructText::AbstructText( const fs::path& file_path )
     : m_file_path( file_path )
 {
-    system_complete( m_file_path );
+    m_file_path = system_complete( m_file_path );
     IDisable::instance().add_observer( this );
 }
 

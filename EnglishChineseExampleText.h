@@ -1,5 +1,7 @@
 #pragma once
 #include "AbstructText.h"
+#include "Singleton.h"
+#include "IEnglishPlayer.h"
 
 
 struct EnglishChineseExampleText : AbstructText
@@ -18,4 +20,5 @@ private:
 private:
 
     bool m_hash_without_symbols;
+    Singleton<IEnglishPlayer> m_player;
 };

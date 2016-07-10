@@ -481,11 +481,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\QueueProcessor.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ReviewManager.h"
 				>
 			</File>
 			<File
 				RelativePath=".\Scheduler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Singleton.h"
 				>
 			</File>
 			<File
@@ -541,6 +549,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ThreadPool.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TimeUtility.h"
 				>
 			</File>
@@ -582,10 +594,6 @@
 			</File>
 			<File
 				RelativePath=".\InputUtility.h"
-				>
-			</File>
-			<File
-				RelativePath=".\QueueProcessor.h"
 				>
 			</File>
 			<File

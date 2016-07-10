@@ -4,12 +4,13 @@
 #include "IEnglishPlayer.h"
 
 
-EceSlideshow::EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp )
+EceSlideshow::EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp, Singleton<IEnglishPlayer>& player )
     : m_key( key ),
       m_english( eng ),
       m_chinese( chs ),
       m_example( exp ),
-      m_stage( English )
+      m_stage( English ),
+      m_player( player )
 {
     std::wstringstream strm;
     strm
@@ -30,7 +31,7 @@ bool EceSlideshow::show()
             .cls()
             .write_center( m_english )
             ;
-        IEnglishPlayer::instance().speak( m_english );
+        m_player->speak( m_english );
         m_stage = Chinese;
         return false;
 

@@ -8,12 +8,8 @@
 
 EnglishPlayer::EnglishPlayer()
     : m_options_description( "Speech" ),
-      m_speech( ISpeech::instance() ),
-      m_sound( ISound::instance() ),
       m_disabled( false )
 {
-    m_processor.set_callback( boost::bind( &EnglishPlayer::speak_impl, this, _1 ) );
-
     m_options_description.add_options()
         ( "speech.path", po::wvalue< std::vector<std::wstring> >(), "speech path with format 'path | .extension'" )
         ( "speech.disable", po::wvalue<std::wstring>(), "disable speech (true/false)" )
@@ -55,7 +51,7 @@ void EnglishPlayer::speak( const std::wstring& word )
         }
     }
 
-    m_processor.queue_item( w );
+    m_processor.queue_item( boost::bind( &EnglishPlayer::speak_impl, this, w ) );
 }
 
 
@@ -72,11 +68,11 @@ void EnglishPlayer::speak_impl( const Word& word )
 {
     if ( word.path.empty() )
     {
-        m_speech.speak( word.word );
+        m_speech->speak( word.word );
     }
     else
     {
-        m_sound.play_sound( word.path );
+        m_sound->play_sound( word.path );
     }
 }
 

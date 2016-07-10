@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "IInput.h"
-#include "QueueProcessor.h"
+#include "ThreadPool.h"
 
 
 struct Input : IInput
@@ -33,5 +33,5 @@ private:
     typedef std::map<DWORD, CallbackMap> MouseHandlerMap;
     MouseHandlerMap m_mouse_button_pressed_handlers;
     MouseHandlerMap m_other_mouse_handlers;
-    QueueProcessor<Callback> m_processor;
+    ThreadPool m_processor;
 };

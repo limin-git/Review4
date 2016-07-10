@@ -33,24 +33,17 @@ MpcPlayer::MpcPlayer()
 
     if ( vm.count( "file.name" ) )
     {
-        m_subtitle_path = vm["file.name"].as<std::wstring>();
-        
-        if ( ! m_subtitle_path.is_absolute() )
-        {
-            m_subtitle_path = fs::current_path() / m_subtitle_path;
-        }
+        m_subtitle_path = fs::system_complete( vm["file.name"].as<std::wstring>() );
     }
 
     if ( vm.count( "movie.player" ) )
     {
-        m_player = vm["movie.player"].as<std::wstring>();
-        system_complete( m_player );
+        m_player = fs::system_complete( vm["movie.player"].as<std::wstring>() );
     }
 
     if ( vm.count( "movie.movie" ) )
     {
-        m_movie = vm["movie.movie"].as<std::wstring>();
-        system_complete( m_movie );
+        m_movie = fs::system_complete( vm["movie.movie"].as<std::wstring>() );
     }
 
     if ( vm.count( "movie.load-subtitle" ) )
@@ -76,6 +69,7 @@ MpcPlayer::~MpcPlayer()
 {
     m_running = false;
     terminate_player();
+    m_monitor_player_thread.join();
 }
 
 
@@ -115,7 +109,7 @@ bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
     log_test << ss.str() << " " << subtitle->key_string();
     IInputSender::instance().string( ss.str() ).key( VK_RETURN );
     m_subtitle = subtitle;
-    m_processor.queue_item( m_subtitle );
+    m_processor.queue_item( boost::bind( &MpcPlayer::play_thread, this, m_subtitle ) );
     return true;
 }
 
@@ -183,7 +177,6 @@ void MpcPlayer::pause()
     {
         SetForegroundWindow( m_player_hwnd );
         IInputSender::instance().key( VK_SPACE );
-        //SetForegroundWindow( m_console );
         m_playing = false;
     }
 }
@@ -205,7 +198,6 @@ void MpcPlayer::initialize()
     if ( open_player() )
     {
         locate_player();
-        m_processor.set_callback( boost::bind( &MpcPlayer::play_thread, this, _1 ) );
     }
 }
 
@@ -230,8 +222,14 @@ bool MpcPlayer::open_player()
     }
 
     std::wstring cmd = cmd_strm.str();
+    BOOL result = CreateProcess( NULL, const_cast<wchar_t*>( cmd.c_str() ), 0, 0, 0, 0, 0, 0, &m_si, &m_pi ) != 0;
 
-    return CreateProcess( NULL, const_cast<wchar_t*>( cmd.c_str() ), 0, 0, 0, 0, 0, 0,&m_si,&m_pi ) != 0;
+    if ( result )
+    {
+        m_monitor_player_thread = boost::thread( boost::bind( &MpcPlayer::monitor_player_process_thread, this ) );
+    }
+
+    return ( result != FALSE );
 }
 
 
@@ -269,3 +267,12 @@ void MpcPlayer::options_changed( const po::variables_map& vm, const po::variable
     }
 }
 
+
+void MpcPlayer::monitor_player_process_thread()
+{
+    WaitForSingleObject( m_pi.hProcess, INFINITE );
+    ZeroMemory( &m_si, sizeof(m_si) );
+    m_si.cb = sizeof(m_si);
+    ZeroMemory( &m_pi, sizeof(m_pi) );
+    m_player_hwnd = NULL;
+}

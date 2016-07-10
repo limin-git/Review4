@@ -21,7 +21,7 @@ EnglishChineseExampleText::EnglishChineseExampleText( const fs::path& file_path 
     : AbstructText( file_path ),
       m_hash_without_symbols( true )
 {
-    system_complete( m_file_path );
+    m_file_path = system_complete( m_file_path );
 
     po::options_description options( "Advanced" );
     options.add_options()
@@ -71,7 +71,7 @@ bool EnglishChineseExampleText::reload()
         if ( !IDisable::instance().is_disabled( key ) )
         {
             keys.push_back( key );
-            slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example ) );
+            slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example, m_player ) );
         }
     }
 

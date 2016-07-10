@@ -7,7 +7,7 @@
 
 ConfigurationFile::ConfigurationFile()
 {
-    boost::program_options::variables_map& vm = ICommandLine::instance().get_variables_map();
+    po::variables_map& vm = ICommandLine::instance().variables_map();
 
     if ( vm.count( "config-file" ) )
     {

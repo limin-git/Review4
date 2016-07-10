@@ -14,7 +14,6 @@ void Input::run()
     const size_t size = 1024;
     INPUT_RECORD input_buffer[size];
     DWORD num_read = 0;
-    m_processor.set_callback( boost::bind( &Input::callback_thread, this, _1 ) );
 
     SetConsoleMode( cin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT );
 
@@ -47,7 +46,7 @@ void Input::run()
                     {
                         BOOST_FOREACH( CallbackMap::value_type& v, it->second )
                         {
-                            m_processor.queue_item( v.second );
+                            m_processor.queue_item( boost::bind( &Input::callback_thread, this, v.second ) );
                         }
                     }
                 }
@@ -75,7 +74,7 @@ void Input::run()
                     {
                         BOOST_FOREACH( CallbackMap::value_type& v, it->second )
                         {
-                            m_processor.queue_item( v.second );
+                            m_processor.queue_item( boost::bind( &Input::callback_thread, this, v.second ) );
                         }
                     }
                 }

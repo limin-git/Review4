@@ -258,6 +258,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TestSingleton.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestSingleton.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TestSound.cpp"
 				>
 			</File>
@@ -381,6 +389,10 @@
 			</File>
 			<File
 				RelativePath="..\FileSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\FileSystemUtility.cpp"
 				>
 			</File>
 			<File

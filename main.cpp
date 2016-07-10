@@ -5,9 +5,6 @@
 #include "IConsole.h"
 #include "IScheduler.h"
 #include "IHistory.h"
-#include "IEnglishPlayer.h"
-#include "ISpeech.h"
-#include "ISound.h"
 #include "ILog.h"
 #include "IConfigurationFile.h"
 #include "IText.h"
@@ -22,7 +19,8 @@ int _tmain(int argc, _TCHAR* argv[])
 {
     if ( argc == 1 )
     {
-        std::cout << ICommandLine::instance().get_options_description() << std::endl;
+        std::cout << ICommandLine::instance().options_description() << std::endl;
+        system( "pause" );
         return 0;
     }
 
@@ -51,7 +49,6 @@ int _tmain(int argc, _TCHAR* argv[])
         IHistory::remove();
         IText::remove(); ITextFactory::remove();
         IDisable::remove();
-        IEnglishPlayer::remove(); ISpeech::remove(); ISound::remove();
         IMoviePlayer::remove();
         IInput::remove(); IHotKey::remove();
         IConfigurationFile::remove();

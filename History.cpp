@@ -23,11 +23,6 @@ History::History()
         .variables_map()
         ;
 
-    if ( vm.count( "file.history" ) )
-    {
-        m_file_name = vm["file.history"].as<std::wstring>();
-    }
-
     if ( vm.count( "review.no-history" ) )
     {
         m_no_history = ( L"true" == vm["review.no-history"].as<std::wstring>() );
@@ -35,7 +30,12 @@ History::History()
 
     if ( ! m_no_history )
     {
-        system_complete( m_file_name );
+        if ( vm.count( "file.history" ) )
+        {
+            m_file_name = vm["file.history"].as<std::wstring>();
+        }
+
+        m_file_name = system_complete( m_file_name );
         load_history();
         IDisable::instance().add_observer( this );
     }
