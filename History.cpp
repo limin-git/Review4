@@ -18,10 +18,7 @@ History::History()
         ( "file.history", po::wvalue<std::wstring>(), "history file" )
         ( "review.no-history", po::wvalue<std::wstring>(), "write history or not?" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance()
-        .add_options_description( options )
-        .variables_map()
-        ;
+    po::variables_map& vm = m_configuration->add_options_description( options ).variables_map();
 
     if ( vm.count( "review.no-history" ) )
     {
@@ -37,7 +34,7 @@ History::History()
 
         m_file_name = system_complete( m_file_name );
         load_history();
-        IDisable::instance().add_observer( this );
+        m_disable->add_observer( this );
     }
 }
 
@@ -47,7 +44,7 @@ History::~History()
     if ( ! m_no_history )
     {
         save_history_file();
-        IDisable::instance().remove_observer( this );
+        m_disable->remove_observer( this );
     }
 }
 
@@ -116,7 +113,7 @@ void History::load_history()
                 strm.str( s );
                 strm >> key;
 
-                if ( !IDisable::instance().is_disabled( key ) )
+                if ( ! m_disable->is_disabled( key ) )
                 {
                     std::vector<std::time_t>& times = m_history[key];
 

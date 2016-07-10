@@ -1,6 +1,9 @@
 #pragma once
 #include "IConfigurationFile.h"
 #include "IFileChangeHandler.h"
+#include "IFileChangeManager.h"
+#include "ICommandLine.h"
+#include "Singleton.h"
 
 namespace fs = boost::filesystem;
 
@@ -38,4 +41,6 @@ private:
     po::options_description m_options_description;
     po::variables_map m_variables_map;
     po::variables_map m_variables_map_old;
+    Singleton<IFileChangeManager> m_file_change_manager;
+    Singleton<ICommandLine> m_command_line;
 };

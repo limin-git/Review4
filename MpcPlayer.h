@@ -2,6 +2,9 @@
 #include "IMoviePlayer.h"
 #include "QueueProcessor.h"
 #include "IConfigurationFileObserver.h"
+#include "IConfigurationFile.h"
+#include "Singleton.h"
+#include "IInputSender.h"
 namespace fs = boost::filesystem;
 
 
@@ -49,4 +52,6 @@ private:
     volatile bool m_running;
     ISubtitleSlideshowPtr m_subtitle;
     boost::thread m_monitor_player_thread;
+    Singleton<IConfigurationFile> m_configuration;
+    Singleton<IInputSender> m_input_sender;
 };

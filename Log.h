@@ -1,6 +1,8 @@
 #pragma once
 #include "ILog.h"
 #include "IConfigurationFileObserver.h"
+#include "IConfigurationFile.h"
+#include "Singleton.h"
 
 namespace lg = boost::log;
 namespace po = boost::program_options;
@@ -25,4 +27,5 @@ private:
     boost::shared_ptr< lg::sinks::synchronous_sink<lg::sinks::text_file_backend> > m_sink;
     std::wstring m_levels;
     po::options_description m_options_description;
+    Singleton<IConfigurationFile> m_configuration;
 };

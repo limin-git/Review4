@@ -1,6 +1,9 @@
 #pragma once
 #include "IHistory.h"
 #include "IDisableObserver.h"
+#include "IDisable.h"
+#include "Singleton.h"
+#include "IConfigurationFile.h"
 
 namespace fs = boost::filesystem;
 
@@ -28,4 +31,6 @@ private:
     fs::path m_file_name;
     std::fstream m_file_stream;
     bool m_no_history;
+    Singleton<IDisable> m_disable;
+    Singleton<IConfigurationFile> m_configuration;
 };

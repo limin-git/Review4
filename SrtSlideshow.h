@@ -6,7 +6,7 @@ struct SrtSlideshow : AbstructSubtitleSlidshow
 {
 public:
 
-    SrtSlideshow( size_t key, size_t num, SubTime start_t, SubTime end_t, const std::wstring& txt, const std::wstring& txt2 );
+    SrtSlideshow( size_t key, size_t num, SubTime start_t, SubTime end_t, const std::wstring& txt, const std::wstring& txt2, Singleton<IConsole>& console, Singleton<IMoviePlayer>& player );
     virtual bool show();
 
 private:

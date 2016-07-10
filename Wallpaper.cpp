@@ -16,10 +16,7 @@ Wallpaper::Wallpaper()
         ( "wallpaper.path", po::wvalue<std::wstring>(), "picture directory path" )
         ( "wallpaper.recycle-path", po::wvalue<std::wstring>(), "recycle directory path" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance()
-        .add_options_description( options )
-        .variables_map()
-        ;
+    po::variables_map& vm = m_configuration->add_options_description( options ).variables_map();
 
     if ( vm.count( "wallpaper.path" ) )
     {
@@ -48,10 +45,7 @@ Wallpaper::~Wallpaper()
 {
     if ( !m_directory.empty() )
     {
-        IInput::instance()
-            .remove_key_handler( this )
-            .remove_mouse_handler( this )
-            ;
+        m_input->remove_key_handler( this ).remove_mouse_handler( this );
         Utility::set_system_wallpaper( L"C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );
     }
 }
@@ -66,8 +60,8 @@ void Wallpaper::run()
 
     set_wallpaper();
 
-    IInput::instance()
-        .add_key_handler( this, true, 'Z', 'Z',                     boost::bind( &Wallpaper::remove_current_picture, this ) )
+    m_input
+        ->add_key_handler( this, true, 'Z', 'Z',                    boost::bind( &Wallpaper::remove_current_picture, this ) )
         .add_key_handler( this, true, VK_LEFT, VK_DOWN,             boost::bind( &Wallpaper::set_wallpaper, this ) )
         .add_key_handler( this, true, VK_BACK,                      boost::bind( &Wallpaper::set_wallpaper, this ) )
         .add_key_handler( this, true, VK_OEM_3,                     boost::bind( &Wallpaper::set_wallpaper, this ) )     // '`~' for US

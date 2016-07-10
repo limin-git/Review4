@@ -24,10 +24,7 @@ Console::Console()
         ( "console.height", po::value<size_t>(), "console layout: height" )
         ( "console.color", po::wvalue<std::wstring>(), "console color" )
         ;
-    IConfigurationFile::instance()
-        .add_options_description( options )
-        .add_observer( this )
-        ;
+    m_configuration->add_options_description( options ).add_observer( this );
 }
 
 
@@ -286,7 +283,7 @@ void Console::set_ctrl_handler()
         {
             DWORD ctrl_types[] = { CTRL_C_EVENT, CTRL_BREAK_EVENT, CTRL_CLOSE_EVENT, CTRL_LOGOFF_EVENT, CTRL_SHUTDOWN_EVENT };
             const char* ctrl_info[] = { "Ctrl + C", "Ctrl + BREAK", "CLOSE EVENT", "LOGOFF EVENT",  "SHUTDOWN EVENT" };
-            IConsole::instance().write( ctrl_info[ctrl_type] );
+            Singleton<IConsole>()->write( ctrl_info[ctrl_type] );
             return TRUE;
         }
     };

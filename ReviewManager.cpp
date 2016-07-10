@@ -25,10 +25,7 @@ ReviewManager::ReviewManager()
     options.add_options()
         ( "advanced.register-hot-keys", po::wvalue<std::wstring>(), "register hot keys?" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance()
-        .add_options_description( options )
-        .variables_map()
-        ;
+    po::variables_map& vm = m_configuration->add_options_description( options ).variables_map();
 
     if ( vm.count( "advanced.register-hot-keys" ) )
     {
@@ -39,23 +36,20 @@ ReviewManager::ReviewManager()
 
 ReviewManager::~ReviewManager()
 {
-    IInput::instance()
-        .remove_key_handler( this )
-        .remove_mouse_handler( this )
-        ;
-    IHotKey::instance().unregister_handler( this );
+    m_input->remove_key_handler( this ).remove_mouse_handler( this );
+    m_hotkey->unregister_handler( this );
 }
 
 
 void ReviewManager::run()
 {
-    m_review_history.push_back( IScheduler::instance().get_slideshow() );
+    m_review_history.push_back( m_scheduler->get_slideshow() );
     m_current = m_review_history.begin();
 
     show();
 
-    IInput::instance()
-        .add_key_handler( this, true, VK_DOWN,      boost::bind( &ReviewManager::handle_continue, this ) )
+    m_input
+        ->add_key_handler( this, true, VK_DOWN,     boost::bind( &ReviewManager::handle_continue, this ) )
         .add_key_handler( this, true, VK_BACK,      boost::bind( &ReviewManager::handle_continue, this ) )
         .add_key_handler( this, true, VK_OEM_3,     boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
         .add_key_handler( this, true, VK_OEM_5,     boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
@@ -72,8 +66,8 @@ void ReviewManager::run()
 
     if ( m_register_hot_keys )
     {
-        IHotKey::instance()
-            .register_handler( this, 0, VK_LEFT,                boost::bind( &ReviewManager::handle_previous, this ) )
+        m_hotkey
+            ->register_handler( this, 0, VK_LEFT,               boost::bind( &ReviewManager::handle_previous, this ) )
             .register_handler( this, 0, VK_RIGHT,               boost::bind( &ReviewManager::handle_next, this ) )
             .register_handler( this, 0, VK_UP,                  boost::bind( &ReviewManager::handle_replay, this ) )
             .register_handler( this, 0, VK_DOWN,                boost::bind( &ReviewManager::handle_continue, this ) )
@@ -126,7 +120,7 @@ void ReviewManager::go_forward()
 {
     if ( (*m_current)->empty() )
     {
-        (*m_current) = IScheduler::instance().get_slideshow();
+        (*m_current) = m_scheduler->get_slideshow();
     }
     else
     {
@@ -135,7 +129,7 @@ void ReviewManager::go_forward()
 
     if ( m_current == m_review_history.end() )
     {
-        m_review_history.push_back( IScheduler::instance().get_slideshow() );
+        m_review_history.push_back( m_scheduler->get_slideshow() );
         m_current = m_review_history.end();
         m_current--;
     }
@@ -168,7 +162,7 @@ void ReviewManager::handle_disable()
     ISlideshowPtr slideshow = *m_current;
     size_t key = slideshow->key();
     handle_next();
-    IDisable::instance().disable( slideshow );
+    m_disable->disable( slideshow );
     delete_review_history( key );
 }
 

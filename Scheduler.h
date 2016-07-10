@@ -3,6 +3,12 @@
 #include "IDisableObserver.h"
 #include "ITextObserver.h"
 #include "IConfigurationFileObserver.h"
+#include "Singleton.h"
+#include "IText.h"
+#include "IDisable.h"
+#include "IHistory.h"
+#include "IConsole.h"
+#include "IConfigurationFile.h"
 
 typedef std::list<size_t> KeyList;
 
@@ -38,7 +44,12 @@ private:
     std::multimap<std::time_t, size_t> m_next_time_map;
     boost::interprocess::interprocess_semaphore m_select_candidates_semaphore;
     bool m_running;
-    boost::thread* m_select_candidates_thread;
+    boost::thread m_select_candidates_thread;
     bool m_once_per_session;
     bool m_randomize;
+    Singleton<IDisable> m_disable;
+    Singleton<IText> m_text;
+    Singleton<IHistory> m_history;
+    Singleton<IConsole> m_console;
+    Singleton<IConfigurationFile> m_configuration;
 };

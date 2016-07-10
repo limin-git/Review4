@@ -2,13 +2,14 @@
 #include "ISlideShow.h"
 #include "Singleton.h"
 #include "IEnglishPlayer.h"
+#include "IConsole.h"
 
 
 struct EceSlideshow : ISlideshow
 {
 public:
 
-    EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp, Singleton<IEnglishPlayer>& player );
+    EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp, Singleton<IConsole>& console, Singleton<IEnglishPlayer>& player );
     virtual bool show();
     virtual void clear_state();
     virtual size_t key();
@@ -27,5 +28,6 @@ private:
     std::wstring m_chinese;
     std::wstring m_example;
     std::wstring m_cache;
+    Singleton<IConsole>& m_console;
     Singleton<IEnglishPlayer>& m_player;
 };

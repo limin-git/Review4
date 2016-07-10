@@ -1,5 +1,7 @@
 #pragma once
 #include "IHotKey.h"
+#include "IInputSender.h"
+#include "Singleton.h"
 
 
 struct HotKey : IHotKey
@@ -32,6 +34,7 @@ private:
 
     std::map< IHotKeyHandler*, std::set<size_t> > m_handlers;
     std::map<size_t, HotKeyCallback> m_callbacks;
-    boost::thread* m_thread;
+    boost::thread m_thread;
     bool m_running;
+    Singleton<IInputSender> m_input_sender;
 };

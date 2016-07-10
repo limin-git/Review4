@@ -7,7 +7,7 @@
 
 ConfigurationFile::ConfigurationFile()
 {
-    po::variables_map& vm = ICommandLine::instance().variables_map();
+    po::variables_map& vm = m_command_line->variables_map();
 
     if ( vm.count( "config-file" ) )
     {
@@ -17,7 +17,7 @@ ConfigurationFile::ConfigurationFile()
         {
             boost::filesystem::path p = boost::filesystem::system_complete( config_file );
             load_config_file( p );
-            IFileChangeManager::instance().add_handler( p, this );
+            m_file_change_manager->add_handler( p, this );
         }
     }
 }
@@ -27,7 +27,7 @@ ConfigurationFile::~ConfigurationFile()
 {
     BOOST_FOREACH( const ConfigurationFileMap::value_type& config_file, m_config_file_map )
     {
-        IFileChangeManager::instance().remove_handler( config_file.first, this );
+        m_file_change_manager->remove_handler( config_file.first, this );
     }
 }
 

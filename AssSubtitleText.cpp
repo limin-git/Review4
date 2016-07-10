@@ -46,7 +46,7 @@ void AssSubtitleText::parse()
 
         size_t key = m_hash( it->str() );
 
-        if ( IDisable::instance().is_disabled( key ) )
+        if ( m_disable->is_disabled( key ) )
         {
             continue;
         }
@@ -83,7 +83,7 @@ void AssSubtitleText::parse()
 
         trim_text( text );
         time_key_map[start_time] = key;
-        m_slidshow_map[key] = ISlideshowPtr( new AssSlideshow( key, start_time, end_time, text ) );
+        m_slidshow_map[key] = ISlideshowPtr( new AssSlideshow( key, start_time, end_time, text, m_console, m_player ) );
     }
 
     BOOST_FOREACH( TimeKeyMap::value_type& v, time_key_map )

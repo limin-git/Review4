@@ -29,7 +29,7 @@ MpcPlayer::MpcPlayer()
         ( "movie.adjust-start-time", po::value<int>()->default_value( 0 ), "adjust subtitle display start time" )
         ( "movie.adjust-duration-time", po::value<int>()->default_value( 0 ), "adjust subtitle display duration time" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer(this).variables_map();
+    po::variables_map& vm = m_configuration->add_options_description( options ).add_observer(this).variables_map();
 
     if ( vm.count( "file.name" ) )
     {
@@ -81,7 +81,7 @@ bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
     }
 
     SetForegroundWindow( m_player_hwnd );
-    IInputSender::instance().Ctrl_key( 'G' );
+    m_input_sender->Ctrl_key( 'G' );
 
     if ( ! hide_goto_dialog() )
     {
@@ -106,8 +106,7 @@ bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
         << std::setw(2) << std::setfill('0') << sec
         << std::setw(2) << std::setfill('0') << mil
         ;
-    log_test << ss.str() << " " << subtitle->key_string();
-    IInputSender::instance().string( ss.str() ).key( VK_RETURN );
+    m_input_sender->string( ss.str() ).key( VK_RETURN );
     m_subtitle = subtitle;
     m_processor.queue_item( boost::bind( &MpcPlayer::play_thread, this, m_subtitle ) );
     return true;
@@ -165,7 +164,7 @@ void MpcPlayer::play()
     if ( ! m_playing )
     {
         SetForegroundWindow( m_player_hwnd );
-        IInputSender::instance().key( VK_SPACE );
+        m_input_sender->key( VK_SPACE );
         m_playing = true;
     }
 }
@@ -176,7 +175,7 @@ void MpcPlayer::pause()
     if ( m_playing )
     {
         SetForegroundWindow( m_player_hwnd );
-        IInputSender::instance().key( VK_SPACE );
+        m_input_sender->key( VK_SPACE );
         m_playing = false;
     }
 }

@@ -15,10 +15,7 @@ Log::Log()
         ( "log.rotation-size", po::value<size_t>()->default_value( 20 * 1024 * 1024 ), "log rotation size." )
         ( "log.levels", po::wvalue<std::wstring>()->multitoken(), "error,info,debug,trace,*" )
         ;
-
-    IConfigurationFile::instance()
-        .add_options_description( m_options_description )
-        .add_observer( this );
+    m_configuration->add_options_description( m_options_description ).add_observer( this );
 }
 
 

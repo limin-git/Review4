@@ -4,11 +4,10 @@
 
 
 HotKey::HotKey()
-    : m_thread( NULL ),
-      m_running( true ),
+    : m_running( true ),
       m_unregister_handler( NULL )
 {
-    m_thread = new boost::thread( boost::bind( &HotKey::message_loop, this ) );
+    m_thread = boost::thread( boost::bind( &HotKey::message_loop, this ) );
     Sleep( 20 );
 }
 
@@ -16,9 +15,8 @@ HotKey::HotKey()
 HotKey::~HotKey()
 {
     m_running = false;
-    IInputSender::instance().Ctrl_Alt_Shift_key( 'Q' );
-    m_thread->join();
-    delete m_thread;
+    m_input_sender->Ctrl_Alt_Shift_key( 'Q' );
+    m_thread.join();
 }
 
 
@@ -26,7 +24,7 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
 {
     RegisterHandlerInfo info = { handler, fsModifiers, vk, callback };
     m_register_handler = info;
-    IInputSender::instance().Ctrl_Alt_Shift_key( 'R' );
+    m_input_sender->Ctrl_Alt_Shift_key( 'R' );
     Sleep( 5 );
     return *this;
 }
@@ -35,7 +33,7 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
 IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
 {
     m_unregister_handler = handler;
-    IInputSender::instance().Ctrl_Alt_Shift_key( 'U' );
+    m_input_sender->Ctrl_Alt_Shift_key( 'U' );
     return *this;
 }
 
