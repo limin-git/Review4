@@ -30,6 +30,9 @@ void SrtSubtitleText::parse()
         L"([0-9]+):([0-9]+):([0-9]+),([0-9]+) --> ([0-9]+):([0-9]+):([0-9]+),([0-9]+)"
     );
 
+    typedef std::map<SubTime, size_t> TimeKeyMap;
+    TimeKeyMap time_key_map;
+
     boost::wsregex_iterator it( s.begin(), s.end(), e );
     boost::wsregex_iterator end;
 
@@ -71,7 +74,12 @@ void SrtSubtitleText::parse()
             text2 = it->str(4);
         }
 
-        m_keys.push_back( key );
+        time_key_map[start_time] = key;
         m_slidshow_map[key] = ISlideshowPtr( new SrtSlideshow( key, number, start_time, end_time, text, text2 ) );
+    }
+
+    BOOST_FOREACH( TimeKeyMap::value_type& v, time_key_map )
+    {
+        m_keys.push_back( v.second );
     }
 }

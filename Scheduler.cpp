@@ -11,6 +11,7 @@
 #include "IDisable.h"
 #include "IText.h"
 #include "IConsole.h"
+#include "ILog.h"
 
 // dependency:
 // IHistory
@@ -38,51 +39,18 @@ Scheduler::Scheduler()
         ( "review.once-per-session", po::wvalue<std::wstring>(), "once per session" )
         ( "review.randomize", po::wvalue<std::wstring>(), "randomize or not" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance()
+    IConfigurationFile::instance()
         .add_options_description( options )
         .add_observer( this )
-        .variables_map()
         ;
-    std::wstring schedule_string;
-
-    if ( vm.count( "review.schedule" ) )
-    {
-        schedule_string = vm["review.schedule"].as<std::wstring>();
-    }
-
-    if ( schedule_string.empty() )
-    {
-        schedule_string = L"7 : 24 hours, 48 hours, 72 hours, 96 hours, 120 hours, 144 hours, 168 hours";
-    }
-
-    size_t pos = schedule_string.find_first_of( L":|" );
-
-    if ( pos == std::wstring::npos )
-    {
-        return;
-    }
-
-    size_t number = boost::lexical_cast<size_t>( boost::trim_copy( schedule_string.substr( 0, pos ) ) );
-    std::vector<std::time_t> schedule = Utility::times_from_strings( Utility::split_string( schedule_string.substr( pos + 1 ) ) );
-    number = ( 0 == number ? 100 : number );
-
-    if ( 1 == schedule.size() )
-    {
-        m_schedule.reserve( number );
-
-        for ( size_t i = 0; i < number; ++i )
-        {
-            m_schedule.push_back( schedule[0] );
-        }
-    }
-    else
-    {
-        m_schedule = schedule;
-    }
-
+    parse_schedule_configuration();
     initialize_schedule();
 
-    m_select_candidates_thread = new boost::thread( boost::bind( &Scheduler::select_candidates_thread, this ) );
+    if ( ! m_schedule.empty() )
+    {
+        m_select_candidates_thread = new boost::thread( boost::bind( &Scheduler::select_candidates_thread, this ) );
+    }
+
     IDisable::instance().add_observer( this );
     IText::instance().add_observer( this );
 }
@@ -90,10 +58,14 @@ Scheduler::Scheduler()
 
 Scheduler::~Scheduler()
 {
-    m_running = false;
-    m_select_candidates_semaphore.post();
-    m_select_candidates_thread->join();
-    delete m_select_candidates_thread;
+    if ( m_select_candidates_thread )
+    {
+        m_running = false;
+        m_select_candidates_semaphore.post();
+        m_select_candidates_thread->join();
+        delete m_select_candidates_thread;
+    }
+
     IDisable::instance().remove_observer( this );
     IText::instance().remove_observer( this );
 }
@@ -101,11 +73,6 @@ Scheduler::~Scheduler()
 
 ISlideshowPtr Scheduler::get_slideshow()
 {
-    if ( m_schedule.empty() )
-    {
-        return ISlideshowPtr( new EmptySlideshow( L"wrong schedule, check configuration!!!" ) );
-    }
-
     if ( m_candidates.empty() )
     {
         m_select_candidates_semaphore.post();
@@ -141,13 +108,25 @@ ISlideshowPtr Scheduler::get_slideshow()
     }
 
     set_title();
-    m_select_candidates_semaphore.post();
+
+    if ( ! m_schedule.empty() )
+    {
+        m_select_candidates_semaphore.post();
+    }
+
+    log_test << "Scheduler::get_slideshow: " << slideshow->key_string();
     return slideshow;
 }
 
 
 void Scheduler::initialize_schedule()
 {
+    if ( m_schedule.empty() )
+    {
+        m_candidates = IText::instance().keys();
+        return;
+    }
+
     std::time_t current = std::time( NULL );
     const KeyList& keys = IText::instance().keys();
     KeyList candidates;
@@ -211,6 +190,11 @@ void Scheduler::select_candidates_thread()
 
 void Scheduler::schedule_next_time( size_t key )
 {
+    if ( m_schedule.empty() )
+    {
+        return;
+    }
+
     std::time_t current = std::time( NULL );
     std::time_t next_time = get_next_time( key, current );
 
@@ -230,6 +214,11 @@ std::time_t Scheduler::get_next_time( size_t key, const std::time_t current )
 
 bool Scheduler::is_finished( size_t key )
 {
+    if ( m_schedule.empty() )
+    {
+        return false;
+    }
+
     return ( m_schedule.size() + 1 <= IHistory::instance().history( key ).size() );
 }
 
@@ -276,5 +265,52 @@ void Scheduler::options_changed( const po::variables_map& vm, const po::variable
     if ( Utility::updated<std::wstring>( "review.randomize", vm, old ) )
     {
         m_randomize = ( L"true" == vm["review.randomize"].as<std::wstring>() );
+    }
+}
+
+
+void Scheduler::parse_schedule_configuration()
+{
+    po::variables_map& vm = IConfigurationFile::instance().variables_map();
+    std::wstring schedule_string;
+
+    if ( vm.count( "review.schedule" ) )
+    {
+        schedule_string = vm["review.schedule"].as<std::wstring>();
+    }
+
+    if ( schedule_string == L"disable" || schedule_string == L"no" )
+    {
+        return;
+    }
+
+    if ( schedule_string.empty() )
+    {
+        schedule_string = L"7 : 24 hours, 48 hours, 72 hours, 96 hours, 120 hours, 144 hours, 168 hours";
+    }
+
+    size_t pos = schedule_string.find_first_of( L":|" );
+
+    if ( pos == std::wstring::npos )
+    {
+        return;
+    }
+
+    size_t number = boost::lexical_cast<size_t>( boost::trim_copy( schedule_string.substr( 0, pos ) ) );
+    std::vector<std::time_t> schedule = Utility::times_from_strings( Utility::split_string( schedule_string.substr( pos + 1 ) ) );
+    number = ( 0 == number ? 100 : number );
+
+    if ( 1 == schedule.size() )
+    {
+        m_schedule.reserve( number );
+
+        for ( size_t i = 0; i < number; ++i )
+        {
+            m_schedule.push_back( schedule[0] );
+        }
+    }
+    else
+    {
+        m_schedule = schedule;
     }
 }

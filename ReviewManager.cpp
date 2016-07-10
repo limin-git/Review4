@@ -5,6 +5,7 @@
 #include "IDisable.h"
 #include "IHotKey.h"
 #include "IConfigurationFile.h"
+#include "ILog.h"
 
 namespace po = boost::program_options;
 
@@ -17,7 +18,7 @@ namespace po = boost::program_options;
 
 
 ReviewManager::ReviewManager()
-    : m_forward_before_show( false ),
+    : m_current_show_finished( false ),
       m_register_hot_keys( false )
 {
     po::options_description options( "" );
@@ -48,78 +49,80 @@ ReviewManager::~ReviewManager()
 
 void ReviewManager::run()
 {
-    m_slideshow_history.push_back( IScheduler::instance().get_slideshow() );
-    m_current = m_slideshow_history.begin();
+    m_review_history.push_back( IScheduler::instance().get_slideshow() );
+    m_current = m_review_history.begin();
 
     show();
 
     IInput::instance()
-        .add_key_handler( this, true, VK_DOWN,      boost::bind( &ReviewManager::continue_handler, this ) )
-        .add_key_handler( this, true, VK_BACK,      boost::bind( &ReviewManager::continue_handler, this ) )
-        .add_key_handler( this, true, VK_RETURN,    boost::bind( &ReviewManager::continue_handler, this ) )
-        .add_key_handler( this, true, VK_OEM_3,     boost::bind( &ReviewManager::continue_handler, this ) )     // '`~' for US
-        .add_key_handler( this, true, VK_OEM_5,     boost::bind( &ReviewManager::continue_handler, this ) )     //  '\|' for US
-        .add_key_handler( this, true, VK_RIGHT,     boost::bind( &ReviewManager::next_handler, this ) )
-        .add_key_handler( this, true, VK_NEXT,      boost::bind( &ReviewManager::next_handler, this ) )
-        .add_key_handler( this, true, VK_UP,        boost::bind( &ReviewManager::repeat_handler, this ) )
-        .add_key_handler( this, true, VK_LEFT,      boost::bind( &ReviewManager::previous_handler, this ) )
-        .add_key_handler( this, true, VK_PRIOR,     boost::bind( &ReviewManager::previous_handler, this ) )
-        .add_key_handler( this, true, VK_DELETE,    boost::bind( &ReviewManager::disable_handler, this ) )
-        .add_mouse_handler( this, 0, FROM_LEFT_1ST_BUTTON_PRESSED,  boost::bind( &ReviewManager::continue_handler, this ) )
-        .add_mouse_handler( this, MOUSE_HWHEELED, 0,                boost::bind( &ReviewManager::continue_handler, this ) )
-        .add_mouse_handler( this, 0, RIGHTMOST_BUTTON_PRESSED,      boost::bind( &ReviewManager::previous_handler, this ) )
+        .add_key_handler( this, true, VK_DOWN,      boost::bind( &ReviewManager::handle_continue, this ) )
+        .add_key_handler( this, true, VK_BACK,      boost::bind( &ReviewManager::handle_continue, this ) )
+        .add_key_handler( this, true, VK_OEM_3,     boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
+        .add_key_handler( this, true, VK_OEM_5,     boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
+        .add_key_handler( this, true, VK_RIGHT,     boost::bind( &ReviewManager::handle_next, this ) )
+        .add_key_handler( this, true, VK_NEXT,      boost::bind( &ReviewManager::handle_next, this ) )
+        .add_key_handler( this, true, VK_UP,        boost::bind( &ReviewManager::handle_replay, this ) )
+        .add_key_handler( this, true, VK_LEFT,      boost::bind( &ReviewManager::handle_previous, this ) )
+        .add_key_handler( this, true, VK_PRIOR,     boost::bind( &ReviewManager::handle_previous, this ) )
+        .add_key_handler( this, true, VK_DELETE,    boost::bind( &ReviewManager::handle_disable, this ) )
+        .add_mouse_handler( this, 0, FROM_LEFT_1ST_BUTTON_PRESSED,  boost::bind( &ReviewManager::handle_continue, this ) )
+        .add_mouse_handler( this, MOUSE_HWHEELED, 0,                boost::bind( &ReviewManager::handle_continue, this ) )
+        .add_mouse_handler( this, 0, RIGHTMOST_BUTTON_PRESSED,      boost::bind( &ReviewManager::handle_previous, this ) )
         ;
 
     if ( m_register_hot_keys )
     {
         IHotKey::instance()
-            .register_handler( this, 0, VK_LEFT,    boost::bind( &ReviewManager::previous_handler, this ) )
-            .register_handler( this, 0, VK_RIGHT,   boost::bind( &ReviewManager::next_handler, this ) )
-            .register_handler( this, 0, VK_UP,      boost::bind( &ReviewManager::repeat_handler, this ) )
-            .register_handler( this, 0, VK_DOWN,    boost::bind( &ReviewManager::continue_handler, this ) )
+            .register_handler( this, 0, VK_LEFT,                boost::bind( &ReviewManager::handle_previous, this ) )
+            .register_handler( this, 0, VK_RIGHT,               boost::bind( &ReviewManager::handle_next, this ) )
+            .register_handler( this, 0, VK_UP,                  boost::bind( &ReviewManager::handle_replay, this ) )
+            .register_handler( this, 0, VK_DOWN,                boost::bind( &ReviewManager::handle_continue, this ) )
+            .register_handler( this, 0, VK_DELETE,              boost::bind( &ReviewManager::handle_disable, this ) )
+            .register_handler( this, MOD_CONTROL, VK_RIGHT,     boost::bind( &ReviewManager::handle_jump, this, 10 ) )
+            .register_handler( this, MOD_CONTROL, VK_DOWN,      boost::bind( &ReviewManager::handle_jump, this, 50 ) )
+            .register_handler( this, MOD_CONTROL, VK_NEXT,      boost::bind( &ReviewManager::handle_jump, this, 100 ) )
+            .register_handler( this, MOD_CONTROL, VK_LEFT,      boost::bind( &ReviewManager::handle_jump_back, this, 10 ) )
+            .register_handler( this, MOD_CONTROL, VK_UP,        boost::bind( &ReviewManager::handle_jump_back, this, 50 ) )
+            .register_handler( this, MOD_CONTROL, VK_PRIOR,     boost::bind( &ReviewManager::handle_jump_back, this, 100 ) )
             ;
     }
 }
 
 
-void ReviewManager::continue_handler()
+void ReviewManager::handle_continue()
 {
     show();
 }
 
 
-void ReviewManager::next_handler()
+void ReviewManager::handle_next()
 {
-    forward();
-    m_forward_before_show = false;
+    go_forward();
+    m_current_show_finished = false;
     show();
 }
 
 
-void ReviewManager::previous_handler()
+void ReviewManager::handle_previous()
 {
-    if ( m_current != m_slideshow_history.begin() )
-    {
-        m_current--;
-        (*m_current)->clear_state();
-        m_forward_before_show = false;
-        show();
-    }
+    go_back();
+    m_current_show_finished = false;
+    show();
 }
 
 
 void ReviewManager::show()
 {
-    if ( m_forward_before_show )
+    if ( m_current_show_finished )
     {
-        forward();
+        go_forward();
     }
 
-    m_forward_before_show = (*m_current)->show();
+    m_current_show_finished = (*m_current)->show();
 }
 
 
-void ReviewManager::forward()
+void ReviewManager::go_forward()
 {
     if ( (*m_current)->empty() )
     {
@@ -130,10 +133,10 @@ void ReviewManager::forward()
         m_current++;
     }
 
-    if ( m_current == m_slideshow_history.end() )
+    if ( m_current == m_review_history.end() )
     {
-        m_slideshow_history.push_back( IScheduler::instance().get_slideshow() );
-        m_current = m_slideshow_history.end();
+        m_review_history.push_back( IScheduler::instance().get_slideshow() );
+        m_current = m_review_history.end();
         m_current--;
     }
     else
@@ -143,18 +146,28 @@ void ReviewManager::forward()
 }
 
 
-void ReviewManager::repeat_handler()
+void ReviewManager::go_back()
 {
-    (*m_current)->clear_state();
-    m_forward_before_show = (*m_current)->show();
+    if ( m_current != m_review_history.begin() )
+    {
+        m_current--;
+        (*m_current)->clear_state();
+    }
 }
 
 
-void ReviewManager::disable_handler()
+void ReviewManager::handle_replay()
+{
+    (*m_current)->clear_state();
+    m_current_show_finished = (*m_current)->show();
+}
+
+
+void ReviewManager::handle_disable()
 {
     ISlideshowPtr slideshow = *m_current;
     size_t key = slideshow->key();
-    next_handler();
+    handle_next();
     IDisable::instance().disable( slideshow );
     delete_review_history( key );
 }
@@ -162,14 +175,42 @@ void ReviewManager::disable_handler()
 
 void ReviewManager::delete_review_history( size_t key )
 {
-    for ( ISlideshowPtrList::iterator it = m_slideshow_history.begin(); it != m_slideshow_history.end(); NULL )
+    for ( ISlideshowPtrList::iterator it = m_review_history.begin(); it != m_review_history.end(); NULL )
     {
         if ( (*it)->key() == key )
         {
-            m_slideshow_history.erase( it++ );
+            m_review_history.erase( it++ );
             continue;
         }
 
         it++;
     }
+}
+
+
+void ReviewManager::handle_jump( size_t distance )
+{
+    Sleep( 500 );
+
+    for ( size_t i = 0; i < distance + 1; ++i )
+    {
+        go_forward();
+    }
+
+    m_current_show_finished = false;
+    show();
+}
+
+
+void ReviewManager::handle_jump_back( size_t distance )
+{
+    Sleep( 500 );
+
+    for ( size_t i = 0; i < distance + 1; ++i )
+    {
+        go_back();
+    }
+
+    m_current_show_finished = false;
+    show();
 }

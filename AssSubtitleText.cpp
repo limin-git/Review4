@@ -3,6 +3,7 @@
 #include "FileUtility.h"
 #include "AssSlideshow.h"
 #include "IDisable.h"
+#include "ILog.h"
 
 
 AssSubtitleText::AssSubtitleText( const fs::path& file_path )
@@ -28,6 +29,9 @@ void AssSubtitleText::parse()
         L"([0-9]+):([0-9]+):([0-9]+).([0-9]+)"
     );
 
+    typedef std::map<SubTime, size_t> TimeKeyMap;
+    TimeKeyMap time_key_map;
+
     boost::wsregex_iterator it( s.begin(), s.end(), e );
     boost::wsregex_iterator end;
 
@@ -40,8 +44,7 @@ void AssSubtitleText::parse()
             continue;
         }
 
-        trim_text( text );
-        size_t key = m_hash( text );
+        size_t key = m_hash( it->str() );
 
         if ( IDisable::instance().is_disabled( key ) )
         {
@@ -73,8 +76,19 @@ void AssSubtitleText::parse()
             end_time.milliseconds = ( end_time.hour*3600 + end_time.minute*60 + end_time.second ) * 1000 + end_time.millisecond;
         }
 
-        m_keys.push_back( key );
+        if ( end_time.milliseconds - start_time.milliseconds < 500 )
+        {
+            continue;
+        }
+
+        trim_text( text );
+        time_key_map[start_time] = key;
         m_slidshow_map[key] = ISlideshowPtr( new AssSlideshow( key, start_time, end_time, text ) );
+    }
+
+    BOOST_FOREACH( TimeKeyMap::value_type& v, time_key_map )
+    {
+        m_keys.push_back( v.second );
     }
 }
 

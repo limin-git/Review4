@@ -5,13 +5,17 @@
 #include "InputUtility.h"
 #include "IConsole.h"
 #include "ILog.h"
+#include "Utility.h"
 
 
 MpcPlayer::MpcPlayer()
     : m_player_hwnd( NULL ),
       m_load_subtitle( false ),
       m_auto_stop( true ),
-      m_playing( false )
+      m_playing( false ),
+      m_running( true ),
+      m_adjust_start_time( 0 ),
+      m_adjust_duration_time( 0 )
 {
     m_console = GetConsoleWindow();
 
@@ -22,8 +26,20 @@ MpcPlayer::MpcPlayer()
         ( "movie.load-subtitle", po::wvalue<std::wstring>(), "load subtitle?" )
         ( "movie.auto-stop", po::wvalue<std::wstring>(), "auto stop?" )
         ( "movie.wait-player-startup", po::value<size_t>()->default_value( 3 ), "wait the play to startup in seconds" )
+        ( "movie.adjust-start-time", po::value<int>()->default_value( 0 ), "adjust subtitle display start time" )
+        ( "movie.adjust-duration-time", po::value<int>()->default_value( 0 ), "adjust subtitle display duration time" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
+    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer(this).variables_map();
+
+    if ( vm.count( "file.name" ) )
+    {
+        m_subtitle_path = vm["file.name"].as<std::wstring>();
+        
+        if ( ! m_subtitle_path.is_absolute() )
+        {
+            m_subtitle_path = fs::current_path() / m_subtitle_path;
+        }
+    }
 
     if ( vm.count( "movie.player" ) )
     {
@@ -35,12 +51,6 @@ MpcPlayer::MpcPlayer()
     {
         m_movie = vm["movie.movie"].as<std::wstring>();
         system_complete( m_movie );
-    }
-
-    if ( vm.count( "file.name" ) )
-    {
-        m_subtitle_path = vm["file.name"].as<std::wstring>();
-        system_complete( m_subtitle_path );
     }
 
     if ( vm.count( "movie.load-subtitle" ) )
@@ -64,6 +74,7 @@ MpcPlayer::MpcPlayer()
 
 MpcPlayer::~MpcPlayer()
 {
+    m_running = false;
     terminate_player();
 }
 
@@ -83,13 +94,25 @@ bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
         return false;
     }
 
+    int sec = subtitle->second();
+    int mil = subtitle->millisecond();
+    int min = subtitle->minute();
+    int hor = subtitle->hour();
+
+    if ( m_adjust_start_time )
+    {
+        mil += m_adjust_start_time;
+        while ( mil < 0 ) { mil += 1000; while ( --sec < 0 ) { sec += 60; while ( --min < 0 ) { min += 60; hor--; } } }
+        while ( 1000 <= mil ) {  mil -= 1000; while ( 60 <= ++sec ) { sec -= 60; while ( 60 <= ++min ) { min -= 60; ++hor; } } }
+    }
+
     std::stringstream ss;
-    ss  << std::setfill('0')
-        << std::setw(2) << subtitle->hour()
-        << std::setw(2) << subtitle->minute()
-        << std::setw(2) << subtitle->second()
-        << std::setw(3) << subtitle->millisecond()
+    ss  << std::setw(2) << std::setfill('0') << hor
+        << std::setw(2) << std::setfill('0') << min
+        << std::setw(2) << std::setfill('0') << sec
+        << std::setw(2) << std::setfill('0') << mil
         ;
+    log_test << ss.str() << " " << subtitle->key_string();
     IInputSender::instance().string( ss.str() ).key( VK_RETURN );
     m_subtitle = subtitle;
     m_processor.queue_item( m_subtitle );
@@ -122,9 +145,16 @@ void MpcPlayer::play_thread( const ISubtitleSlideshowPtr& subtitle )
 
     size_t duration = subtitle->duration();
 
-    for ( size_t i = 0, step = 5; i < duration; i += step )
+    if ( ( m_adjust_duration_time < 0 && static_cast<size_t>(- m_adjust_duration_time) < duration ) || 0 < m_adjust_duration_time )
     {
+        duration += m_adjust_duration_time;
+    }
+
+    for ( size_t i = 0, step = 2; i < duration; i += step )
+    {
+        if ( !m_running ) { break; }
         Sleep( step );
+        if ( !m_running ) { break; }
 
         if ( m_subtitle != subtitle )
         {
@@ -153,7 +183,7 @@ void MpcPlayer::pause()
     {
         SetForegroundWindow( m_player_hwnd );
         IInputSender::instance().key( VK_SPACE );
-        SetForegroundWindow( m_console );
+        //SetForegroundWindow( m_console );
         m_playing = false;
     }
 }
@@ -224,3 +254,18 @@ void MpcPlayer::locate_player()
         Sleep( m_wait_startup * 1000 );
     }
 }
+
+
+void MpcPlayer::options_changed( const po::variables_map& vm, const po::variables_map& old )
+{
+    if ( Utility::updated<int>( "movie.adjust-start-time", vm, old ) )
+    {
+        m_adjust_start_time = vm["movie.adjust-start-time"].as<int>();
+    }
+
+    if ( Utility::updated<int>( "movie.adjust-duration-time", vm, old ) )
+    {
+        m_adjust_duration_time = vm["movie.adjust-duration-time"].as<int>();
+    }
+}
+

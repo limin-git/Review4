@@ -72,7 +72,6 @@ void Wallpaper::run()
         .add_key_handler( this, true, 'Z', 'Z',                     boost::bind( &Wallpaper::remove_current_picture, this ) )
         .add_key_handler( this, true, VK_LEFT, VK_DOWN,             boost::bind( &Wallpaper::set_wallpaper, this ) )
         .add_key_handler( this, true, VK_BACK,                      boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_RETURN,                    boost::bind( &Wallpaper::set_wallpaper, this ) )
         .add_key_handler( this, true, VK_OEM_3,                     boost::bind( &Wallpaper::set_wallpaper, this ) )     // '`~' for US
         .add_key_handler( this, true, VK_OEM_5,                     boost::bind( &Wallpaper::set_wallpaper, this ) )     //  '\|' for US
         .add_key_handler( this, true, VK_NEXT,                      boost::bind( &Wallpaper::set_wallpaper, this ) )

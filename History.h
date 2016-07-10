@@ -27,4 +27,5 @@ private:
     HistoryRecord m_history;
     fs::path m_file_name;
     std::fstream m_file_stream;
+    bool m_no_history;
 };

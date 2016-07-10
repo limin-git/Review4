@@ -11,38 +11,66 @@
 
 
 History::History()
+    : m_no_history( false )
 {
     po::options_description options;
     options.add_options()
         ( "file.history", po::wvalue<std::wstring>(), "history file" )
+        ( "review.no-history", po::wvalue<std::wstring>(), "write history or not?" )
         ;
-    m_file_name = IConfigurationFile::instance()
+    po::variables_map& vm = IConfigurationFile::instance()
         .add_options_description( options )
-        .variables_map()["file.history"].as<std::wstring>()
+        .variables_map()
         ;
-    system_complete( m_file_name );
-    load_history();
-    IDisable::instance().add_observer( this );
+
+    if ( vm.count( "file.history" ) )
+    {
+        m_file_name = vm["file.history"].as<std::wstring>();
+    }
+
+    if ( vm.count( "review.no-history" ) )
+    {
+        m_no_history = ( L"true" == vm["review.no-history"].as<std::wstring>() );
+    }
+
+    if ( ! m_no_history )
+    {
+        system_complete( m_file_name );
+        load_history();
+        IDisable::instance().add_observer( this );
+    }
 }
 
 
 History::~History()
 {
-    save_history_file();
-    IDisable::instance().remove_observer( this );
+    if ( ! m_no_history )
+    {
+        save_history_file();
+        IDisable::instance().remove_observer( this );
+    }
 }
 
 
 const std::vector<std::time_t>& History::history( size_t key )
 {
+    if ( m_no_history )
+    {
+        static std::vector<std::time_t> empty;
+        return empty;
+    }
+
     return m_history[key];
 }
 
 
 void History::write_history( size_t key, std::time_t t)
 {
-    m_history[key].push_back( t );
-    m_file_stream << key << '\t' << t << std::endl;
+    if ( ! m_no_history )
+    {
+        m_history[key].push_back( t );
+        m_file_stream << key << '\t' << t << std::endl;
+    }
 }
 
 
