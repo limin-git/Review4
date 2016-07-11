@@ -2,6 +2,7 @@
 #include "IHotKey.h"
 #include "IInputSender.h"
 #include "Singleton.h"
+#include "ThreadPool.h"
 
 
 struct HotKey : IHotKey
@@ -10,7 +11,7 @@ public:
 
     HotKey();
     ~HotKey();
-    virtual IHotKey& register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, HotKeyCallback callback );
+    virtual IHotKey& register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, Callable callback );
     virtual IHotKey& unregister_handler( IHotKeyHandler* handler );
 
 private:
@@ -21,20 +22,26 @@ private:
 
     struct RegisterHandlerInfo
     {
-        IHotKeyHandler* handler;
+        UINT id;
         UINT modifiers;
         UINT vk;
-        HotKeyCallback callback;
     };
 
     RegisterHandlerInfo m_register_handler;
-    IHotKeyHandler* m_unregister_handler;
+    std::set<UINT> m_unregister_ids;
+    boost::mutex m_mutex;
 
 private:
 
-    std::map< IHotKeyHandler*, std::set<size_t> > m_handlers;
-    std::map<size_t, HotKeyCallback> m_callbacks;
+    typedef std::vector<Callable> CallableList;
+    typedef std::map<IHotKeyHandler*, CallableList> CallbackMap;
+    typedef std::pair<UINT, UINT> Key; // modifier, vk
+    typedef std::map<Key, CallbackMap> KeyHandlerMap;
+    typedef std::map<Key, size_t> KeyIdMap;
+    KeyHandlerMap m_handlers;
+    KeyIdMap m_ids;
     boost::thread m_thread;
     bool m_running;
     Singleton<IInputSender> m_input_sender;
+    ThreadPool m_thread_pool;
 };

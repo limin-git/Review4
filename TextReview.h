@@ -1,5 +1,5 @@
 #pragma once
-#include "IReviewManager.h"
+#include "IReview.h"
 #include "IInputHandler.h"
 #include "ISlideShow.h"
 #include "IHotKeyHandler.h"
@@ -9,20 +9,16 @@
 #include "IInput.h"
 #include "IHotKey.h"
 #include "Singleton.h"
-#include "IReview.h"
-#include "ThreadPool.h"
 
 
-struct ReviewManager : IReviewManager,
-                       IInputHandler,
-                       IHotKeyHandler
+struct TextReview : IReview
 {
 public:
 
-    ReviewManager();
-    ~ReviewManager();
+    TextReview();
+    ~TextReview();
 
-    virtual void run();
+    virtual void handle_start();
     virtual void handle_continue();
     virtual void handle_replay();
     virtual void handle_next();
@@ -31,18 +27,21 @@ public:
     virtual void handle_jump_back( size_t distance );
     virtual void handle_disable();
 
-private:
+protected:
 
-    void start();
-    void handle_impl_thread( IReview* review, void (IReview::*virtual_fun)() );
-    void handle_impl_thread_1( IReview* review, void (IReview::*virtual_fun)(size_t), size_t distance );
+    void show();
+    void go_forward();
+    void go_back();
+    void delete_review_history( size_t key );
 
-private:
+protected:
 
-    bool m_register_hot_keys;
+    ISlideshowPtrList m_review_history;
+    ISlideshowPtrList::iterator m_current;
+    bool m_current_show_finished;
+    Singleton<IDisable> m_disable;
+    Singleton<IScheduler> m_scheduler;
     Singleton<IConfigurationFile> m_configuration;
     Singleton<IInput> m_input;
     Singleton<IHotKey> m_hotkey;
-    std::set<IReview*> m_reivews;
-    ThreadPool m_thread_pool;
 };

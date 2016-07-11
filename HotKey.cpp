@@ -5,10 +5,9 @@
 
 HotKey::HotKey()
     : m_running( true ),
-      m_unregister_handler( NULL )
+      m_thread_pool( 5 )
 {
     m_thread = boost::thread( boost::bind( &HotKey::message_loop, this ) );
-    Sleep( 20 );
 }
 
 
@@ -20,20 +19,61 @@ HotKey::~HotKey()
 }
 
 
-IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, HotKeyCallback callback )
+IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, Callable callback )
 {
-    RegisterHandlerInfo info = { handler, fsModifiers, vk, callback };
-    m_register_handler = info;
-    m_input_sender->Ctrl_Alt_Shift_key( 'R' );
-    Sleep( 5 );
+    KeyHandlerMap::iterator it = m_handlers.find( std::make_pair( fsModifiers, vk ) );
+
+    if ( it != m_handlers.end() )
+    {
+        it->second[handler].push_back( callback );
+    }
+    else
+    {
+        m_mutex.lock();
+        static UINT id = 0;
+        Key key( fsModifiers, vk );
+        m_ids[key] = id;
+        m_handlers[key][handler].push_back( callback );
+
+        RegisterHandlerInfo info = { id, fsModifiers, vk };
+        m_register_handler = info;
+        m_input_sender->Ctrl_Alt_Shift_key( 'R' );
+        id++;
+    }
+
     return *this;
 }
 
 
 IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
 {
-    m_unregister_handler = handler;
-    m_input_sender->Ctrl_Alt_Shift_key( 'U' );
+    std::set<UINT> ids;
+
+    for ( KeyHandlerMap::iterator it = m_handlers.begin(); it != m_handlers.end(); NULL )
+    {
+        it->second.erase( handler );
+
+        if ( it->second.empty() )
+        {
+            Key key = it->first;
+            UINT id = m_ids[key];
+            m_ids.erase( key );
+            ids.insert( id );
+            m_handlers.erase( it++ );
+        }
+        else
+        {
+            it++;
+        }
+    }
+
+    if ( ! ids.empty() )
+    {
+        m_mutex.lock();
+        m_unregister_ids.swap( ids );
+        m_input_sender->Ctrl_Alt_Shift_key( 'U' );
+    }
+
     return *this;
 }
 
@@ -52,24 +92,19 @@ void HotKey::message_loop()
         {
             if ( 0xBFFD == msg.wParam ) // Register
             {
-                RegisterHandlerInfo& i = m_register_handler;
-                int id = i.handler->unique_id();
-                m_handlers[i.handler].insert( id );
-                m_callbacks[id] = i.callback;
-                RegisterHotKey( NULL, id, i.modifiers, i.vk );
+                RegisterHandlerInfo i = m_register_handler;
+                m_mutex.unlock();
+                RegisterHotKey( NULL, i.id, i.modifiers, i.vk );
             }
             if ( 0xBFFE == msg.wParam ) // Unregister
             {
-                if ( m_unregister_handler )
-                {
-                    BOOST_FOREACH( int id, m_handlers[m_unregister_handler] )
-                    {
-                        UnregisterHotKey( NULL, id );
-                        m_callbacks.erase( id );
-                    }
+                std::set<UINT> ids;
+                ids.swap( m_unregister_ids );
+                m_mutex.unlock();
 
-                    m_handlers.erase( m_unregister_handler );
-                    m_unregister_handler = NULL;
+                BOOST_FOREACH( int id, ids )
+                {
+                    UnregisterHotKey( NULL, id );
                 }
             }
             else if ( 0xBFFF == msg.wParam ) // Quit
@@ -78,20 +113,24 @@ void HotKey::message_loop()
                 UnregisterHotKey( NULL, 0xBFFE );
                 UnregisterHotKey( NULL, 0xBFFF );
 
-                for ( std::map<size_t, HotKeyCallback>::iterator it = m_callbacks.begin(); it != m_callbacks.end(); ++it )
+                BOOST_FOREACH( KeyIdMap::value_type& v, m_ids )
                 {
-                    UnregisterHotKey( NULL, it->first );
+                    UnregisterHotKey( NULL, v.second );
                 }
 
                 return;
             }
             else
             {
-                std::map<size_t, HotKeyCallback>::iterator it = m_callbacks.find( msg.wParam );
-
-                if ( it != m_callbacks.end() )
+                BOOST_FOREACH( KeyIdMap::value_type& v, m_ids )
                 {
-                    (it->second)();
+                    if ( v.second == msg.wParam )
+                    {
+                        BOOST_FOREACH( CallbackMap::value_type& vc, m_handlers[v.first] )
+                        {
+                            m_thread_pool.queue_items( vc.second );
+                        }
+                    }
                 }
             }
         }

@@ -405,6 +405,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\IReview.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IReviewManager.cpp"
 				>
 			</File>
@@ -546,6 +550,10 @@
 			</File>
 			<File
 				RelativePath=".\TextFactory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TextReview.h"
 				>
 			</File>
 			<File
@@ -745,7 +753,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SubtitleReview.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SubtitleReview.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TextFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TextReview.cpp"
 				>
 			</File>
 			<File

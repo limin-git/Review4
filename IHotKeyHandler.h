@@ -4,7 +4,6 @@
 struct IHotKeyHandler
 {
     virtual ~IHotKeyHandler() {}
-    int unique_id();
 };
 
-typedef boost::function<void()> HotKeyCallback;
+typedef boost::function<void()> Callable;

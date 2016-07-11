@@ -36,8 +36,6 @@ Wallpaper::Wallpaper()
             }
         }
     }
-
-    m_pictures = Utility::get_files_of_directory( m_directory );
 }
 
 
@@ -48,50 +46,6 @@ Wallpaper::~Wallpaper()
         m_input->remove_key_handler( this ).remove_mouse_handler( this );
         Utility::set_system_wallpaper( L"C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );
     }
-}
-
-
-void Wallpaper::run()
-{
-    if ( m_directory.empty() )
-    {
-        return;
-    }
-
-    set_wallpaper();
-
-    m_input
-        ->add_key_handler( this, true, 'Z', 'Z',                    boost::bind( &Wallpaper::remove_current_picture, this ) )
-        .add_key_handler( this, true, VK_LEFT, VK_DOWN,             boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_BACK,                      boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_OEM_3,                     boost::bind( &Wallpaper::set_wallpaper, this ) )     // '`~' for US
-        .add_key_handler( this, true, VK_OEM_5,                     boost::bind( &Wallpaper::set_wallpaper, this ) )     //  '\|' for US
-        .add_key_handler( this, true, VK_NEXT,                      boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_PRIOR,                     boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_key_handler( this, true, VK_DELETE,                    boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_mouse_handler( this, 0, FROM_LEFT_1ST_BUTTON_PRESSED,  boost::bind( &Wallpaper::set_wallpaper, this ) )
-        .add_mouse_handler( this, 0, RIGHTMOST_BUTTON_PRESSED,      boost::bind( &Wallpaper::set_wallpaper, this ) )
-        ;
-}
-
-
-void Wallpaper::search_pictures()
-{
-    fs::recursive_directory_iterator it( m_directory );
-    fs::recursive_directory_iterator end;
-
-    for ( ; it != end; ++it )
-    {
-        if ( ! is_directory( it.status() )  )
-        {
-            if ( Utility::is_picture( it->path() ) )
-            {
-                m_pictures.push_back( it->path() );
-            }
-        }
-    }
-
-    m_current = m_pictures.end();
 }
 
 
@@ -127,4 +81,57 @@ void Wallpaper::remove_current_picture()
         m_pictures.erase( m_current );
         set_wallpaper();
     }
+}
+
+
+void Wallpaper:: handle_start()
+{
+    m_pictures = Utility::get_files_of_directory( m_directory );
+
+    if ( m_directory.empty() )
+    {
+        return;
+    }
+
+    set_wallpaper();
+    m_input->add_key_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
+}
+
+
+void Wallpaper:: handle_continue()
+{
+}
+
+
+void Wallpaper:: handle_replay()
+{
+}
+
+
+void Wallpaper:: handle_next()
+{
+    set_wallpaper();
+}
+
+
+void Wallpaper:: handle_previous()
+{
+    set_wallpaper();
+}
+
+
+void Wallpaper:: handle_jump( size_t distance )
+{
+    set_wallpaper();
+}
+
+
+void Wallpaper:: handle_jump_back( size_t distance )
+{
+    set_wallpaper();
+}
+
+
+void Wallpaper:: handle_disable()
+{
 }
