@@ -49,16 +49,16 @@ void ReviewManager::run()
     show();
 
     m_input
-        ->add_key_handler( this, true, VK_DOWN,     boost::bind( &ReviewManager::handle_continue, this ) )
-        .add_key_handler( this, true, VK_BACK,      boost::bind( &ReviewManager::handle_continue, this ) )
-        .add_key_handler( this, true, VK_OEM_3,     boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
-        .add_key_handler( this, true, VK_OEM_5,     boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
-        .add_key_handler( this, true, VK_RIGHT,     boost::bind( &ReviewManager::handle_next, this ) )
-        .add_key_handler( this, true, VK_NEXT,      boost::bind( &ReviewManager::handle_next, this ) )
-        .add_key_handler( this, true, VK_UP,        boost::bind( &ReviewManager::handle_replay, this ) )
-        .add_key_handler( this, true, VK_LEFT,      boost::bind( &ReviewManager::handle_previous, this ) )
-        .add_key_handler( this, true, VK_PRIOR,     boost::bind( &ReviewManager::handle_previous, this ) )
-        .add_key_handler( this, true, VK_DELETE,    boost::bind( &ReviewManager::handle_disable, this ) )
+        ->add_key_handler( this, 0, VK_DOWN,     boost::bind( &ReviewManager::handle_continue, this ) )
+        .add_key_handler( this, 0, VK_BACK,      boost::bind( &ReviewManager::handle_continue, this ) )
+        .add_key_handler( this, 0, VK_OEM_3,     boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
+        .add_key_handler( this, 0, VK_OEM_5,     boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
+        .add_key_handler( this, 0, VK_RIGHT,     boost::bind( &ReviewManager::handle_next, this ) )
+        .add_key_handler( this, 0, VK_NEXT,      boost::bind( &ReviewManager::handle_next, this ) )
+        .add_key_handler( this, 0, VK_UP,        boost::bind( &ReviewManager::handle_replay, this ) )
+        .add_key_handler( this, 0, VK_LEFT,      boost::bind( &ReviewManager::handle_previous, this ) )
+        .add_key_handler( this, 0, VK_PRIOR,     boost::bind( &ReviewManager::handle_previous, this ) )
+        .add_key_handler( this, 0, VK_DELETE,    boost::bind( &ReviewManager::handle_disable, this ) )
         .add_mouse_handler( this, 0, FROM_LEFT_1ST_BUTTON_PRESSED,  boost::bind( &ReviewManager::handle_continue, this ) )
         .add_mouse_handler( this, MOUSE_HWHEELED, 0,                boost::bind( &ReviewManager::handle_continue, this ) )
         .add_mouse_handler( this, 0, RIGHTMOST_BUTTON_PRESSED,      boost::bind( &ReviewManager::handle_previous, this ) )

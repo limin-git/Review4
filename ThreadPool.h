@@ -43,6 +43,14 @@ public:
         boost::thread t( item );
     }
 
+    template<typename U> void queue_items( const U& items )
+    {
+        BOOST_FOREACH( const Callable& item, items )
+        {
+            queue_item( item );
+        }
+    }
+
 private:
 
     std::vector<QueueProcessor*> m_processors;

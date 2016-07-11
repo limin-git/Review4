@@ -5,9 +5,9 @@
 
 TestInput::TestInput()
 {
-    //test1();
+    test1();
     //test2();
-    test3();
+    //test3();
 }
 
 
@@ -34,14 +34,39 @@ void TestInput::test1()
         {
             std::cout << "Enter" << std::endl;
         }
+
+        void control_A()
+        {
+            std::cout << "Control + A" << std::endl;
+        }
+
+        void shift_B()
+        {
+            std::cout << "Shift + B" << std::endl;
+        }
+
+        void alt_C()
+        {
+            std::cout << "Alt + C" << std::endl;
+        }
+
+        void control_alt_D()
+        {
+            std::cout << "Control + Alt + D" << std::endl;
+        }
+
     } kh;
 
     IInput::instance()
-        .add_key_handler( &kh, true, 'A', 'Z',  boost::bind( &KeyHandler::chars, &kh ) )
-        .add_key_handler( &kh, true, VK_LEFT, VK_DOWN,  boost::bind( &KeyHandler::arrows, &kh ) )
-        .add_key_handler( &kh, true, VK_F1, VK_F24, boost::bind( &KeyHandler::Fn, &kh ) )
-        .add_key_handler( &kh, true, VK_RETURN, boost::bind( &KeyHandler::enter, &kh ) )
-        .run();
+        .add_key_handler( &kh, 0, VK_LEFT,  boost::bind( &KeyHandler::arrows, &kh ) )
+        .add_key_handler( &kh, 0, VK_F1, boost::bind( &KeyHandler::Fn, &kh ) )
+        .add_key_handler( &kh, 0, VK_RETURN, boost::bind( &KeyHandler::enter, &kh ) )
+        .add_key_handler( &kh, MOD_CONTROL, 'A', boost::bind( &KeyHandler::control_A, &kh ) )
+        .add_key_handler( &kh, MOD_SHIFT, 'B', boost::bind( &KeyHandler::shift_B, &kh ) )
+        .add_key_handler( &kh, MOD_ALT, 'C', boost::bind( &KeyHandler::alt_C, &kh ) )
+        .add_key_handler( &kh, (MOD_CONTROL|MOD_ALT), 'D', boost::bind( &KeyHandler::control_alt_D, &kh ) )
+        .run()
+        ;
 }
 
 
@@ -105,10 +130,9 @@ void TestInput::test3()
     } kh;
 
     IInput::instance()
-        .add_key_handler( &kh, true, 'A', 'Z',  boost::bind( &KeyHandler::chars, &kh ) )
-        .add_key_handler( &kh, true, VK_LEFT, VK_DOWN,  boost::bind( &KeyHandler::arrows, &kh ) )
-        .add_key_handler( &kh, true, VK_F1, VK_F24, boost::bind( &KeyHandler::Fn, &kh ) )
-        .add_key_handler( &kh, true, VK_RETURN, boost::bind( &KeyHandler::enter, &kh ) );
+        .add_key_handler( &kh, 0, VK_LEFT,  boost::bind( &KeyHandler::arrows, &kh ) )
+        .add_key_handler( &kh, 0, VK_F1, boost::bind( &KeyHandler::Fn, &kh ) )
+        .add_key_handler( &kh, 0, VK_RETURN, boost::bind( &KeyHandler::enter, &kh ) );
 
     struct MouseHandler : IInputHandler
     {

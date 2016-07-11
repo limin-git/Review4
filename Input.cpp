@@ -3,8 +3,8 @@
 
 
 Input::Input()
+    : m_thread_pool( 10 )
 {
-    m_key_handlers.resize( 2 );
 }
 
 
@@ -40,13 +40,18 @@ void Input::run()
                         return;
                     }
 
-                    KeyHandlerMap::iterator it = m_key_handlers[e.bKeyDown != 0].find( e.wVirtualKeyCode );
+                    if ( e.bKeyDown != TRUE )
+                    {
+                        continue;
+                    }
 
-                    if ( it != m_key_handlers[e.bKeyDown != 0].end() )
+                    KeyHandlerMap::iterator it = m_key_handlers.find( std::make_pair( control_key_state( e.dwControlKeyState ), e.wVirtualKeyCode ) );
+
+                    if ( it != m_key_handlers.end() )
                     {
                         BOOST_FOREACH( CallbackMap::value_type& v, it->second )
                         {
-                            m_processor.queue_item( boost::bind( &Input::callback_thread, this, v.second ) );
+                            m_thread_pool.queue_items( v.second );
                         }
                     }
                 }
@@ -74,7 +79,7 @@ void Input::run()
                     {
                         BOOST_FOREACH( CallbackMap::value_type& v, it->second )
                         {
-                            m_processor.queue_item( boost::bind( &Input::callback_thread, this, v.second ) );
+                            m_thread_pool.queue_items( v.second );
                         }
                     }
                 }
@@ -91,29 +96,18 @@ void Input::run()
 }
 
 
-IInput& Input::add_key_handler( IInputHandler* handler, bool key_down, WORD virtual_key_code, const boost::function<void()>& callback )
+IInput& Input::add_key_handler( IInputHandler* handler, UINT state, WORD vk, const Callback& callback )
 {
-    m_key_handlers[key_down][virtual_key_code][handler] = callback;
+    m_key_handlers[std::make_pair( state, vk )][handler].push_back( callback );
     return *this;
 }
 
 
-IInput& Input::add_key_handler( IInputHandler* handler, bool key_down, WORD virtual_key_code_first, WORD virtual_key_code_last, const Callback& callback )
+IInput& Input::add_key_handler( IInputHandler* handler, UINT state, WORD vk_first, WORD vk_last, const Callback& callback )
 {
-    for ( size_t virtual_key_code = virtual_key_code_first; virtual_key_code <= virtual_key_code_last; ++virtual_key_code )
+    for ( size_t vk = vk_first; vk <= vk_last; ++vk )
     {
-        m_key_handlers[key_down][virtual_key_code][handler] = callback;
-    }
-
-    return *this;
-}
-
-
-IInput& Input::add_key_handler( IInputHandler* handler, bool key_down, const std::vector<WORD>& virtual_key_code_list, const Callback& callback )
-{
-    BOOST_FOREACH( WORD virtual_key_code, virtual_key_code_list )
-    {
-        m_key_handlers[key_down][virtual_key_code][handler] = callback;
+        m_key_handlers[std::make_pair(state, vk)][handler].push_back( callback );
     }
 
     return *this;
@@ -122,12 +116,9 @@ IInput& Input::add_key_handler( IInputHandler* handler, bool key_down, const std
 
 IInput& Input::remove_key_handler( IInputHandler* handler )
 {
-    BOOST_FOREACH( KeyHandlerMap& key_handler, m_key_handlers)
+    BOOST_FOREACH( KeyHandlerMap::value_type& v, m_key_handlers )
     {
-        BOOST_FOREACH( KeyHandlerMap::value_type& v, key_handler )
-        {
-            v.second.erase( handler );
-        }
+        v.second.erase( handler );
     }
 
     return *this;
@@ -136,15 +127,15 @@ IInput& Input::remove_key_handler( IInputHandler* handler )
 
 IInput& Input::add_mouse_handler( IInputHandler* handler, DWORD event_flas, DWORD button_state, const Callback& callback )
 {
-    ( 0 == event_flas ? m_mouse_button_pressed_handlers[button_state][handler] : m_other_mouse_handlers[event_flas][handler] ) = callback;
+    ( 0 == event_flas ? m_mouse_button_pressed_handlers[button_state][handler] : m_other_mouse_handlers[event_flas][handler] ).push_back( callback );
 
     if ( 0 == event_flas )
     {
-        m_mouse_button_pressed_handlers[button_state][handler] = callback;
+        m_mouse_button_pressed_handlers[button_state][handler].push_back( callback );
     }
     else
     {
-        m_other_mouse_handlers[event_flas][handler] = callback;
+        m_other_mouse_handlers[event_flas][handler].push_back( callback );
     }
 
     return *this;
@@ -167,9 +158,12 @@ IInput& Input::remove_mouse_handler( IInputHandler* handler )
 }
 
 
-void Input::callback_thread( const Callback& callback )
+UINT Input::control_key_state( DWORD state )
 {
-    callback();
+    short shift   = ( ( state & (SHIFT_PRESSED) ) != 0 ) << 2;                          // MOD_SHIFT   = 4
+    short control = ( ( state & (LEFT_CTRL_PRESSED|RIGHT_CTRL_PRESSED) ) != 0 ) << 1;   // MOD_CONTROL = 2
+    short alt     = ( ( state & (LEFT_ALT_PRESSED|RIGHT_ALT_PRESSED) ) != 0 );          // MOD_ALT     = 1
+    return (control | alt | shift );
 }
 
 
