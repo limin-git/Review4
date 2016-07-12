@@ -2,6 +2,7 @@
 #include "Console.h"
 #include "IConfigurationFile.h"
 #include "Utility.h"
+#include "ILog.h"
 
 
 Console::Console()
@@ -13,7 +14,6 @@ Console::Console()
     SetStdHandle( STD_OUTPUT_HANDLE, m_cout );
     SetConsoleActiveScreenBuffer( m_cout );
     show_cursor( false );
-    disable_system_buttons();
     set_ctrl_handler();
 
     po::options_description options( "Console" );
@@ -23,6 +23,8 @@ Console::Console()
         ( "console.width", po::value<size_t>(), "console layout: width" )
         ( "console.height", po::value<size_t>(), "console layout: height" )
         ( "console.color", po::wvalue<std::wstring>(), "console color" )
+        ( "console.position", po::wvalue<std::wstring>(), "position(left,top)" )
+        ( "console.disable-system-menu", po::wvalue<std::wstring>(), "disable system menu?)" )
         ;
     m_configuration->add_options_description( options ).add_observer( this );
 }
@@ -140,6 +142,24 @@ void Console::options_changed( const po::variables_map& vm, const po::variables_
         }
         set_color( color);
     }
+
+    if ( Utility::updated<std::wstring>( "console.position", vm, old ) )
+    {
+        std::wstring s = vm["console.position"].as<std::wstring>();
+        size_t p = s.find( L"," );
+
+        if ( p != std::wstring::npos )
+        {
+            short left = boost::lexical_cast<short>( s.substr( 0, p ) );
+            short top = boost::lexical_cast<short>( s.substr( p + 1 ) );
+            set_position( left, top );
+        }
+    }
+
+    if ( Utility::updated<size_t>( "console.disable-system-menu", vm, old ) )
+    {
+        disable_system_buttons( L"true" == vm["console.disable-system-menu"].as<std::wstring>() );
+    }
 }
 
 
@@ -256,10 +276,19 @@ void Console::show_cursor( BOOL visible )
 }
 
 
-void Console::disable_system_buttons()
+void Console::disable_system_buttons( bool disable )
 {
     LONG style = GetWindowLong( m_hwnd, GWL_STYLE );
-    style &= ~(WS_SYSMENU|WS_SIZEBOX); // no menu, no sizing
+
+    if ( disable )
+    {
+        style &= ~(WS_SYSMENU|WS_SIZEBOX); // no menu, no sizing
+    }
+    else
+    {
+        style |= (WS_SYSMENU|WS_SIZEBOX);
+    }
+
     SetWindowLong( m_hwnd, GWL_STYLE, style );
 }
 
@@ -289,4 +318,16 @@ void Console::set_ctrl_handler()
     };
 
     SetConsoleCtrlHandler( Hide::ctrl_handler, TRUE );
+}
+
+
+void Console::set_position( short left, short top )
+{
+    WINDOWINFO info;
+    info.cbSize = sizeof(WINDOWINFO);
+    GetWindowInfo( m_hwnd, &info );
+    RECT r = info.rcWindow;
+    long width = r.right - r.left;
+    long height = r.bottom - r.top;
+    SetWindowPos( m_hwnd, NULL, left, top, width, height, 0 );
 }

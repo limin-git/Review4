@@ -34,8 +34,6 @@ public:
 private:
 
     void start();
-    void handle_impl_thread( IReview* review, void (IReview::*virtual_fun)() );
-    void handle_impl_thread_1( IReview* review, void (IReview::*virtual_fun)(size_t), size_t distance );
 
 private:
 

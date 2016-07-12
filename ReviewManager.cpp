@@ -120,7 +120,7 @@ void ReviewManager::start()
 {
     BOOST_FOREACH( IReview* review, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &ReviewManager::handle_impl_thread, this, review, &IReview::handle_start ) );
+        m_thread_pool.queue_item( boost::bind( &IReview::handle_start, review ) );
     }
 }
 
@@ -129,7 +129,7 @@ void ReviewManager::handle_continue()
 {
     BOOST_FOREACH( IReview* review, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &ReviewManager::handle_impl_thread, this, review, &IReview::handle_continue ) );
+        m_thread_pool.queue_item( boost::bind( &IReview::handle_continue, review ) );
     }
 }
 
@@ -138,7 +138,7 @@ void ReviewManager::handle_next()
 {
     BOOST_FOREACH( IReview* review, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &ReviewManager::handle_impl_thread, this, review, &IReview::handle_next ) );
+        m_thread_pool.queue_item( boost::bind( &IReview::handle_next, review ) );
     }
 }
 
@@ -147,7 +147,7 @@ void ReviewManager::handle_previous()
 {
     BOOST_FOREACH( IReview* review, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &ReviewManager::handle_impl_thread, this, review, &IReview::handle_previous ) );
+        m_thread_pool.queue_item( boost::bind( &IReview::handle_previous, review ) );
     }
 }
 
@@ -156,7 +156,7 @@ void ReviewManager::handle_replay()
 {
     BOOST_FOREACH( IReview* review, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &ReviewManager::handle_impl_thread, this, review, &IReview::handle_replay ) );
+        m_thread_pool.queue_item( boost::bind( &IReview::handle_replay, review ) );
     }
 }
 
@@ -165,7 +165,7 @@ void ReviewManager::handle_disable()
 {
     BOOST_FOREACH( IReview* review, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &ReviewManager::handle_impl_thread, this, review, &IReview::handle_disable ) );
+        m_thread_pool.queue_item( boost::bind( &IReview::handle_disable, review ) );
     }
 }
 
@@ -174,7 +174,7 @@ void ReviewManager::handle_jump( size_t distance )
 {
     BOOST_FOREACH( IReview* review, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &ReviewManager::handle_impl_thread_1, this, review, &IReview::handle_jump, distance ) );
+        m_thread_pool.queue_item( boost::bind( &IReview::handle_jump, review, distance ) );
     }
 }
 
@@ -183,18 +183,6 @@ void ReviewManager::handle_jump_back( size_t distance )
 {
     BOOST_FOREACH( IReview* review, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &ReviewManager::handle_impl_thread_1, this, review, &IReview::handle_jump_back, distance ) );
+        m_thread_pool.queue_item( boost::bind( &IReview::handle_jump_back, review, distance ) );
     }
-}
-
-
-void ReviewManager::handle_impl_thread( IReview* review, void (IReview::*virtual_fun)() )
-{
-    (review->*virtual_fun)();
-}
-
-
-void ReviewManager::handle_impl_thread_1( IReview* review, void (IReview::*virtual_fun)(size_t), size_t distance )
-{
-    (review->*virtual_fun)( distance );
 }
