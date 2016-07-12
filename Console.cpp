@@ -26,7 +26,7 @@ Console::Console()
         ( "console.position", po::wvalue<std::wstring>(), "position(left,top)" )
         ( "console.disable-system-menu", po::wvalue<std::wstring>(), "disable system menu?)" )
         ;
-    m_configuration->add_options_description( options ).add_observer( this );
+    IConfigurationFile::instance()->add_options_description( options ).add_observer( this );
 }
 
 
@@ -156,7 +156,7 @@ void Console::options_changed( const po::variables_map& vm, const po::variables_
         }
     }
 
-    if ( Utility::updated<size_t>( "console.disable-system-menu", vm, old ) )
+    if ( Utility::updated<std::wstring>( "console.disable-system-menu", vm, old ) )
     {
         disable_system_buttons( L"true" == vm["console.disable-system-menu"].as<std::wstring>() );
     }
@@ -167,7 +167,6 @@ void Console::set_font_face_name( const std::wstring& name )
 {
     if ( name !=  L"ÐÂËÎÌå" && name != L"Consolas" && name != L"Lucida Console"  )
     {
-        //log_error << "wrong font-face-name: " << name;
         return;
     }
 

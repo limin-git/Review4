@@ -10,10 +10,7 @@ struct SrtSubtitleText : AbstructText
 public:
 
     SrtSubtitleText( const fs::path& file_path );
-
-private:
-
-    void parse();
+    virtual bool parse_text();
 
 private:
 

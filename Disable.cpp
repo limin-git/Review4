@@ -15,8 +15,8 @@ Disable::Disable()
     options.add_options()
         ( "file.disabled", po::wvalue<std::wstring>(), "disabled file" )
         ;
-    m_file_name = m_configuration
-        ->add_options_description( options )
+    m_file_name = IConfigurationFile::instance()
+        .add_options_description( options )
         .variables_map()["file.disabled"].as<std::wstring>();
     m_file_name = system_complete( m_file_name );
     load_file();

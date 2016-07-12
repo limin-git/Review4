@@ -12,10 +12,10 @@ public:
 
     EnglishChineseExampleText( const fs::path& file_path );
     virtual void last_write_time_changed( const fs::path& file );
+    virtual bool parse_text();
 
 private:
 
-    bool reload();
     size_t hash( const std::wstring& s );
     void notify();
 

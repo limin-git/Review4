@@ -3,22 +3,8 @@
 #include "CommandLine.h"
 
 
-static ICommandLine* g_command_line = NULL;
-
-
 ICommandLine& ICommandLine::instance()
 {
-    if ( g_command_line == NULL )
-    {
-        g_command_line = new CommandLine;
-    }
-
-    return *g_command_line;
-}
-
-
-void ICommandLine::remove()
-{
-    delete g_command_line;
-    g_command_line = NULL;
+    static CommandLine command_line;
+    return command_line;
 }

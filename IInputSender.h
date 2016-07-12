@@ -14,5 +14,4 @@ struct IInputSender
     virtual IInputSender& Shift_key( WORD vk ) = 0;
     virtual IInputSender& string( const std::string& s ) = 0;
     static IInputSender& instance();
-    static void remove();
 };

@@ -29,7 +29,8 @@ Scheduler::Scheduler()
     : m_running( true ),
       m_select_candidates_semaphore( 0 ),
       m_once_per_session( false ),
-      m_randomize( false )
+      m_randomize( false ),
+      m_initialized( false )
 {
     //TODO: lock when keys wer pressed down for a long time.
     po::options_description options( "Scheduler" );
@@ -40,14 +41,13 @@ Scheduler::Scheduler()
         ;
     m_configuration ->add_options_description( options ).add_observer( this );
     parse_schedule_configuration();
-    initialize_schedule();
 
     if ( ! m_schedule.empty() )
     {
         m_select_candidates_thread = boost::thread( boost::bind( &Scheduler::select_candidates_thread, this ) );
     }
 
-    m_disable->add_observer( this );
+    IDisable::instance()->add_observer( this );
     m_text->add_observer( this );
 }
 
@@ -57,13 +57,18 @@ Scheduler::~Scheduler()
     m_running = false;
     m_select_candidates_semaphore.post();
     m_select_candidates_thread.join();
-    m_disable->remove_observer( this );
+    IDisable::instance()->remove_observer( this );
     m_text->remove_observer( this );
 }
 
 
 ISlideshowPtr Scheduler::get_slideshow()
 {
+    if ( ! m_initialized )
+    {
+        initialize_schedule();
+    }
+
     if ( m_candidates.empty() )
     {
         m_select_candidates_semaphore.post();
@@ -88,7 +93,7 @@ ISlideshowPtr Scheduler::get_slideshow()
 
     if ( is_finished( key ) )
     {
-        m_disable->disable( slideshow ); // same as disabled
+        IDisable::instance()->disable( slideshow ); // same as disabled
     }
     else
     {
@@ -111,6 +116,8 @@ ISlideshowPtr Scheduler::get_slideshow()
 
 void Scheduler::initialize_schedule()
 {
+    m_initialized = true;
+
     if ( m_schedule.empty() )
     {
         m_candidates = m_text->keys();
@@ -240,7 +247,7 @@ void Scheduler::set_title()
 {
     std::wstringstream strm;
     strm << m_text->get_file_path().filename().wstring() << " - " << m_candidates.size();
-    m_console->title( strm.str() );
+    IConsole::instance().title( strm.str() );
 }
 
 
@@ -260,7 +267,7 @@ void Scheduler::options_changed( const po::variables_map& vm, const po::variable
 
 void Scheduler::parse_schedule_configuration()
 {
-    po::variables_map& vm = m_configuration->variables_map();
+    po::variables_map& vm = IConfigurationFile::instance()->variables_map();
     std::wstring schedule_string;
 
     if ( vm.count( "review.schedule" ) )

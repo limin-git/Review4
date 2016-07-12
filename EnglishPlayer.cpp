@@ -14,14 +14,14 @@ EnglishPlayer::EnglishPlayer()
         ( "speech.path", po::wvalue< std::vector<std::wstring> >(), "speech path with format 'path | .extension'" )
         ( "speech.disable", po::wvalue<std::wstring>(), "disable speech (true/false)" )
         ;
-    m_configuration->add_options_description( m_options_description ).add_observer( this );
+    IConfigurationFile::instance()->add_options_description( m_options_description ).add_observer( this );
 }
 
 
 EnglishPlayer::~EnglishPlayer()
 {
     m_processor.terminate();
-    m_configuration->remove_observer( this );
+    IConfigurationFile::instance()->remove_observer( this );
 }
 
 
@@ -64,11 +64,11 @@ void EnglishPlayer::speak_impl( const Word& word )
 {
     if ( word.path.empty() )
     {
-        m_speech->speak( word.word );
+        ISpeech::instance().speak( word.word );
     }
     else
     {
-        m_sound->play_sound( word.path );
+        ISound::instance().play_sound( word.path );
     }
 }
 

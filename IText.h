@@ -14,6 +14,7 @@ struct IText
     virtual const KeyList& keys() = 0;
     virtual void add_observer( ITextObserver* observer ) = 0;
     virtual void remove_observer( ITextObserver* observer ) = 0;
+    virtual bool parse_text() = 0;
     static IText& instance();
     static void remove();
 };

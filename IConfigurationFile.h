@@ -11,5 +11,4 @@ struct IConfigurationFile
     virtual po::options_description& options_description() = 0;
     virtual po::variables_map& variables_map() = 0;
     static IConfigurationFile& instance();
-    static void remove();
 };

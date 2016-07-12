@@ -10,7 +10,8 @@ namespace fs = boost::filesystem;
 
 
 struct Wallpaper : IReview,
-                   IInputHandler
+                   IInputHandler,
+                   IConfigurationFileObserver
 {
 public:
 
@@ -25,6 +26,7 @@ public:
     virtual void handle_jump( size_t distance );
     virtual void handle_jump_back( size_t distance );
     virtual void handle_disable();
+    virtual void options_changed( const po::variables_map& vm, const po::variables_map& old );
 
 protected:
 
@@ -33,6 +35,7 @@ protected:
 private:
 
     void set_wallpaper();
+    void search_pictures_thread();
 
 private:
 
@@ -42,4 +45,6 @@ private:
     std::list<fs::path>::iterator m_current;
     Singleton<IConfigurationFile> m_configuration;
     Singleton<IInput> m_input;
+    size_t m_frequence;
+    size_t m_count;
 };

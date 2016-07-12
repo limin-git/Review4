@@ -11,5 +11,4 @@ struct IConsole
     virtual IConsole& write_center( const std::wstring& ws ) = 0;
     virtual IConsole& title( const std::wstring& title ) = 0;
     static IConsole& instance();
-    static void remove();
 };

@@ -5,7 +5,6 @@ struct ILog
 {
     virtual ~ILog() {}
     static ILog& instance();
-    static void remove();
 };
 
 enum { ERROR_LOGGER, INFO_LOGGER, DEBUG_LOGGER, TRACE_LOGGER, TEST_LOGGER, LOG_NUM };

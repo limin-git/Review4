@@ -1,8 +1,5 @@
 #pragma once
 #include "IDisable.h"
-#include "IConfigurationFile.h"
-#include "Singleton.h"
-
 namespace fs = boost::filesystem;
 
 
@@ -29,5 +26,4 @@ private:
     std::wfstream m_file_stream;
     std::set<size_t> m_disabled;
     std::set<IDisableObserver*> m_observers;
-    Singleton<IConfigurationFile> m_configuration;
 };

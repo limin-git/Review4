@@ -7,5 +7,4 @@ struct IMoviePlayer
     virtual ~IMoviePlayer() {}
     virtual bool play( ISubtitleSlideshowPtr subtitle ) = 0;
     static IMoviePlayer& instance();
-    static void remove();
 };

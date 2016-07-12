@@ -9,11 +9,10 @@
 AssSubtitleText::AssSubtitleText( const fs::path& file_path )
     : AbstructText( file_path )
 {
-    parse();
 }
 
 
-void AssSubtitleText::parse()
+bool AssSubtitleText::parse_text()
 {
     std::wstring s = Utility::wstring_from_file( m_file_path.wstring().c_str() );
     boost::wsmatch m;
@@ -46,7 +45,7 @@ void AssSubtitleText::parse()
 
         size_t key = m_hash( it->str() );
 
-        if ( m_disable->is_disabled( key ) )
+        if ( IDisable::instance()->is_disabled( key ) )
         {
             continue;
         }
@@ -90,6 +89,8 @@ void AssSubtitleText::parse()
     {
         m_keys.push_back( v.second );
     }
+
+    return true;
 }
 
 

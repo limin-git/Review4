@@ -52,4 +52,5 @@ private:
     Singleton<IHistory> m_history;
     Singleton<IConsole> m_console;
     Singleton<IConfigurationFile> m_configuration;
+    bool m_initialized;
 };

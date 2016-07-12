@@ -10,7 +10,7 @@ struct AbstructSubtitleSlidshow : ISubtitleSlideshow
 {
 public:
 
-    AbstructSubtitleSlidshow( size_t key, const SubTime& start_t, const SubTime& end_t, const std::wstring& txt, Singleton<IConsole>& console, Singleton<IMoviePlayer>& player );
+    AbstructSubtitleSlidshow( size_t key, const SubTime& start_t, const SubTime& end_t, const std::wstring& txt );
     virtual void clear_state() {}
     virtual size_t key() { return m_key; }
     virtual const std::wstring& key_string() { return text; }
@@ -28,6 +28,4 @@ public:
     SubTime start_time;
     SubTime end_time;
     std::wstring text;
-    Singleton<IConsole>& m_console;
-    Singleton<IMoviePlayer>& m_player;
 };

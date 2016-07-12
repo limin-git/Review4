@@ -5,21 +5,28 @@
 
 
 AbstructText::AbstructText( const fs::path& file_path )
-    : m_file_path( file_path )
+    : m_file_path( file_path ),
+      m_parsed( false )
 {
     m_file_path = system_complete( m_file_path );
-    m_disable->add_observer( this );
+    IDisable::instance()->add_observer( this );
 }
 
 
 AbstructText::~AbstructText()
 {
-    m_disable->remove_observer( this );
+    IDisable::instance()->remove_observer( this );
 }
 
 
 ISlideshowPtr AbstructText::slideshow( size_t key )
 {
+    if ( ! m_parsed )
+    {
+        parse_text();
+        m_parsed = true;
+    }
+
     std::map<size_t, ISlideshowPtr>::iterator it = m_slidshow_map.find( key );
 
     if ( it == m_slidshow_map.end() )
@@ -39,6 +46,12 @@ const fs::path& AbstructText::get_file_path()
 
 const KeyList& AbstructText::keys()
 {
+    if ( ! m_parsed )
+    {
+        parse_text();
+        m_parsed = true;
+    }
+
     return m_keys;
 }
 
@@ -57,6 +70,12 @@ void AbstructText::remove_observer( ITextObserver* observer )
 
 void AbstructText::disabled( size_t key )
 {
+    if ( ! m_parsed )
+    {
+        parse_text();
+        m_parsed = true;
+    }
+
     m_keys.remove( key );
     m_slidshow_map.erase( key );
 }

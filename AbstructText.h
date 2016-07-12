@@ -1,8 +1,6 @@
 #pragma once
 #include "IText.h"
 #include "IDisableObserver.h"
-#include "Singleton.h"
-#include "IDisable.h"
 
 
 struct AbstructText : IText,
@@ -26,5 +24,5 @@ protected:
     std::map<size_t, ISlideshowPtr> m_slidshow_map;
     boost::hash<std::wstring> m_hash;
     std::set<ITextObserver*> m_observers;
-    Singleton<IDisable> m_disable;
+    bool m_parsed;
 };

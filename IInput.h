@@ -12,5 +12,4 @@ struct IInput
     virtual IInput& add_mouse_handler( IInputHandler* handler, DWORD event_flas, DWORD button_state, const Callback& callback ) = 0;
     virtual IInput& remove_mouse_handler( IInputHandler* handler ) = 0;
     static IInput& instance();
-    static void remove();
 };

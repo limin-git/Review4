@@ -89,8 +89,9 @@ void TextReview::go_back()
     if ( m_current != m_review_history.begin() )
     {
         m_current--;
-        (*m_current)->clear_state();
     }
+
+    (*m_current)->clear_state();
 }
 
 
@@ -106,7 +107,7 @@ void TextReview::handle_disable()
     ISlideshowPtr slideshow = *m_current;
     size_t key = slideshow->key();
     handle_next();
-    m_disable->disable( slideshow );
+    IDisable::instance()->disable( slideshow );
     delete_review_history( key );
 }
 

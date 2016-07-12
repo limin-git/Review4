@@ -8,11 +8,10 @@
 SrtSubtitleText::SrtSubtitleText( const fs::path& file_path )
     : AbstructText( file_path )
 {
-    parse();
 }
 
 
-void SrtSubtitleText::parse()
+bool SrtSubtitleText::parse_text()
 {
     std::wstring s = Utility::wstring_from_file( m_file_path.wstring().c_str() );
     boost::wsmatch m;
@@ -41,7 +40,7 @@ void SrtSubtitleText::parse()
         std::wstring text = it->str(3);
         size_t key = m_hash( text );
 
-        if ( m_disable->is_disabled( key ) )
+        if ( IDisable::instance()->is_disabled( key ) )
         {
             continue;
         }
@@ -82,4 +81,6 @@ void SrtSubtitleText::parse()
     {
         m_keys.push_back( v.second );
     }
+
+    return true;
 }

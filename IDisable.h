@@ -12,5 +12,4 @@ struct IDisable
     virtual void add_observer( IDisableObserver* observer ) = 0;
     virtual void remove_observer( IDisableObserver* observer ) = 0;
     static IDisable& instance();
-    static void remove();
 };

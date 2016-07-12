@@ -17,7 +17,7 @@ ConfigurationFile::ConfigurationFile()
         {
             boost::filesystem::path p = boost::filesystem::system_complete( config_file );
             load_config_file( p );
-            m_file_change_manager->add_handler( p, this );
+            IFileChangeManager::instance()add_handler( p, this );
         }
     }
 }
@@ -27,7 +27,7 @@ ConfigurationFile::~ConfigurationFile()
 {
     BOOST_FOREACH( const ConfigurationFileMap::value_type& config_file, m_config_file_map )
     {
-        m_file_change_manager->remove_handler( config_file.first, this );
+        IFileChangeManager::instance()remove_handler( config_file.first, this );
     }
 }
 

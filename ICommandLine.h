@@ -9,5 +9,4 @@ struct ICommandLine
     virtual po::variables_map& variables_map() = 0;
     virtual po::options_description& options_description() = 0;
     static ICommandLine& instance();
-    static void remove();
 };

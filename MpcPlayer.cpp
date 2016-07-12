@@ -29,7 +29,7 @@ MpcPlayer::MpcPlayer()
         ( "movie.adjust-start-time", po::value<int>()->default_value( 0 ), "adjust subtitle display start time" )
         ( "movie.adjust-duration-time", po::value<int>()->default_value( 0 ), "adjust subtitle display duration time" )
         ;
-    po::variables_map& vm = m_configuration->add_options_description( options ).add_observer(this).variables_map();
+    po::variables_map& vm = IConfigurationFile::instance()->add_options_description( options ).add_observer(this).variables_map();
 
     if ( vm.count( "file.name" ) )
     {

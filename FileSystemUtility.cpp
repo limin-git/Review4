@@ -82,4 +82,35 @@ namespace Utility
         return files;
     }
 
+
+    std::list<fs::path> get_files_of_directory_if( const fs::path& dir, const boost::function<bool(const fs::path&)>& predicate, size_t first_n )
+    {
+        std::list<fs::path> files;
+        size_t n = 0;
+
+        if ( ! exists( dir ) || ! is_directory( dir ) )
+        {
+            return files;
+        }
+
+        fs::recursive_directory_iterator end;
+        for ( fs::recursive_directory_iterator it( dir ); it != end; ++it )
+        {
+            if ( ! is_directory( it->status() ) )
+            {
+                if ( predicate( it->path() ) )
+                {
+                    files.push_back( it->path() );
+
+                    if ( first_n <= ++n )
+                    {
+                        return files;
+                    }
+                }
+            }
+        }
+
+        return files;
+    }
+
 }

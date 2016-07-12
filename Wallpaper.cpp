@@ -4,19 +4,21 @@
 #include "SystemUtility.h"
 #include "AlgorithmUtility.h"
 #include "FileSystemUtility.h"
+#include "Utility.h"
 #include "IInput.h"
-
-namespace po = boost::program_options;
 
 
 Wallpaper::Wallpaper()
+    : m_frequence( 2 ),
+      m_count( 0 )
 {
     po::options_description options;
     options.add_options()
         ( "wallpaper.path", po::wvalue<std::wstring>(), "picture directory path" )
         ( "wallpaper.recycle-path", po::wvalue<std::wstring>(), "recycle directory path" )
+        ( "wallpaper.frequence", po::value<size_t>(), "change picture frequence" )
         ;
-    po::variables_map& vm = m_configuration->add_options_description( options ).variables_map();
+    po::variables_map& vm = IConfigurationFile::instance()->add_options_description( options ).add_observer(this).variables_map();
 
     if ( vm.count( "wallpaper.path" ) )
     {
@@ -84,9 +86,9 @@ void Wallpaper::remove_current_picture()
 }
 
 
-void Wallpaper:: handle_start()
+void Wallpaper::handle_start()
 {
-    m_pictures = Utility::get_files_of_directory( m_directory );
+    m_pictures = Utility::get_files_of_directory_if( m_directory, &Utility::is_picture, 5 );
 
     if ( m_directory.empty() )
     {
@@ -95,43 +97,73 @@ void Wallpaper:: handle_start()
 
     set_wallpaper();
     m_input->add_key_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
+    boost::thread t( boost::bind( &Wallpaper::search_pictures_thread, this ) );
 }
 
 
-void Wallpaper:: handle_continue()
+void Wallpaper::handle_continue()
 {
+    m_count++;
+
+    if ( 0 == ( m_count % m_frequence ) )
+    {
+        set_wallpaper();
+    }
 }
 
 
-void Wallpaper:: handle_replay()
+void Wallpaper::handle_replay()
 {
+    m_count = 0;
 }
 
 
-void Wallpaper:: handle_next()
-{
-    set_wallpaper();
-}
-
-
-void Wallpaper:: handle_previous()
-{
-    set_wallpaper();
-}
-
-
-void Wallpaper:: handle_jump( size_t distance )
+void Wallpaper::handle_next()
 {
     set_wallpaper();
+    m_count = 0;
 }
 
 
-void Wallpaper:: handle_jump_back( size_t distance )
+void Wallpaper::handle_previous()
 {
     set_wallpaper();
+    m_count = 0;
 }
 
 
-void Wallpaper:: handle_disable()
+void Wallpaper::handle_jump( size_t distance )
 {
+    set_wallpaper();
+    m_count = 0;
+}
+
+
+void Wallpaper::handle_jump_back( size_t distance )
+{
+    set_wallpaper();
+    m_count = 0;
+}
+
+
+void Wallpaper::handle_disable()
+{
+    set_wallpaper();
+    m_count = 0;
+}
+
+
+void Wallpaper::options_changed( const po::variables_map& vm, const po::variables_map& old )
+{
+    if ( Utility::updated<size_t>( "wallpaper.frequence", vm, old ) )
+    {
+        m_frequence = vm["wallpaper.frequence"].as<size_t>();
+    }
+}
+
+
+void Wallpaper::search_pictures_thread()
+{
+    std::list<fs::path> pictures = Utility::get_files_of_directory_if( m_directory, &Utility::is_picture );
+    m_pictures.swap( pictures );
 }

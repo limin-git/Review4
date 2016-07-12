@@ -2,11 +2,6 @@
 #include "IEnglishPlayer.h"
 #include "QueueProcessor.h"
 #include "IConfigurationFileObserver.h"
-#include "ISpeech.h"
-#include "ISound.h"
-#include "IConfigurationFile.h"
-#include "Singleton.h"
-
 namespace fs = boost::filesystem;
 
 
@@ -39,8 +34,5 @@ private:
     SpeechDirectory m_speech_directories; // path, extension
     QueueProcessor m_processor;
     po::options_description m_options_description;
-    Singleton<ISpeech> m_speech;
-    Singleton<ISound> m_sound;
-    Singleton<IConfigurationFile> m_configuration;
     bool m_disabled;
 };

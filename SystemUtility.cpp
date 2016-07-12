@@ -7,10 +7,7 @@ namespace Utility
 
     void set_system_wallpaper( const fs::path& picture )
     {
-        if ( is_picture( picture ) )
-        {
-            SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, const_cast<wchar_t*>( picture.wstring().c_str() ), SPIF_UPDATEINIFILE);
-        }
+        SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, const_cast<wchar_t*>( picture.wstring().c_str() ), SPIF_UPDATEINIFILE);
     }
 
 

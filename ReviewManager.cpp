@@ -30,7 +30,7 @@ ReviewManager::ReviewManager()
         ( "file.name", po::wvalue<std::wstring>(), "file name" )
         ( "wallpaper.path", po::wvalue<std::wstring>(), "register hot keys?" )
         ;
-    po::variables_map& vm = m_configuration->add_options_description( options ).variables_map();
+    po::variables_map& vm = IConfigurationFile::instance()->add_options_description( options ).variables_map();
 
     if ( vm.count( "advanced.register-hot-keys" ) )
     {

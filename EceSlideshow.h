@@ -1,15 +1,12 @@
 #pragma once
 #include "ISlideShow.h"
-#include "Singleton.h"
-#include "IEnglishPlayer.h"
-#include "IConsole.h"
 
 
 struct EceSlideshow : ISlideshow
 {
 public:
 
-    EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp, Singleton<IConsole>& console, Singleton<IEnglishPlayer>& player );
+    EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp );
     virtual bool show();
     virtual void clear_state();
     virtual size_t key();

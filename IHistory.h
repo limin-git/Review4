@@ -8,5 +8,4 @@ struct IHistory
     virtual void write_history( size_t key, std::time_t = ::time( NULL ) ) = 0;
     virtual void save_history_file() = 0;
     static IHistory& instance();
-    static void remove();
 };

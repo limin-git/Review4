@@ -1,8 +1,6 @@
 #pragma once
 #include "IConsole.h"
 #include "IConfigurationFileObserver.h"
-#include "Singleton.h"
-#include "IConfigurationFile.h"
 
 
 struct Console : IConsole,
@@ -45,5 +43,4 @@ private:
     HANDLE m_stdout;
     HWND m_hwnd;
     LONG m_style;
-    Singleton<IConfigurationFile> m_configuration;
 };

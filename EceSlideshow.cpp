@@ -1,17 +1,13 @@
 #include "stdafx.h"
 #include "EceSlideshow.h"
-#include "IConsole.h"
-#include "IEnglishPlayer.h"
 
 
-EceSlideshow::EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp, Singleton<IConsole>& console, Singleton<IEnglishPlayer>& player )
+EceSlideshow::EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp )
     : m_key( key ),
       m_english( eng ),
       m_chinese( chs ),
       m_example( exp ),
-      m_stage( English ),
-      m_console( console ),
-      m_player( player )
+      m_stage( English )
 {
     std::wstringstream strm;
     strm
@@ -28,19 +24,19 @@ bool EceSlideshow::show()
     switch ( m_stage )
     {
     case English:
-        m_console->cls().write_center( m_english );
+        IConsole::instance().cls().write_center( m_english );
         m_player->speak( m_english );
         m_stage = Chinese;
         return false;
 
     case Chinese:
-        m_console->cls().write( m_cache );
+        IConsole::instance().cls().write( m_cache );
         m_stage = English;
         return true;
 
     case Example:
     default:
-        m_console->write( m_example );
+        IConsole::instance().write( m_example );
         m_stage = English;
         return true;
     }
