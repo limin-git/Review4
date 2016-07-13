@@ -88,6 +88,11 @@ void Wallpaper::remove_current_picture()
 
 void Wallpaper::handle_start()
 {
+    if ( m_directory.empty() || m_recycle_directory.empty() )
+    {
+        return;
+    }
+
     m_pictures = Utility::get_files_of_directory_if( m_directory, &Utility::is_picture, 5 );
 
     if ( m_directory.empty() )
