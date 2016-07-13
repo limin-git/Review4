@@ -6,8 +6,6 @@ struct InputSender : IInputSender
 {
 public:
 
-    InputSender();
-    ~InputSender();
     virtual IInputSender& key( WORD vk );
     virtual IInputSender& Ctrl_key( WORD vk );
     virtual IInputSender& Ctrl_Alt_key( WORD vk );

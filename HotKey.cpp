@@ -8,14 +8,16 @@ HotKey::HotKey()
       m_thread_pool( 5 )
 {
     m_thread = boost::thread( boost::bind( &HotKey::message_loop, this ) );
+    m_mutex.lock();
+    //Sleep(20);
 }
 
 
 HotKey::~HotKey()
 {
     m_running = false;
-    m_input_sender->Ctrl_Alt_Shift_key( 'Q' );
-    m_thread.join();
+    //IInputSender::instance().Ctrl_Alt_Shift_key( 'Q' );
+    //m_thread.join();
 }
 
 
@@ -37,7 +39,7 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
 
         RegisterHandlerInfo info = { id, fsModifiers, vk };
         m_register_handler = info;
-        m_input_sender->Ctrl_Alt_Shift_key( 'R' );
+        IInputSender::instance().Ctrl_Alt_Shift_key( 'R' );
         id++;
     }
 
@@ -71,7 +73,7 @@ IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
     {
         m_mutex.lock();
         m_unregister_ids.swap( ids );
-        m_input_sender->Ctrl_Alt_Shift_key( 'U' );
+        IInputSender::instance().Ctrl_Alt_Shift_key( 'U' );
     }
 
     return *this;
@@ -83,6 +85,8 @@ void HotKey::message_loop()
     RegisterHotKey( NULL, 0xBFFD, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'R' ); // Register
     RegisterHotKey( NULL, 0xBFFE, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'U' ); // Unregister
     RegisterHotKey( NULL, 0xBFFF, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'Q' ); // Quit
+    
+    m_mutex.unlock();
 
     MSG msg = { 0 };
 

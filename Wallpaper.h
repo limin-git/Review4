@@ -1,11 +1,8 @@
 #pragma once
 #include "IWallpaper.h"
 #include "IInputHandler.h"
-#include "IInput.h"
-#include "IConfigurationFile.h"
-#include "Singleton.h"
 #include "IReview.h"
-
+#include "IConfigurationFileObserver.h"
 namespace fs = boost::filesystem;
 
 
@@ -43,8 +40,6 @@ private:
     fs::path m_recycle_directory;
     std::list<fs::path> m_pictures;
     std::list<fs::path>::iterator m_current;
-    Singleton<IConfigurationFile> m_configuration;
-    Singleton<IInput> m_input;
     size_t m_frequence;
     size_t m_count;
 };

@@ -1,7 +1,5 @@
 #pragma once
 #include "IHotKey.h"
-#include "IInputSender.h"
-#include "Singleton.h"
 #include "ThreadPool.h"
 
 
@@ -42,6 +40,5 @@ private:
     KeyIdMap m_ids;
     boost::thread m_thread;
     bool m_running;
-    Singleton<IInputSender> m_input_sender;
     ThreadPool m_thread_pool;
 };

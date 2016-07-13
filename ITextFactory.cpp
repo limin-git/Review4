@@ -6,5 +6,5 @@
 ITextFactory& ITextFactory::instance()
 {
     static TextFactory text_factory;
-    return text_factory''
+    return text_factory;
 }

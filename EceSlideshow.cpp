@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "EceSlideshow.h"
+#include "IEnglishPlayer.h"
+#include "IConsole.h"
 
 
 EceSlideshow::EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp )
@@ -25,7 +27,7 @@ bool EceSlideshow::show()
     {
     case English:
         IConsole::instance().cls().write_center( m_english );
-        m_player->speak( m_english );
+        IEnglishPlayer::instance().speak( m_english );
         m_stage = Chinese;
         return false;
 

@@ -39,7 +39,7 @@ Scheduler::Scheduler()
         ( "review.once-per-session", po::wvalue<std::wstring>(), "once per session" )
         ( "review.randomize", po::wvalue<std::wstring>(), "randomize or not" )
         ;
-    m_configuration ->add_options_description( options ).add_observer( this );
+    IConfigurationFile::instance().add_options_description( options ).add_observer( this );
     parse_schedule_configuration();
 
     if ( ! m_schedule.empty() )
@@ -47,8 +47,8 @@ Scheduler::Scheduler()
         m_select_candidates_thread = boost::thread( boost::bind( &Scheduler::select_candidates_thread, this ) );
     }
 
-    IDisable::instance()->add_observer( this );
-    m_text->add_observer( this );
+    IDisable::instance().add_observer( this );
+    IText::instance().add_observer( this );
 }
 
 
@@ -57,8 +57,8 @@ Scheduler::~Scheduler()
     m_running = false;
     m_select_candidates_semaphore.post();
     m_select_candidates_thread.join();
-    IDisable::instance()->remove_observer( this );
-    m_text->remove_observer( this );
+    //IDisable::instance().remove_observer( this );
+    //IText::instance().remove_observer( this );
 }
 
 
@@ -88,12 +88,12 @@ ISlideshowPtr Scheduler::get_slideshow()
 
     size_t key = *it;
     m_candidates.erase( it );
-    m_history->write_history( key );
-    ISlideshowPtr slideshow = m_text->slideshow( key );
+    IHistory::instance().write_history( key );
+    ISlideshowPtr slideshow = IText::instance().slideshow( key );
 
     if ( is_finished( key ) )
     {
-        IDisable::instance()->disable( slideshow ); // same as disabled
+        IDisable::instance().disable( slideshow ); // same as disabled
     }
     else
     {
@@ -120,12 +120,12 @@ void Scheduler::initialize_schedule()
 
     if ( m_schedule.empty() )
     {
-        m_candidates = m_text->keys();
+        m_candidates = IText::instance().keys();
         return;
     }
 
     std::time_t current = std::time( NULL );
-    const KeyList& keys = m_text->keys();
+    const KeyList& keys = IText::instance().keys();
     KeyList candidates;
     std::multimap<std::time_t, size_t> next_time_map;
 
@@ -203,7 +203,7 @@ void Scheduler::schedule_next_time( size_t key )
 
 std::time_t Scheduler::get_next_time( size_t key, const std::time_t current )
 {
-    const std::vector<std::time_t>& history = m_history->history( key );
+    const std::vector<std::time_t>& history = IHistory::instance().history( key );
     return ( history.empty() ? current : history.back() + m_schedule[ history.size() - 1 ] );
 }
 
@@ -215,7 +215,7 @@ bool Scheduler::is_finished( size_t key )
         return false;
     }
 
-    return ( m_schedule.size() + 1 <= m_history->history( key ).size() );
+    return ( m_schedule.size() + 1 <= IHistory::instance().history( key ).size() );
 }
 
 
@@ -246,7 +246,7 @@ void Scheduler::text_changed( IText* text )
 void Scheduler::set_title()
 {
     std::wstringstream strm;
-    strm << m_text->get_file_path().filename().wstring() << " - " << m_candidates.size();
+    strm << IText::instance().get_file_path().filename().wstring() << " - " << m_candidates.size();
     IConsole::instance().title( strm.str() );
 }
 
@@ -267,7 +267,7 @@ void Scheduler::options_changed( const po::variables_map& vm, const po::variable
 
 void Scheduler::parse_schedule_configuration()
 {
-    po::variables_map& vm = IConfigurationFile::instance()->variables_map();
+    po::variables_map& vm = IConfigurationFile::instance().variables_map();
     std::wstring schedule_string;
 
     if ( vm.count( "review.schedule" ) )

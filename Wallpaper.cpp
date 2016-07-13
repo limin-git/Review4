@@ -18,7 +18,7 @@ Wallpaper::Wallpaper()
         ( "wallpaper.recycle-path", po::wvalue<std::wstring>(), "recycle directory path" )
         ( "wallpaper.frequence", po::value<size_t>(), "change picture frequence" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance()->add_options_description( options ).add_observer(this).variables_map();
+    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer(this).variables_map();
 
     if ( vm.count( "wallpaper.path" ) )
     {
@@ -45,7 +45,7 @@ Wallpaper::~Wallpaper()
 {
     if ( !m_directory.empty() )
     {
-        m_input->remove_key_handler( this ).remove_mouse_handler( this );
+        //IInput::instance().remove_key_handler( this ).remove_mouse_handler( this );
         Utility::set_system_wallpaper( L"C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );
     }
 }
@@ -96,7 +96,7 @@ void Wallpaper::handle_start()
     }
 
     set_wallpaper();
-    m_input->add_key_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
+    IInput::instance().add_key_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
     boost::thread t( boost::bind( &Wallpaper::search_pictures_thread, this ) );
 }
 

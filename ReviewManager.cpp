@@ -30,11 +30,11 @@ ReviewManager::ReviewManager()
         ( "file.name", po::wvalue<std::wstring>(), "file name" )
         ( "wallpaper.path", po::wvalue<std::wstring>(), "register hot keys?" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance()->add_options_description( options ).variables_map();
+    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
 
     if ( vm.count( "advanced.register-hot-keys" ) )
     {
-        m_register_hot_keys = L"true" == vm["advanced.register-hot-keys"].as<std::wstring>();
+        m_register_hot_keys = ( L"true" == vm["advanced.register-hot-keys"].as<std::wstring>() );
     }
 
     if ( vm.count( "file.name" ) )
@@ -64,8 +64,8 @@ ReviewManager::ReviewManager()
 
 ReviewManager::~ReviewManager()
 {
-    m_input->remove_key_handler( this ).remove_mouse_handler( this );
-    m_hotkey->unregister_handler( this );
+    //IInput::instance().remove_key_handler( this ).remove_mouse_handler( this );
+    //IHotKey::instance().unregister_handler( this );
 
     BOOST_FOREACH( IReview* review, m_reivews )
     {
@@ -80,8 +80,8 @@ void ReviewManager::run()
 
     if ( m_register_hot_keys )
     {
-        m_hotkey
-           ->register_handler( this, 0, VK_DOWN,                boost::bind( &ReviewManager::handle_continue, this ) )
+        IHotKey::instance()
+            .register_handler( this, 0, VK_DOWN,                boost::bind( &ReviewManager::handle_continue, this ) )
             .register_handler( this, 0, VK_LEFT,                boost::bind( &ReviewManager::handle_previous, this ) )
             .register_handler( this, 0, VK_PRIOR,               boost::bind( &ReviewManager::handle_previous, this ) )
             .register_handler( this, 0, VK_RIGHT,               boost::bind( &ReviewManager::handle_next, this ) )
@@ -98,8 +98,8 @@ void ReviewManager::run()
     }
     else
     {
-        m_input
-           ->add_key_handler( this, 0, VK_DOWN,      boost::bind( &ReviewManager::handle_continue, this ) )
+        IInput::instance()
+            .add_key_handler( this, 0, VK_DOWN,      boost::bind( &ReviewManager::handle_continue, this ) )
             .add_key_handler( this, 0, VK_BACK,      boost::bind( &ReviewManager::handle_continue, this ) )
             .add_key_handler( this, 0, VK_OEM_3,     boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
             .add_key_handler( this, 0, VK_OEM_5,     boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
@@ -112,7 +112,7 @@ void ReviewManager::run()
             ;
     }
 
-    m_input->run();
+    IInput::instance().run();
 }
 
 

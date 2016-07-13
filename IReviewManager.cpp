@@ -5,6 +5,6 @@
 
 IReviewManager& IReviewManager::instance()
 {
-    ReviewManager review_manager;
+    static ReviewManager review_manager;
     return review_manager;
 }

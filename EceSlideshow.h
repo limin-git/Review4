@@ -25,6 +25,4 @@ private:
     std::wstring m_chinese;
     std::wstring m_example;
     std::wstring m_cache;
-    Singleton<IConsole>& m_console;
-    Singleton<IEnglishPlayer>& m_player;
 };

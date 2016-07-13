@@ -2,7 +2,6 @@
 #include "ISlideshow.h"
 #include "ITextObserver.h"
 namespace fs = boost::filesystem;
-
 typedef std::list<size_t> KeyList;
 
 
@@ -16,5 +15,4 @@ struct IText
     virtual void remove_observer( ITextObserver* observer ) = 0;
     virtual bool parse_text() = 0;
     static IText& instance();
-    static void remove();
 };

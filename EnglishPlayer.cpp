@@ -14,14 +14,14 @@ EnglishPlayer::EnglishPlayer()
         ( "speech.path", po::wvalue< std::vector<std::wstring> >(), "speech path with format 'path | .extension'" )
         ( "speech.disable", po::wvalue<std::wstring>(), "disable speech (true/false)" )
         ;
-    IConfigurationFile::instance()->add_options_description( m_options_description ).add_observer( this );
+    IConfigurationFile::instance().add_options_description( m_options_description ).add_observer( this );
 }
 
 
 EnglishPlayer::~EnglishPlayer()
 {
     m_processor.terminate();
-    IConfigurationFile::instance()->remove_observer( this );
+    IConfigurationFile::instance().remove_observer( this );
 }
 
 

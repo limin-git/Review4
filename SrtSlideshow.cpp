@@ -13,6 +13,6 @@ SrtSlideshow::SrtSlideshow( size_t key, size_t num, SubTime start_t, SubTime end
 bool SrtSlideshow::show()
 {
     IConsole::instance().cls().write( "\n" ).write( "\t" ).write( text ).write( "\n" ).write( "\t" ).write( text2 );
-    IEnglishPlayer::instance().play( ISubtitleSlideshowPtr( new SrtSlideshow(*this) ) );
+    IMoviePlayer::instance().play( ISubtitleSlideshowPtr( new SrtSlideshow(*this) ) );
     return true;
 }

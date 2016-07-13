@@ -27,7 +27,7 @@ EnglishChineseExampleText::EnglishChineseExampleText( const fs::path& file_path 
     options.add_options()
         ( "advanced.hash-without-symbols", po::wvalue<std::wstring>(), "trim symbols when hash the key string" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance()->add_options_description( options ).variables_map();
+    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
 
     if ( vm.count( "advanced.hash-without-symbols" ) )
     {
@@ -66,10 +66,10 @@ bool EnglishChineseExampleText::parse_text()
         const std::wstring& example = ( (*it)[3].matched ? it->str(3) : L"" );
         size_t key = hash( english );
 
-        if ( ! IDisable::instance()->is_disabled( key ) )
+        if ( ! IDisable::instance().is_disabled( key ) )
         {
             keys.push_back( key );
-            slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example, m_console, m_player ) );
+            slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example ) );
         }
     }
 

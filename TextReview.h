@@ -1,14 +1,6 @@
 #pragma once
 #include "IReview.h"
-#include "IInputHandler.h"
 #include "ISlideShow.h"
-#include "IHotKeyHandler.h"
-#include "IDisable.h"
-#include "IScheduler.h"
-#include "IConfigurationFile.h"
-#include "IInput.h"
-#include "IHotKey.h"
-#include "Singleton.h"
 
 
 struct TextReview : IReview
@@ -39,9 +31,4 @@ protected:
     ISlideshowPtrList m_review_history;
     ISlideshowPtrList::iterator m_current;
     bool m_current_show_finished;
-    Singleton<IDisable> m_disable;
-    Singleton<IScheduler> m_scheduler;
-    Singleton<IConfigurationFile> m_configuration;
-    Singleton<IInput> m_input;
-    Singleton<IHotKey> m_hotkey;
 };

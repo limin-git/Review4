@@ -549,6 +549,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SubtitleReview.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TextFactory.h"
 				>
 			</File>
@@ -754,10 +758,6 @@
 			</File>
 			<File
 				RelativePath=".\SubtitleReview.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SubtitleReview.h"
 				>
 			</File>
 			<File

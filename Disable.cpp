@@ -26,7 +26,6 @@ Disable::Disable()
 
 Disable::~Disable()
 {
-    m_file_stream.close();
 }
 
 

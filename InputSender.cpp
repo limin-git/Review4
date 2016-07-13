@@ -2,16 +2,6 @@
 #include "InputSender.h"
 
 
-InputSender::InputSender()
-{
-}
-
-
-InputSender::~InputSender()
-{
-}
-
-
 IInputSender& InputSender::key( WORD vk )
 {
     return key( vk, false, false, false );

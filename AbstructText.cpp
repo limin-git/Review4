@@ -9,13 +9,13 @@ AbstructText::AbstructText( const fs::path& file_path )
       m_parsed( false )
 {
     m_file_path = system_complete( m_file_path );
-    IDisable::instance()->add_observer( this );
+    IDisable::instance().add_observer( this );
 }
 
 
 AbstructText::~AbstructText()
 {
-    IDisable::instance()->remove_observer( this );
+    //IDisable::instance().remove_observer( this );
 }
 
 

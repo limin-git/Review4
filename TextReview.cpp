@@ -21,7 +21,7 @@ TextReview::~TextReview()
 
 void TextReview::handle_start()
 {
-    m_review_history.push_back( m_scheduler->get_slideshow() );
+    m_review_history.push_back( IScheduler::instance().get_slideshow() );
     m_current = m_review_history.begin();
     show();
 }
@@ -64,7 +64,7 @@ void TextReview::go_forward()
 {
     if ( (*m_current)->empty() )
     {
-        (*m_current) = m_scheduler->get_slideshow();
+        (*m_current) = IScheduler::instance().get_slideshow();
     }
     else
     {
@@ -73,7 +73,7 @@ void TextReview::go_forward()
 
     if ( m_current == m_review_history.end() )
     {
-        m_review_history.push_back( m_scheduler->get_slideshow() );
+        m_review_history.push_back( IScheduler::instance().get_slideshow() );
         m_current = m_review_history.end();
         m_current--;
     }
@@ -107,7 +107,7 @@ void TextReview::handle_disable()
     ISlideshowPtr slideshow = *m_current;
     size_t key = slideshow->key();
     handle_next();
-    IDisable::instance()->disable( slideshow );
+    IDisable::instance().disable( slideshow );
     delete_review_history( key );
 }
 

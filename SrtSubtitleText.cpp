@@ -40,7 +40,7 @@ bool SrtSubtitleText::parse_text()
         std::wstring text = it->str(3);
         size_t key = m_hash( text );
 
-        if ( IDisable::instance()->is_disabled( key ) )
+        if ( IDisable::instance().is_disabled( key ) )
         {
             continue;
         }
@@ -74,7 +74,7 @@ bool SrtSubtitleText::parse_text()
         }
 
         time_key_map[start_time] = key;
-        m_slidshow_map[key] = ISlideshowPtr( new SrtSlideshow( key, number, start_time, end_time, text, text2, m_console, m_player ) );
+        m_slidshow_map[key] = ISlideshowPtr( new SrtSlideshow( key, number, start_time, end_time, text, text2 ) );
     }
 
     BOOST_FOREACH( TimeKeyMap::value_type& v, time_key_map )

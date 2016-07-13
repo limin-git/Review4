@@ -1,9 +1,5 @@
 #pragma once
 #include "AbstructText.h"
-#include "Singleton.h"
-#include "IEnglishPlayer.h"
-#include "IConfigurationFile.h"
-#include "IConsole.h"
 
 
 struct EnglishChineseExampleText : AbstructText
@@ -22,7 +18,4 @@ private:
 private:
 
     bool m_hash_without_symbols;
-    Singleton<IConsole> m_console;
-    Singleton<IEnglishPlayer> m_player;
-    Singleton<IConfigurationFile> m_configuration;
 };

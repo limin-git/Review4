@@ -26,7 +26,7 @@ Console::Console()
         ( "console.position", po::wvalue<std::wstring>(), "position(left,top)" )
         ( "console.disable-system-menu", po::wvalue<std::wstring>(), "disable system menu?)" )
         ;
-    IConfigurationFile::instance()->add_options_description( options ).add_observer( this );
+    IConfigurationFile::instance().add_options_description( options ).add_observer( this );
 }
 
 
@@ -311,7 +311,7 @@ void Console::set_ctrl_handler()
         {
             DWORD ctrl_types[] = { CTRL_C_EVENT, CTRL_BREAK_EVENT, CTRL_CLOSE_EVENT, CTRL_LOGOFF_EVENT, CTRL_SHUTDOWN_EVENT };
             const char* ctrl_info[] = { "Ctrl + C", "Ctrl + BREAK", "CLOSE EVENT", "LOGOFF EVENT",  "SHUTDOWN EVENT" };
-            Singleton<IConsole>()->write( ctrl_info[ctrl_type] );
+            IConsole::instance().write( ctrl_info[ctrl_type] );
             return TRUE;
         }
     };
