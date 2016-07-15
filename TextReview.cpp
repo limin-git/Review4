@@ -5,7 +5,6 @@
 #include "IDisable.h"
 #include "IHotKey.h"
 #include "IConfigurationFile.h"
-#include "ILog.h"
 
 
 TextReview::TextReview()

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Sound.h"
+#include <dshow.h>
+#pragma comment(lib, "strmiids.lib") // For IID_IGraphBuilder, IID_IMediaControl, IID_IMediaEvent
 
 
 Sound::Sound()

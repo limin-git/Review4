@@ -3,7 +3,6 @@
 #include "FileUtility.h"
 #include "AssSlideshow.h"
 #include "IDisable.h"
-#include "ILog.h"
 
 
 AssSubtitleText::AssSubtitleText( const fs::path& file_path )

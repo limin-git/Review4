@@ -43,7 +43,7 @@
 				AdditionalOptions="-Zm1024"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(BOOST_HOME)&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -124,7 +124,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="&quot;$(BOOST_HOME)&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
@@ -133,7 +133,7 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4995;4819;4996"
+				DisableSpecificWarnings="4995;4819;4996;4275"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -381,14 +381,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ILog.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ILog.h"
-				>
-			</File>
-			<File
 				RelativePath=".\IMoviePlayer.cpp"
 				>
 			</File>
@@ -630,30 +622,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Test"
-			>
-			<File
-				RelativePath=".\test-ste.cfg"
-				>
-			</File>
-			<File
-				RelativePath=".\test.cfg"
-				>
-			</File>
-			<File
-				RelativePath=".\test.disabled"
-				>
-			</File>
-			<File
-				RelativePath=".\test.ece"
-				>
-			</File>
-			<File
-				RelativePath=".\test.history"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="src"
 			>
 			<File
@@ -725,10 +693,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Log.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\MpcPlayer.cpp"
 				>
 			</File>
@@ -773,6 +737,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\example.cfg"
+			>
+		</File>
 		<File
 			RelativePath=".\main.cpp"
 			>

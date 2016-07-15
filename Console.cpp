@@ -2,7 +2,7 @@
 #include "Console.h"
 #include "IConfigurationFile.h"
 #include "Utility.h"
-#include "ILog.h"
+#include <conio.h>
 
 
 Console::Console()

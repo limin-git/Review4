@@ -5,7 +5,6 @@
 #include "IDisable.h"
 #include "IHotKey.h"
 #include "IConfigurationFile.h"
-#include "ILog.h"
 #include "TextReview.h"
 #include "SubtitleReview.h"
 #include "Wallpaper.h"

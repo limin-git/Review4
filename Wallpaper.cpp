@@ -10,15 +10,25 @@
 
 Wallpaper::Wallpaper()
     : m_frequence( 2 ),
-      m_count( 0 )
+      m_count( 0 ),
+      m_disable( false )
 {
     po::options_description options;
     options.add_options()
+        ( "wallpaper.disable", po::wvalue<std::wstring>(), "disable" )
         ( "wallpaper.path", po::wvalue<std::wstring>(), "picture directory path" )
         ( "wallpaper.recycle-path", po::wvalue<std::wstring>(), "recycle directory path" )
         ( "wallpaper.frequence", po::value<size_t>(), "change picture frequence" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer(this).variables_map();
+
+    if ( vm.count( "wallpaper.disable" ) )
+    {
+        if ( m_disable = ( L"true" == vm["wallpaper.disable"].as<std::wstring>() ) )
+        {
+            return;
+        }
+    }
 
     if ( vm.count( "wallpaper.path" ) )
     {
@@ -53,7 +63,7 @@ Wallpaper::~Wallpaper()
 
 void Wallpaper::set_wallpaper()
 {
-    if ( m_pictures.size() < 2 )
+    if ( m_disable || m_pictures.size() < 2 )
     {
         return;
     }
@@ -88,7 +98,7 @@ void Wallpaper::remove_current_picture()
 
 void Wallpaper::handle_start()
 {
-    if ( m_directory.empty() || m_recycle_directory.empty() )
+    if ( m_disable || m_directory.empty() || m_recycle_directory.empty() )
     {
         return;
     }
@@ -125,36 +135,51 @@ void Wallpaper::handle_replay()
 
 void Wallpaper::handle_next()
 {
-    set_wallpaper();
-    m_count = 0;
+    if ( ! m_disable )
+    {
+        set_wallpaper();
+        m_count = 0;
+    }
 }
 
 
 void Wallpaper::handle_previous()
 {
-    set_wallpaper();
-    m_count = 0;
+    if ( ! m_disable )
+    {
+        set_wallpaper();
+        m_count = 0;
+    }
 }
 
 
 void Wallpaper::handle_jump( size_t distance )
 {
-    set_wallpaper();
-    m_count = 0;
+    if ( ! m_disable )
+    {
+        set_wallpaper();
+        m_count = 0;
+    }
 }
 
 
 void Wallpaper::handle_jump_back( size_t distance )
 {
-    set_wallpaper();
-    m_count = 0;
+    if ( ! m_disable )
+    {
+        set_wallpaper();
+        m_count = 0;
+    }
 }
 
 
 void Wallpaper::handle_disable()
 {
-    set_wallpaper();
-    m_count = 0;
+    if ( ! m_disable )
+    {
+        set_wallpaper();
+        m_count = 0;
+    }
 }
 
 
