@@ -4,7 +4,6 @@
 #include "IInputSender.h"
 #include "InputUtility.h"
 #include "IConsole.h"
-#include "ILog.h"
 #include "Utility.h"
 
 
@@ -15,12 +14,14 @@ MpcPlayer::MpcPlayer()
       m_playing( false ),
       m_running( true ),
       m_adjust_start_time( 0 ),
-      m_adjust_duration_time( 0 )
+      m_adjust_duration_time( 0 ),
+      m_disable( false )
 {
     m_console = GetConsoleWindow();
 
     po::options_description options( "Movie" );
     options.add_options()
+        ( "movie.disable", po::wvalue<std::wstring>(), "disable" )
         ( "movie.player", po::wvalue<std::wstring>(), "mpc player path" )
         ( "movie.movie", po::wvalue<std::wstring>(), "the movie path" )
         ( "movie.load-subtitle", po::wvalue<std::wstring>(), "load subtitle?" )
@@ -30,6 +31,14 @@ MpcPlayer::MpcPlayer()
         ( "movie.adjust-duration-time", po::value<int>()->default_value( 0 ), "adjust subtitle display duration time" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer(this).variables_map();
+
+    if ( vm.count( "move.disable" ) )
+    {
+        if ( m_disable = ( L"true" == fs::system_complete( vm["move.disable"].as<std::wstring>() ) ) )
+        {
+            return;
+        }
+    }
 
     if ( vm.count( "file.name" ) )
     {
@@ -75,7 +84,7 @@ MpcPlayer::~MpcPlayer()
 
 bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
 {
-    if ( m_player_hwnd == NULL )
+    if ( m_disable || NULL == m_player_hwnd )
     {
         return false;
     }

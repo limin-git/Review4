@@ -49,4 +49,5 @@ private:
     volatile bool m_running;
     ISubtitleSlideshowPtr m_subtitle;
     boost::thread m_monitor_player_thread;
+    bool m_disable;
 };

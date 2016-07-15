@@ -11,7 +11,6 @@
 #include "IDisable.h"
 #include "IText.h"
 #include "IConsole.h"
-#include "ILog.h"
 
 // dependency:
 // IHistory

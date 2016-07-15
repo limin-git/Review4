@@ -42,4 +42,5 @@ private:
     std::list<fs::path>::iterator m_current;
     size_t m_frequence;
     size_t m_count;
+    bool m_disable;
 };

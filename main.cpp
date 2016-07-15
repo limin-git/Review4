@@ -1,10 +1,9 @@
 #include "stdafx.h"
 #include "ICommandLine.h"
 #include "IReviewManager.h"
-#include "ILog.h"
 
 
-int _tmain(int argc, _TCHAR* argv[])
+int wmain(int argc, wchar_t* argv[])
 {
     if ( argc == 1 )
     {
@@ -17,7 +16,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
     try
     {
-        ILog::instance();
         IReviewManager::instance().run();
     }
     catch ( std::exception& e)

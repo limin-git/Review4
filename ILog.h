@@ -1,4 +1,10 @@
 #pragma once
+#include <boost/log/sources/logger.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/support/date_time.hpp>
+#include <boost/log/utility/setup.hpp>
+#include <boost/locale.hpp>
 
 
 struct ILog
