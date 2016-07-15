@@ -4,11 +4,6 @@
 #include "FileUtility.h"
 #include "IDisable.h"
 
-// singleton dependency:
-// IHistory
-//     --> IConfigurationFile
-//     --> IDisable
-
 
 History::History()
     : m_no_history( false )

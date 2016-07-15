@@ -1,11 +1,6 @@
 #include "stdafx.h"
 #include "Disable.h"
 #include "IConfigurationFile.h"
-
-// singleton dependency:
-// IDisable
-//     --> IConfigurationFile
-
 namespace po = boost::program_options;
 
 

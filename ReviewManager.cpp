@@ -1,23 +1,13 @@
 #include "stdafx.h"
 #include "ReviewManager.h"
 #include "IInput.h"
-#include "IScheduler.h"
-#include "IDisable.h"
 #include "IHotKey.h"
 #include "IConfigurationFile.h"
 #include "TextReview.h"
 #include "SubtitleReview.h"
 #include "Wallpaper.h"
-
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
-
-// singleton dependency:
-// IReviewManager
-//     --> IInput
-//     --> IScheduler
-//     --> IDisable
-//     --> IConsole
 
 
 ReviewManager::ReviewManager()

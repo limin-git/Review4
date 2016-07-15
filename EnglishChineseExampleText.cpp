@@ -7,14 +7,7 @@
 #include "EmptySlideshow.h"
 #include "IDisable.h"
 #include "IConfigurationFile.h"
-
 namespace po = boost::program_options;
-
-// singleton dependency:
-// IText
-//     --> IFileChangeManager
-//     --> IDisable
-//     --> IConsole
 
 
 EnglishChineseExampleText::EnglishChineseExampleText( const fs::path& file_path )

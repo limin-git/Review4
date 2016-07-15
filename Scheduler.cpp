@@ -11,15 +11,6 @@
 #include "IDisable.h"
 #include "IText.h"
 #include "IConsole.h"
-
-// dependency:
-// IHistory
-//     --> IConfigurationFile
-//     --> IDisable
-//     --> IText
-//     --> IHistory
-//     --> IConsole
-
 namespace po = boost::program_options;
 static const std::time_t ONE_DAY = 12 * 3600;
 

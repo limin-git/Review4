@@ -2,7 +2,6 @@
 #include "IReviewManager.h"
 #include "IInputHandler.h"
 #include "IHotKeyHandler.h"
-#include "ISlideShow.h"
 #include "IReview.h"
 #include "ThreadPool.h"
 
