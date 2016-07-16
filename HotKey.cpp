@@ -9,7 +9,7 @@ HotKey::HotKey()
 {
     m_thread = boost::thread( boost::bind( &HotKey::message_loop, this ) );
     m_mutex.lock();
-    //Sleep(20);
+    Sleep(20);
 }
 
 
@@ -23,15 +23,17 @@ HotKey::~HotKey()
 
 IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, Callable callback )
 {
+    m_mutex.lock();
+
     KeyHandlerMap::iterator it = m_handlers.find( std::make_pair( fsModifiers, vk ) );
 
     if ( it != m_handlers.end() )
     {
         it->second[handler].push_back( callback );
+        m_mutex.unlock();
     }
     else
     {
-        m_mutex.lock();
         static UINT id = 0;
         Key key( fsModifiers, vk );
         m_ids[key] = id;
@@ -49,6 +51,8 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
 
 IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
 {
+    m_mutex.lock();
+
     std::set<UINT> ids;
 
     for ( KeyHandlerMap::iterator it = m_handlers.begin(); it != m_handlers.end(); NULL )
@@ -71,9 +75,12 @@ IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
 
     if ( ! ids.empty() )
     {
-        m_mutex.lock();
         m_unregister_ids.swap( ids );
         IInputSender::instance().Ctrl_Alt_Shift_key( 'U' );
+    }
+    else
+    {
+        m_mutex.unlock();
     }
 
     return *this;

@@ -6,6 +6,7 @@
 #include "FileSystemUtility.h"
 #include "Utility.h"
 #include "IInput.h"
+#include "IHotKey.h"
 
 
 Wallpaper::Wallpaper()
@@ -53,11 +54,6 @@ Wallpaper::Wallpaper()
 
 Wallpaper::~Wallpaper()
 {
-    if ( !m_directory.empty() )
-    {
-        //IInput::instance().remove_key_handler( this ).remove_mouse_handler( this );
-        Utility::set_system_wallpaper( L"C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );
-    }
 }
 
 
@@ -77,17 +73,15 @@ void Wallpaper::set_wallpaper()
 
 void Wallpaper::remove_current_picture()
 {
-    if ( m_current != m_pictures.end() )
+    if ( ! m_disable )
     {
-        fs::path p = *m_current;
-
         if ( m_recycle_directory.empty() )
         {
             Utility::remove_file( *m_current );
         }
         else
         {
-            Utility::rename_file( *m_current, m_recycle_directory / p.filename() );
+            Utility::rename_file( *m_current, m_recycle_directory / m_current->filename() );
         }
 
         m_pictures.erase( m_current );
@@ -112,7 +106,19 @@ void Wallpaper::handle_start()
 
     set_wallpaper();
     IInput::instance().add_key_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
+    IHotKey::instance().register_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
     boost::thread t( boost::bind( &Wallpaper::search_pictures_thread, this ) );
+}
+
+
+void Wallpaper::handle_quit()
+{
+    if ( ! m_disable && ! m_directory.empty() )
+    {
+        IHotKey::instance().unregister_handler( this );
+        IInput::instance().remove_key_handler( this ).remove_mouse_handler( this );
+        Utility::set_system_wallpaper( L"C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );
+    }
 }
 
 
@@ -194,6 +200,8 @@ void Wallpaper::options_changed( const po::variables_map& vm, const po::variable
 
 void Wallpaper::search_pictures_thread()
 {
+    fs::path current_path = *m_current;
     std::list<fs::path> pictures = Utility::get_files_of_directory_if( m_directory, &Utility::is_picture );
     m_pictures.swap( pictures );
+    m_current = std::find( m_pictures.begin(), m_pictures.end(), current_path );
 }

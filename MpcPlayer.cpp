@@ -84,6 +84,8 @@ MpcPlayer::~MpcPlayer()
 
 bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
 {
+    boost::lock_guard<boost::mutex> lock( m_mutex );
+
     if ( m_disable || NULL == m_player_hwnd )
     {
         return false;

@@ -50,4 +50,5 @@ private:
     ISubtitleSlideshowPtr m_subtitle;
     boost::thread m_monitor_player_thread;
     bool m_disable;
+    boost::mutex m_mutex;
 };

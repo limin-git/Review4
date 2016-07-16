@@ -1,6 +1,7 @@
 #pragma once
 #include "IWallpaper.h"
 #include "IInputHandler.h"
+#include "IHotKeyHandler.h"
 #include "IReview.h"
 #include "IConfigurationFileObserver.h"
 namespace fs = boost::filesystem;
@@ -8,6 +9,7 @@ namespace fs = boost::filesystem;
 
 struct Wallpaper : IReview,
                    IInputHandler,
+                   IHotKeyHandler,
                    IConfigurationFileObserver
 {
 public:
@@ -16,6 +18,7 @@ public:
     ~Wallpaper();
 
     virtual void handle_start();
+    virtual void handle_quit();
     virtual void handle_continue();
     virtual void handle_replay();
     virtual void handle_next();

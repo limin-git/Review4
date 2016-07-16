@@ -26,6 +26,11 @@ void TextReview::handle_start()
 }
 
 
+void TextReview::handle_quit()
+{
+}
+
+
 void TextReview::handle_continue()
 {
     show();

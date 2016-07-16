@@ -27,6 +27,7 @@ public:
 private:
 
     void start();
+    void handle_exit();
 
 private:
 

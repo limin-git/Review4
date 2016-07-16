@@ -2,6 +2,7 @@
 #include "ReviewManager.h"
 #include "IInput.h"
 #include "IHotKey.h"
+#include "IInputSender.h"
 #include "IConfigurationFile.h"
 #include "TextReview.h"
 #include "SubtitleReview.h"
@@ -79,6 +80,7 @@ void ReviewManager::run()
             .register_handler( this, 0, VK_NEXT,                boost::bind( &ReviewManager::handle_next, this ) )
             .register_handler( this, 0, VK_UP,                  boost::bind( &ReviewManager::handle_replay, this ) )
             .register_handler( this, 0, VK_DELETE,              boost::bind( &ReviewManager::handle_disable, this ) )
+            .register_handler( this, 0, VK_ESCAPE,              boost::bind( &ReviewManager::handle_exit, this ) )
             .register_handler( this, MOD_CONTROL, VK_RIGHT,     boost::bind( &ReviewManager::handle_jump, this, 10 ) )
             .register_handler( this, MOD_CONTROL, VK_DOWN,      boost::bind( &ReviewManager::handle_jump, this, 50 ) )
             .register_handler( this, MOD_CONTROL, VK_NEXT,      boost::bind( &ReviewManager::handle_jump, this, 100 ) )
@@ -176,4 +178,18 @@ void ReviewManager::handle_jump_back( size_t distance )
     {
         m_thread_pool.queue_item( boost::bind( &IReview::handle_jump_back, review, distance ) );
     }
+}
+
+
+void ReviewManager::handle_exit()
+{
+    BOOST_FOREACH( IReview* review, m_reivews )
+    {
+        m_thread_pool.queue_item( boost::bind( &IReview::handle_quit, review ) );
+    }
+
+    IHotKey::instance().unregister_handler( this );
+    Sleep( 20 );
+    SetForegroundWindow( GetConsoleWindow() );
+    IInputSender::instance().key( VK_ESCAPE );
 }
