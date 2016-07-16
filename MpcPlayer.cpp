@@ -119,6 +119,7 @@ bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
         ;
     IInputSender::instance().string( ss.str() ).key( VK_RETURN );
     m_subtitle = subtitle;
+    m_condition.notify_one();
     m_processor.queue_item( boost::bind( &MpcPlayer::play_thread, this, m_subtitle ) );
     return true;
 }
@@ -154,15 +155,20 @@ void MpcPlayer::play_thread( const ISubtitleSlideshowPtr& subtitle )
         duration += m_adjust_duration_time;
     }
 
-    for ( size_t i = 0, step = 2; i < duration; i += step )
-    {
-        if ( !m_running ) { break; }
-        Sleep( step );
-        if ( !m_running ) { break; }
+    boost::unique_lock<boost::mutex> lock( m_mutex );
+    boost::chrono::steady_clock::time_point end_time = boost::chrono::steady_clock::now() + boost::chrono::milliseconds( duration );
 
-        if ( m_subtitle != subtitle )
+    while ( boost::chrono::steady_clock::now() < end_time )
+    {
+        boost::cv_status status = m_condition.wait_until( lock, end_time );
+
+        if ( subtitle != m_subtitle )
         {
             return;
+        }
+        else if ( boost::cv_status::timeout == status )
+        {
+            break;
         }
     }
 

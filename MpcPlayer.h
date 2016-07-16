@@ -51,4 +51,5 @@ private:
     boost::thread m_monitor_player_thread;
     bool m_disable;
     boost::mutex m_mutex;
+    boost::condition_variable m_condition;
 };

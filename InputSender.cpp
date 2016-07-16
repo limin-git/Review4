@@ -34,7 +34,7 @@ IInputSender& InputSender::Ctrl_Alt_Shift_key( WORD vk )
 
 IInputSender& InputSender::Alt_key( WORD vk )
 {
-    return key( vk, false, false, true );
+    return key( vk, false, true, false );
 }
 
 

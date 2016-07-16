@@ -3,7 +3,7 @@
 
 
 Input::Input()
-    : m_thread_pool( 10 )
+    : m_thread_pool( 5 )
 {
 }
 
@@ -35,11 +35,6 @@ void Input::run()
                         continue;
                     }
 
-                    if ( VK_ESCAPE == e.wVirtualKeyCode )
-                    {
-                        return;
-                    }
-
                     if ( e.bKeyDown != TRUE )
                     {
                         continue;
@@ -53,6 +48,11 @@ void Input::run()
                         {
                             m_thread_pool.queue_items( v.second );
                         }
+                    }
+
+                    if ( VK_ESCAPE == e.wVirtualKeyCode )
+                    {
+                        return;
                     }
                 }
                 break;

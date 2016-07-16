@@ -97,9 +97,9 @@ void Wallpaper::handle_start()
         return;
     }
 
-    m_pictures = Utility::get_files_of_directory_if( m_directory, &Utility::is_picture, 5 );
+    m_pictures = Utility::get_files_of_directory_if( m_directory, &Utility::is_picture, 10 );
 
-    if ( m_directory.empty() )
+    if ( m_pictures.empty() )
     {
         return;
     }
@@ -111,24 +111,26 @@ void Wallpaper::handle_start()
 }
 
 
-void Wallpaper::handle_quit()
+void Wallpaper::handle_exit()
 {
     if ( ! m_disable && ! m_directory.empty() )
     {
+        m_disable = true;
         IHotKey::instance().unregister_handler( this );
         IInput::instance().remove_key_handler( this ).remove_mouse_handler( this );
-        Utility::set_system_wallpaper( L"C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );
+        Utility::set_system_wallpaper( "C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );        
     }
 }
 
 
 void Wallpaper::handle_continue()
 {
-    m_count++;
-
-    if ( 0 == ( m_count % m_frequence ) )
+    if ( ! m_disable )
     {
-        set_wallpaper();
+        if ( 0 == ( ++m_count % m_frequence ) )
+        {
+            set_wallpaper();
+        }
     }
 }
 

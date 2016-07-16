@@ -4,7 +4,7 @@
 
 void SubtitleReview::handle_jump( size_t distance )
 {
-    Sleep( 500 );
+    Sleep( 200 );
 
     for ( size_t i = 0; i < distance + 1; ++i )
     {
@@ -18,7 +18,7 @@ void SubtitleReview::handle_jump( size_t distance )
 
 void SubtitleReview::handle_jump_back( size_t distance )
 {
-    Sleep( 500 );
+    Sleep( 200 );
 
     for ( size_t i = 0; i < distance + 1; ++i )
     {

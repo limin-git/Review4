@@ -18,7 +18,7 @@ public:
     ~Wallpaper();
 
     virtual void handle_start();
-    virtual void handle_quit();
+    virtual void handle_exit();
     virtual void handle_continue();
     virtual void handle_replay();
     virtual void handle_next();
@@ -45,5 +45,5 @@ private:
     std::list<fs::path>::iterator m_current;
     size_t m_frequence;
     size_t m_count;
-    bool m_disable;
+    bool volatile m_disable;
 };

@@ -28,7 +28,6 @@ private:
 
     RegisterHandlerInfo m_register_handler;
     std::set<UINT> m_unregister_ids;
-    boost::mutex m_mutex;
 
 private:
 
@@ -42,6 +41,9 @@ private:
     boost::thread m_thread;
     bool m_running;
     ThreadPool m_thread_pool;
-    boost::condition_variable m_condition;
+    boost::mutex m_mutex;
+    boost::mutex m_operation_mutex;
+    boost::condition_variable m_operation_condition;
     bool m_operation_complete;
+    volatile bool m_message_loop;
 };

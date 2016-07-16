@@ -102,6 +102,7 @@ void ReviewManager::run()
             .add_key_handler( this, 0, VK_LEFT,      boost::bind( &ReviewManager::handle_previous, this ) )
             .add_key_handler( this, 0, VK_PRIOR,     boost::bind( &ReviewManager::handle_previous, this ) )
             .add_key_handler( this, 0, VK_DELETE,    boost::bind( &ReviewManager::handle_disable, this ) )
+            .add_key_handler( this, 0, VK_ESCAPE,    boost::bind( &ReviewManager::handle_exit, this ) )
             ;
     }
 
@@ -185,10 +186,10 @@ void ReviewManager::handle_exit()
 {
     BOOST_FOREACH( IReview* review, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &IReview::handle_quit, review ) );
+        m_thread_pool.queue_item( boost::bind( &IReview::handle_exit, review ) );
     }
 
     IHotKey::instance().unregister_handler( this );
     SetForegroundWindow( GetConsoleWindow() );
-    IInputSender::instance().key( VK_ESCAPE );
+    IInputSender::instance().key( VK_ESCAPE ).key( VK_ESCAPE ); // why twice ?
 }

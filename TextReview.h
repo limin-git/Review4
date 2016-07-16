@@ -11,7 +11,7 @@ public:
     ~TextReview();
 
     virtual void handle_start();
-    virtual void handle_quit();
+    virtual void handle_exit();
     virtual void handle_continue();
     virtual void handle_replay();
     virtual void handle_next();

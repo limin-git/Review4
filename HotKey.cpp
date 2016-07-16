@@ -5,11 +5,16 @@
 
 HotKey::HotKey()
     : m_running( true ),
-      m_thread_pool( 5 )
+      m_thread_pool( 5 ),
+      m_message_loop( false )
 {
     m_thread = boost::thread( boost::bind( &HotKey::message_loop, this ) );
-    m_mutex.lock();
-    Sleep(20);
+    
+    while ( ! m_message_loop )
+    {
+        IInputSender::instance().Ctrl_Alt_Shift_key( 'M' );
+        Sleep( 1 );
+    }
 }
 
 
@@ -23,7 +28,7 @@ HotKey::~HotKey()
 
 IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, Callable callback )
 {
-    boost::unique_lock<boost::mutex> lock( m_mutex );
+    boost::lock_guard<boost::mutex> lock( m_mutex );
 
     KeyHandlerMap::iterator it = m_handlers.find( std::make_pair( fsModifiers, vk ) );
 
@@ -34,6 +39,7 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
     }
     else
     {
+        boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
         static UINT id = 0;
         Key key( fsModifiers, vk );
         m_ids[key] = id;
@@ -47,7 +53,7 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
 
         while ( ! m_operation_complete )
         {
-            m_condition.wait( lock );
+            m_operation_condition.wait( operation_lock );
         }
     }
 
@@ -57,7 +63,7 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
 
 IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
 {
-    boost::unique_lock<boost::mutex> lock( m_mutex );
+    boost::lock_guard<boost::mutex> lock( m_mutex );
 
     std::set<UINT> ids;
 
@@ -81,13 +87,14 @@ IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
 
     if ( ! ids.empty() )
     {
+        boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
         m_unregister_ids.swap( ids );
         m_operation_complete = false;
         IInputSender::instance().Ctrl_Alt_Shift_key( 'U' );
 
         while ( ! m_operation_complete )
         {
-            m_condition.wait( lock );
+            m_operation_condition.wait( operation_lock );
         }
     }
 
@@ -97,7 +104,8 @@ IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
 
 void HotKey::clear()
 {
-    boost::unique_lock<boost::mutex> lock( m_mutex );
+    boost::lock_guard<boost::mutex> lock( m_mutex );
+    boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
     m_handlers.clear();
     m_ids.clear();
     m_operation_complete = false;
@@ -105,7 +113,7 @@ void HotKey::clear()
 
     while ( ! m_operation_complete )
     {
-        m_condition.wait( lock );
+        m_operation_condition.wait( operation_lock );
     }
 }
 
@@ -116,9 +124,9 @@ void HotKey::message_loop()
     RegisterHotKey( NULL, 0xBFFE, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'U' ); // Unregister
     RegisterHotKey( NULL, 0xBFFD, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'C' ); // Clear
     RegisterHotKey( NULL, 0xBFFC, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'Q' ); // Quit
+    RegisterHotKey( NULL, 0xBFFB, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'M' ); // Message Loop
 
     MSG msg = { 0 };
-    m_mutex.unlock();
 
     while ( m_running && ( GetMessage( &msg, 0, 0, 0 ) != 0 ) )
     {
@@ -126,31 +134,31 @@ void HotKey::message_loop()
         {
             if ( 0xBFFF == msg.wParam ) // Register
             {
-                boost::unique_lock<boost::mutex> lock( m_mutex );
+                boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
                 RegisterHandlerInfo& i = m_register_handler;
                 RegisterHotKey( NULL, i.id, i.modifiers, i.vk );
                 m_operation_complete = true;
-                m_condition.notify_one();
+                m_operation_condition.notify_one();
             }
             if ( 0xBFFE == msg.wParam ) // Unregister
             {
-                boost::unique_lock<boost::mutex> lock( m_mutex );
+                boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
                 BOOST_FOREACH( int id, m_unregister_ids )
                 {
                     UnregisterHotKey( NULL, id );
                 }
                 m_operation_complete = true;
-                m_condition.notify_one();
+                m_operation_condition.notify_one();
             }
             else if ( 0xBFFD == msg.wParam ) // Clear
             {
-                boost::unique_lock<boost::mutex> lock( m_mutex );
+                boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
                 BOOST_FOREACH( KeyIdMap::value_type& v, m_ids )
                 {
                     UnregisterHotKey( NULL, v.second );
                 }
                 m_operation_complete = true;
-                m_condition.notify_one();
+                m_operation_condition.notify_one();
             }
             else if ( 0xBFFC == msg.wParam ) // Quit
             {
@@ -165,6 +173,11 @@ void HotKey::message_loop()
                 }
 
                 return;
+            }
+            else if ( 0xBFFB == msg.wParam ) // Message Loop
+            {
+                m_message_loop = true;
+                UnregisterHotKey( NULL, 0xBFFB );
             }
             else
             {

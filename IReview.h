@@ -5,7 +5,7 @@ struct IReview
 {
     virtual ~IReview() {}
     virtual void handle_start() = 0;
-    virtual void handle_quit() = 0;
+    virtual void handle_exit() = 0;
     virtual void handle_continue() = 0;
     virtual void handle_next() = 0;
     virtual void handle_previous() = 0;
