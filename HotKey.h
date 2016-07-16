@@ -11,6 +11,7 @@ public:
     ~HotKey();
     virtual IHotKey& register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, Callable callback );
     virtual IHotKey& unregister_handler( IHotKeyHandler* handler );
+    virtual void clear();
 
 private:
 
@@ -41,4 +42,6 @@ private:
     boost::thread m_thread;
     bool m_running;
     ThreadPool m_thread_pool;
+    boost::condition_variable m_condition;
+    bool m_operation_complete;
 };

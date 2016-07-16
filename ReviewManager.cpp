@@ -189,7 +189,6 @@ void ReviewManager::handle_exit()
     }
 
     IHotKey::instance().unregister_handler( this );
-    Sleep( 20 );
     SetForegroundWindow( GetConsoleWindow() );
     IInputSender::instance().key( VK_ESCAPE );
 }
