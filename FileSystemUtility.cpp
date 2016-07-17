@@ -61,9 +61,10 @@ namespace Utility
     }
 
 
-    std::list<fs::path> get_files_of_directory( const fs::path& dir )
+    std::list<fs::path> get_files_of_directory( const fs::path& dir, size_t first_n )
     {
         std::list<fs::path> files;
+        size_t n = 0;
 
         if ( ! exists( dir ) || ! is_directory( dir ) )
         {
@@ -76,6 +77,11 @@ namespace Utility
             if ( ! is_directory( it->status() ) )
             {
                 files.push_back( it->path() );
+
+                if ( first_n <= ++n )
+                {
+                    break;
+                }
             }
         }
 
@@ -104,7 +110,7 @@ namespace Utility
 
                     if ( first_n <= ++n )
                     {
-                        return files;
+                        break;
                     }
                 }
             }

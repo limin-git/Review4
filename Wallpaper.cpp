@@ -12,7 +12,8 @@
 Wallpaper::Wallpaper()
     : m_frequence( 2 ),
       m_count( 0 ),
-      m_disable( false )
+      m_disable( false ),
+      m_check_picture( true )
 {
     po::options_description options;
     options.add_options()
@@ -20,6 +21,7 @@ Wallpaper::Wallpaper()
         ( "wallpaper.path", po::wvalue<std::wstring>(), "picture directory path" )
         ( "wallpaper.recycle-path", po::wvalue<std::wstring>(), "recycle directory path" )
         ( "wallpaper.frequence", po::value<size_t>(), "change picture frequence" )
+        ( "wallpaper.check-picture", po::wvalue<std::wstring>(), "check whether the file is a picture or not" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer(this).variables_map();
 
@@ -48,6 +50,11 @@ Wallpaper::Wallpaper()
                 m_recycle_directory.clear();
             }
         }
+    }
+
+    if ( vm.count( "wallpaper.check-picture" ) )
+    {
+        m_check_picture = ( L"true" == vm["wallpaper.check-picture"].as<std::wstring>() );
     }
 }
 
@@ -97,7 +104,11 @@ void Wallpaper::handle_start()
         return;
     }
 
-    m_pictures = Utility::get_files_of_directory_if( m_directory, &Utility::is_picture, 10 );
+    m_pictures = ( m_check_picture ?
+                   Utility::get_files_of_directory_if( m_directory, &Utility::is_picture, 10 ) :
+                   Utility::get_files_of_directory( m_directory, 10 ) );
+
+    boost::thread t( boost::bind( &Wallpaper::search_pictures_thread, this ) );
 
     if ( m_pictures.empty() )
     {
@@ -107,7 +118,6 @@ void Wallpaper::handle_start()
     set_wallpaper();
     IInput::instance().add_key_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
     IHotKey::instance().register_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
-    boost::thread t( boost::bind( &Wallpaper::search_pictures_thread, this ) );
 }
 
 
@@ -203,7 +213,15 @@ void Wallpaper::options_changed( const po::variables_map& vm, const po::variable
 void Wallpaper::search_pictures_thread()
 {
     fs::path current_path = *m_current;
-    std::list<fs::path> pictures = Utility::get_files_of_directory_if( m_directory, &Utility::is_picture );
+    std::list<fs::path> pictures =
+        ( m_check_picture ?
+          Utility::get_files_of_directory_if( m_directory, &Utility::is_picture ) :
+          Utility::get_files_of_directory( m_directory ) );
     m_pictures.swap( pictures );
-    m_current = std::find( m_pictures.begin(), m_pictures.end(), current_path );
+    std::list<fs::path>::iterator it = std::find( m_pictures.begin(), m_pictures.end(), current_path );
+
+    if ( it != m_pictures.end() )
+    {
+        m_current = it;
+    }
 }
