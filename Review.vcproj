@@ -150,7 +150,7 @@
 				AdditionalLibraryDirectories="&quot;$(BOOST_HOME)\stage\lib&quot;"
 				GenerateManifest="true"
 				EnableUAC="true"
-				GenerateDebugInformation="false"
+				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
