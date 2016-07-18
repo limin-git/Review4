@@ -191,5 +191,5 @@ void ReviewManager::handle_exit()
 
     IHotKey::instance().unregister_handler( this );
     SetForegroundWindow( GetConsoleWindow() );
-    IInputSender::instance().key( VK_ESCAPE ).key( VK_ESCAPE ); // why twice ?
+    IInputSender::instance().key( VK_ESCAPE ).key( VK_ESCAPE ).key( VK_ESCAPE ).key( VK_ESCAPE ); // why twice ?
 }
