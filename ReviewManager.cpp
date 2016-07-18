@@ -189,7 +189,7 @@ void ReviewManager::handle_exit()
         m_thread_pool.queue_item( boost::bind( &IReview::handle_exit, review ) );
     }
 
-    IHotKey::instance().unregister_handler( this );
+    IHotKey::instance().unregister_handler( this ).clear();
     SetForegroundWindow( GetConsoleWindow() );
-    IInputSender::instance().key( VK_ESCAPE ).key( VK_ESCAPE ); // why twice ?
+    IInputSender::instance().key( VK_ESCAPE );
 }

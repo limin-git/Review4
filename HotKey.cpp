@@ -120,11 +120,16 @@ void HotKey::clear()
 
 void HotKey::message_loop()
 {
-    RegisterHotKey( NULL, 0xBFFF, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'R' ); // Register
-    RegisterHotKey( NULL, 0xBFFE, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'U' ); // Unregister
-    RegisterHotKey( NULL, 0xBFFD, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'C' ); // Clear
-    RegisterHotKey( NULL, 0xBFFC, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'Q' ); // Quit
-    RegisterHotKey( NULL, 0xBFFB, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'M' ); // Message Loop
+    BOOL hotkey_m = RegisterHotKey( NULL, 0xBFFB, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'M' ); // Message Loop
+    BOOL hotkey_q = RegisterHotKey( NULL, 0xBFFC, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'Q' ); // Quit
+    BOOL hotkey_c = RegisterHotKey( NULL, 0xBFFD, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'C' ); // Clear
+    BOOL hotkey_u = RegisterHotKey( NULL, 0xBFFE, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'U' ); // Unregister
+    BOOL hotkey_r = RegisterHotKey( NULL, 0xBFFF, (MOD_CONTROL|MOD_ALT|MOD_SHIFT), 'R' ); // Register
+
+    if ( !hotkey_m || !hotkey_q || !hotkey_c || !hotkey_u || !hotkey_r )
+    {
+        throw;
+    }
 
     MSG msg = { 0 };
 
@@ -132,33 +137,10 @@ void HotKey::message_loop()
     {
         if ( msg.message == WM_HOTKEY )
         {
-            if ( 0xBFFF == msg.wParam ) // Register
+            if ( 0xBFFB == msg.wParam ) // Message Loop
             {
-                boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
-                RegisterHandlerInfo& i = m_register_handler;
-                RegisterHotKey( NULL, i.id, i.modifiers, i.vk );
-                m_operation_complete = true;
-                m_operation_condition.notify_one();
-            }
-            if ( 0xBFFE == msg.wParam ) // Unregister
-            {
-                boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
-                BOOST_FOREACH( int id, m_unregister_ids )
-                {
-                    UnregisterHotKey( NULL, id );
-                }
-                m_operation_complete = true;
-                m_operation_condition.notify_one();
-            }
-            else if ( 0xBFFD == msg.wParam ) // Clear
-            {
-                boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
-                BOOST_FOREACH( KeyIdMap::value_type& v, m_ids )
-                {
-                    UnregisterHotKey( NULL, v.second );
-                }
-                m_operation_complete = true;
-                m_operation_condition.notify_one();
+                UnregisterHotKey( NULL, 0xBFFB );
+                m_message_loop = true;
             }
             else if ( 0xBFFC == msg.wParam ) // Quit
             {
@@ -172,12 +154,35 @@ void HotKey::message_loop()
                     UnregisterHotKey( NULL, v.second );
                 }
 
-                return;
+                break;;
             }
-            else if ( 0xBFFB == msg.wParam ) // Message Loop
+            else if ( 0xBFFD == msg.wParam ) // Clear
             {
-                m_message_loop = true;
-                UnregisterHotKey( NULL, 0xBFFB );
+                boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
+                BOOST_FOREACH( KeyIdMap::value_type& v, m_ids )
+                {
+                    UnregisterHotKey( NULL, v.second );
+                }
+                m_operation_complete = true;
+                m_operation_condition.notify_one();
+            }
+            else if ( 0xBFFE == msg.wParam ) // Unregister
+            {
+                boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
+                BOOST_FOREACH( int id, m_unregister_ids )
+                {
+                    UnregisterHotKey( NULL, id );
+                }
+                m_operation_complete = true;
+                m_operation_condition.notify_one();
+            }
+            else if ( 0xBFFF == msg.wParam ) // Register
+            {
+                boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
+                RegisterHandlerInfo& i = m_register_handler;
+                RegisterHotKey( NULL, i.id, i.modifiers, i.vk );
+                m_operation_complete = true;
+                m_operation_condition.notify_one();
             }
             else
             {
