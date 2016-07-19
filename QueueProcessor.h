@@ -20,6 +20,7 @@ struct QueueProcessor
     void terminate()
     {
         m_running = false;
+        queue_item( Callable() );
         m_condition.notify_one();
         m_thread.join();
         m_busy = false;
@@ -83,7 +84,7 @@ struct QueueProcessor
             m_condition.wait( lock );
         }
 
-        if ( m_queue.empty() )
+        if ( ! m_running || m_queue.empty() )
         {
             return Callable();
         }

@@ -5,7 +5,7 @@
 
 HotKey::HotKey()
     : m_running( true ),
-      m_thread_pool( 5 ),
+      m_thread_pool( 10 ),
       m_message_loop( false )
 {
     m_thread = boost::thread( boost::bind( &HotKey::message_loop, this ) );
@@ -35,7 +35,6 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
     if ( it != m_handlers.end() )
     {
         it->second[handler].push_back( callback );
-        m_mutex.unlock();
     }
     else
     {
@@ -53,7 +52,7 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
 
         while ( ! m_operation_complete )
         {
-            m_operation_condition.wait( operation_lock );
+            m_operation_condition.wait_for( operation_lock, boost::chrono::milliseconds(10) );
         }
     }
 
@@ -94,7 +93,7 @@ IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
 
         while ( ! m_operation_complete )
         {
-            m_operation_condition.wait( operation_lock );
+            m_operation_condition.wait_for( operation_lock, boost::chrono::milliseconds(10) );
         }
     }
 
@@ -107,7 +106,6 @@ void HotKey::clear()
     boost::lock_guard<boost::mutex> lock( m_mutex );
     boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
     m_handlers.clear();
-    m_ids.clear();
     m_operation_complete = false;
     IInputSender::instance().Ctrl_Alt_Shift_key( 'C' );
 
@@ -154,7 +152,7 @@ void HotKey::message_loop()
                     UnregisterHotKey( NULL, v.second );
                 }
 
-                break;;
+                break;
             }
             else if ( 0xBFFD == msg.wParam ) // Clear
             {
@@ -163,6 +161,7 @@ void HotKey::message_loop()
                 {
                     UnregisterHotKey( NULL, v.second );
                 }
+                m_ids.clear();
                 m_operation_complete = true;
                 m_operation_condition.notify_one();
             }
@@ -173,6 +172,7 @@ void HotKey::message_loop()
                 {
                     UnregisterHotKey( NULL, id );
                 }
+                m_unregister_ids.clear();
                 m_operation_complete = true;
                 m_operation_condition.notify_one();
             }

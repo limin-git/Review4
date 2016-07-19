@@ -98,6 +98,7 @@ void Input::run()
 
 IInput& Input::add_key_handler( IInputHandler* handler, UINT state, WORD vk, const Callback& callback )
 {
+    boost::lock_guard<boost::mutex> lock( m_mutex );
     m_key_handlers[std::make_pair( state, vk )][handler].push_back( callback );
     return *this;
 }
@@ -105,6 +106,8 @@ IInput& Input::add_key_handler( IInputHandler* handler, UINT state, WORD vk, con
 
 IInput& Input::add_key_handler( IInputHandler* handler, UINT state, WORD vk_first, WORD vk_last, const Callback& callback )
 {
+    boost::lock_guard<boost::mutex> lock( m_mutex );
+
     for ( size_t vk = vk_first; vk <= vk_last; ++vk )
     {
         m_key_handlers[std::make_pair(state, vk)][handler].push_back( callback );
@@ -116,6 +119,8 @@ IInput& Input::add_key_handler( IInputHandler* handler, UINT state, WORD vk_firs
 
 IInput& Input::remove_key_handler( IInputHandler* handler )
 {
+    boost::lock_guard<boost::mutex> lock( m_mutex );
+
     BOOST_FOREACH( KeyHandlerMap::value_type& v, m_key_handlers )
     {
         v.second.erase( handler );
@@ -127,6 +132,8 @@ IInput& Input::remove_key_handler( IInputHandler* handler )
 
 IInput& Input::add_mouse_handler( IInputHandler* handler, DWORD event_flas, DWORD button_state, const Callback& callback )
 {
+    boost::lock_guard<boost::mutex> lock( m_mutex );
+
     ( 0 == event_flas ? m_mouse_button_pressed_handlers[button_state][handler] : m_other_mouse_handlers[event_flas][handler] ).push_back( callback );
 
     if ( 0 == event_flas )
@@ -144,6 +151,8 @@ IInput& Input::add_mouse_handler( IInputHandler* handler, DWORD event_flas, DWOR
 
 IInput& Input::remove_mouse_handler( IInputHandler* handler )
 {
+    boost::lock_guard<boost::mutex> lock( m_mutex );
+
     BOOST_FOREACH( MouseHandlerMap::value_type& v, m_mouse_button_pressed_handlers )
     {
         v.second.erase( handler );
@@ -154,6 +163,16 @@ IInput& Input::remove_mouse_handler( IInputHandler* handler )
         v.second.erase( handler );
     }
 
+    return *this;
+}
+
+
+IInput& Input::clear()
+{
+    boost::lock_guard<boost::mutex> lock( m_mutex );
+    m_key_handlers.clear();
+    m_mouse_button_pressed_handlers.clear();
+    m_other_mouse_handlers.clear();
     return *this;
 }
 

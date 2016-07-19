@@ -47,4 +47,5 @@ private:
     size_t m_count;
     bool volatile m_disable;
     bool volatile m_check_picture;
+    boost::thread m_search_thread;
 };

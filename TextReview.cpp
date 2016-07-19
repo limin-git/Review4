@@ -15,6 +15,7 @@ TextReview::TextReview()
 
 TextReview::~TextReview()
 {
+    handle_exit();
 }
 
 

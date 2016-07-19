@@ -61,6 +61,7 @@ Wallpaper::Wallpaper()
 
 Wallpaper::~Wallpaper()
 {
+    handle_exit();
 }
 
 
@@ -108,7 +109,7 @@ void Wallpaper::handle_start()
                    Utility::get_files_of_directory_if( m_directory, &Utility::is_picture, 10 ) :
                    Utility::get_files_of_directory( m_directory, 10 ) );
 
-    boost::thread t( boost::bind( &Wallpaper::search_pictures_thread, this ) );
+    m_search_thread = boost::thread( boost::bind( &Wallpaper::search_pictures_thread, this ) );
 
     if ( m_pictures.empty() )
     {
@@ -116,6 +117,7 @@ void Wallpaper::handle_start()
     }
 
     set_wallpaper();
+
     IInput::instance().add_key_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
     IHotKey::instance().register_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
 }
@@ -123,12 +125,14 @@ void Wallpaper::handle_start()
 
 void Wallpaper::handle_exit()
 {
+    m_search_thread.join();
+
     if ( ! m_disable && ! m_directory.empty() )
     {
         m_disable = true;
-        IHotKey::instance().unregister_handler( this );
-        IInput::instance().remove_key_handler( this ).remove_mouse_handler( this );
-        Utility::set_system_wallpaper( "C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );        
+        //IHotKey::instance().unregister_handler( this );
+        //IInput::instance().remove_key_handler( this ).remove_mouse_handler( this );
+        Utility::set_system_wallpaper( "C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );
     }
 }
 

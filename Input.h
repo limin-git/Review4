@@ -14,6 +14,7 @@ public:
     virtual IInput& remove_key_handler( IInputHandler* handler );
     virtual IInput& add_mouse_handler( IInputHandler* handler, DWORD event_flas, DWORD button_state, const Callback& callback );
     virtual IInput& remove_mouse_handler( IInputHandler* handler );
+    virtual IInput& clear();
 
 private:
 
@@ -33,4 +34,5 @@ private:
     MouseHandlerMap m_mouse_button_pressed_handlers;
     MouseHandlerMap m_other_mouse_handlers;
     ThreadPool m_thread_pool;
+    boost::mutex m_mutex;
 };

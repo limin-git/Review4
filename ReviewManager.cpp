@@ -184,12 +184,14 @@ void ReviewManager::handle_jump_back( size_t distance )
 
 void ReviewManager::handle_exit()
 {
+    IHotKey::instance().clear();
+    IInput::instance().clear();
+
     BOOST_FOREACH( IReview* review, m_reivews )
     {
         m_thread_pool.queue_item( boost::bind( &IReview::handle_exit, review ) );
     }
 
-    IHotKey::instance().unregister_handler( this ).clear();
     SetForegroundWindow( GetConsoleWindow() );
     IInputSender::instance().key( VK_ESCAPE );
 }
