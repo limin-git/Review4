@@ -122,8 +122,11 @@ void Scheduler::initialize_schedule()
     BOOST_FOREACH( size_t key, keys )
     {
         std::time_t next_time = get_next_time( key, current );
-
-        if ( next_time <= current )
+        if ( 0 == next_time )
+        {
+            IDisable::instance().disable( IText::instance().slideshow( key ) );
+        }
+        else if ( next_time <= current )
         {
             candidates.push_back( key );
         }
@@ -194,6 +197,10 @@ void Scheduler::schedule_next_time( size_t key )
 std::time_t Scheduler::get_next_time( size_t key, const std::time_t current )
 {
     const std::vector<std::time_t>& history = IHistory::instance().history( key );
+    if ( m_schedule.size() + 1 <=  history.size() )
+    {
+        return 0;
+    }
     return ( history.empty() ? current : history.back() + m_schedule[ history.size() - 1 ] );
 }
 
