@@ -5,11 +5,10 @@
 
 HotKey::HotKey()
     : m_running( true ),
-      m_thread_pool( 10 ),
       m_message_loop( false )
 {
     m_thread = boost::thread( boost::bind( &HotKey::message_loop, this ) );
-    
+
     while ( ! m_message_loop )
     {
         IInputSender::instance().Ctrl_Alt_Shift_key( 'M' );

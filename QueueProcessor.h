@@ -1,10 +1,22 @@
 #pragma once
 
 
-struct QueueProcessor
-{
-    typedef boost::function<void()> Callable;
+typedef boost::function<void()> Callable;
 
+struct IQueueProcessor
+{
+    virtual ~IQueueProcessor() {}
+    virtual void terminate() = 0;
+    virtual void queue_item( const Callable& item ) = 0;
+    virtual void queue_items( std::vector<Callable>& items ) = 0;
+    virtual void queue_items( std::list<Callable>& items ) = 0;
+    virtual bool busy() const = 0;
+    virtual size_t size() const = 0;
+};
+
+template<size_t max_queue_size = -1>
+struct QueueProcessor : IQueueProcessor
+{
     QueueProcessor()
     {
         m_busy = false;
@@ -17,7 +29,7 @@ struct QueueProcessor
         terminate();
     }
 
-    void terminate()
+    virtual void terminate()
     {
         m_running = false;
         queue_item( Callable() );
@@ -26,16 +38,43 @@ struct QueueProcessor
         m_busy = false;
     }
 
-    void queue_item( const Callable& item )
+    virtual void queue_item( const Callable& item )
     {
         boost::unique_lock<boost::mutex> lock( m_mutex );
+        while ( max_queue_size <= m_queue.size() )
+        {
+            m_queue.pop();
+        }
         m_queue.push( item );
         m_condition.notify_one();
         m_busy = true;
     }
 
+    virtual void queue_items( std::vector<Callable>& items )
+    {
+        queue_items_impl( items );
+    }
+
+    virtual void queue_items( std::list<Callable>& items )
+    {
+        queue_items_impl( items );
+    }
+
+    virtual bool busy() const
+    {
+        return m_busy;
+    }
+
+    virtual size_t size() const
+    {
+        boost::unique_lock<boost::mutex> lock( m_mutex );
+        return m_queue.size();
+    }
+
+private:
+
     template<typename U>
-    void queue_items( const U& items )
+    void queue_items_impl( const U& items )
     {
         if ( !items.empty() )
         {
@@ -94,18 +133,12 @@ struct QueueProcessor
         return item;
     }
 
-
-    bool busy()
-    {
-        return m_busy;
-    }
-
 public:
 
     std::queue<Callable> m_queue;
     boost::thread m_thread;
     volatile bool m_running;
     volatile bool m_busy;
-    boost::mutex m_mutex;
+    mutable boost::mutex m_mutex;
     boost::condition_variable m_condition;
 };

@@ -1,6 +1,5 @@
 #pragma once
 #include "ISound.h"
-#include "QueueProcessor.h"
 
 
 struct Sound : ISound

@@ -7,7 +7,6 @@ struct Input : IInput
 {
 public:
 
-    Input();
     virtual void run();
     virtual IInput& add_key_handler( IInputHandler* handler, UINT state, WORD vk, const Callback& callback );
     virtual IInput& add_key_handler( IInputHandler* handler, UINT state, WORD vk_first, WORD vk_last, const Callback& callback );
@@ -33,6 +32,6 @@ private:
     typedef std::map<DWORD, CallbackMap> MouseHandlerMap;
     MouseHandlerMap m_mouse_button_pressed_handlers;
     MouseHandlerMap m_other_mouse_handlers;
-    ThreadPool m_thread_pool;
+    ThreadPool<2> m_thread_pool;
     boost::mutex m_mutex;
 };

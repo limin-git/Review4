@@ -32,7 +32,7 @@ private:
 
     typedef std::map<fs::path, std::wstring> SpeechDirectory;
     SpeechDirectory m_speech_directories; // path, extension
-    QueueProcessor m_processor;
+    QueueProcessor<> m_processor;
     po::options_description m_options_description;
     bool m_disabled;
 };

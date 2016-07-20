@@ -39,7 +39,7 @@ private:
     HWND m_console;
     STARTUPINFO m_si;
     PROCESS_INFORMATION m_pi;
-    QueueProcessor m_processor;
+    QueueProcessor<> m_processor;
     bool m_load_subtitle;
     bool m_auto_stop;
     size_t m_wait_startup;

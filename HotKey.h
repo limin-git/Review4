@@ -40,7 +40,7 @@ private:
     KeyIdMap m_ids;
     boost::thread m_thread;
     bool m_running;
-    ThreadPool m_thread_pool;
+    ThreadPool<2> m_thread_pool;
     boost::mutex m_mutex;
     boost::mutex m_operation_mutex;
     boost::condition_variable m_operation_condition;

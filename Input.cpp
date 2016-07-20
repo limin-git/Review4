@@ -2,12 +2,6 @@
 #include "Input.h"
 
 
-Input::Input()
-    : m_thread_pool( 5 )
-{
-}
-
-
 void Input::run()
 {
     HANDLE cin = GetStdHandle(STD_INPUT_HANDLE);

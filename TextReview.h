@@ -32,5 +32,4 @@ protected:
     ISlideshowPtrList m_review_history;
     ISlideshowPtrList::iterator m_current;
     bool m_current_show_finished;
-    boost::recursive_mutex m_mutex;
 };

@@ -33,21 +33,21 @@ ReviewManager::ReviewManager()
 
         if ( file_name.extension() == ".ece" )
         {
-            m_reivews.insert( new TextReview );
+            m_reivews[new TextReview] = new QueueProcessor<>;
         }
         else if ( file_name.extension() == ".srt" )
         {
-            m_reivews.insert( new SubtitleReview );
+            m_reivews[new SubtitleReview] = new QueueProcessor<>;
         }
         else if ( file_name.extension() == ".ass" )
         {
-            m_reivews.insert( new SubtitleReview );
+            m_reivews[new SubtitleReview] = new QueueProcessor<>;
         }
     }
 
     if ( vm.count( "wallpaper.path" ) )
     {
-        m_reivews.insert( new Wallpaper );
+        m_reivews[new Wallpaper] = new QueueProcessor<1>;
     }
 }
 
@@ -57,9 +57,10 @@ ReviewManager::~ReviewManager()
     //IInput::instance().remove_key_handler( this ).remove_mouse_handler( this );
     //IHotKey::instance().unregister_handler( this );
 
-    BOOST_FOREACH( IReview* review, m_reivews )
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
-        delete review;
+        delete v.first;
+        delete v.second;
     }
 }
 
@@ -112,72 +113,72 @@ void ReviewManager::run()
 
 void ReviewManager::start()
 {
-    BOOST_FOREACH( IReview* review, m_reivews )
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &IReview::handle_start, review ) );
+        v.second->queue_item( boost::bind( &IReview::handle_start, v.first ) );
     }
 }
 
 
 void ReviewManager::handle_continue()
 {
-    BOOST_FOREACH( IReview* review, m_reivews )
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &IReview::handle_continue, review ) );
+        v.second->queue_item( boost::bind( &IReview::handle_continue, v.first ) );
     }
 }
 
 
 void ReviewManager::handle_next()
 {
-    BOOST_FOREACH( IReview* review, m_reivews )
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &IReview::handle_next, review ) );
+        v.second->queue_item( boost::bind( &IReview::handle_next, v.first ) );
     }
 }
 
 
 void ReviewManager::handle_previous()
 {
-    BOOST_FOREACH( IReview* review, m_reivews )
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &IReview::handle_previous, review ) );
+        v.second->queue_item( boost::bind( &IReview::handle_previous, v.first ) );
     }
 }
 
 
 void ReviewManager::handle_replay()
 {
-    BOOST_FOREACH( IReview* review, m_reivews )
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &IReview::handle_replay, review ) );
+        v.second->queue_item( boost::bind( &IReview::handle_replay, v.first ) );
     }
 }
 
 
 void ReviewManager::handle_disable()
 {
-    BOOST_FOREACH( IReview* review, m_reivews )
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &IReview::handle_disable, review ) );
+        v.second->queue_item( boost::bind( &IReview::handle_disable, v.first ) );
     }
 }
 
 
 void ReviewManager::handle_jump( size_t distance )
 {
-    BOOST_FOREACH( IReview* review, m_reivews )
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &IReview::handle_jump, review, distance ) );
+        v.second->queue_item( boost::bind( &IReview::handle_jump, v.first, distance ) );
     }
 }
 
 
 void ReviewManager::handle_jump_back( size_t distance )
 {
-    BOOST_FOREACH( IReview* review, m_reivews )
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &IReview::handle_jump_back, review, distance ) );
+        v.second->queue_item( boost::bind( &IReview::handle_jump_back, v.first, distance ) );
     }
 }
 
@@ -187,9 +188,9 @@ void ReviewManager::handle_exit()
     IHotKey::instance().clear();
     IInput::instance().clear();
 
-    BOOST_FOREACH( IReview* review, m_reivews )
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
-        m_thread_pool.queue_item( boost::bind( &IReview::handle_exit, review ) );
+        v.second->queue_item( boost::bind( &IReview::handle_exit, v.first ) );
     }
 
     SetForegroundWindow( GetConsoleWindow() );

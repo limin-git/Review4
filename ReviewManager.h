@@ -3,7 +3,7 @@
 #include "IInputHandler.h"
 #include "IHotKeyHandler.h"
 #include "IReview.h"
-#include "ThreadPool.h"
+#include "QueueProcessor.h"
 
 
 struct ReviewManager : IReviewManager,
@@ -32,6 +32,6 @@ private:
 private:
 
     bool m_register_hot_keys;
-    std::set<IReview*> m_reivews;
-    ThreadPool m_thread_pool;
+    typedef std::map<IReview*, IQueueProcessor*> ReviewMap;
+    ReviewMap m_reivews;
 };
