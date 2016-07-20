@@ -54,6 +54,8 @@ Scheduler::~Scheduler()
 
 ISlideshowPtr Scheduler::get_slideshow()
 {
+    boost::lock_guard<boost::recursive_mutex> lock( m_mutex );
+
     if ( ! m_initialized )
     {
         initialize_schedule();

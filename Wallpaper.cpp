@@ -72,6 +72,7 @@ void Wallpaper::set_wallpaper()
         return;
     }
 
+    boost::lock_guard<boost::recursive_mutex> lock( m_mutex );
     m_current = m_pictures.begin();
     size_t rand = Utility::random( 0, m_pictures.size() - 1 );
     std::advance( m_current, rand );

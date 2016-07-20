@@ -48,4 +48,5 @@ private:
     bool volatile m_disable;
     bool volatile m_check_picture;
     boost::thread m_search_thread;
+    boost::recursive_mutex m_mutex;
 };

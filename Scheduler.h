@@ -41,4 +41,5 @@ private:
     bool m_once_per_session;
     bool m_randomize;
     bool m_initialized;
+    boost::recursive_mutex m_mutex;
 };
