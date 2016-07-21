@@ -1,15 +1,15 @@
 #pragma once
 
 
-typedef boost::function<void()> Callable;
+typedef boost::function<void()> Function;
 
 struct IQueueProcessor
 {
     virtual ~IQueueProcessor() {}
     virtual void terminate() = 0;
-    virtual void queue_item( const Callable& item ) = 0;
-    virtual void queue_items( std::vector<Callable>& items ) = 0;
-    virtual void queue_items( std::list<Callable>& items ) = 0;
+    virtual void queue_item( const Function& item ) = 0;
+    virtual void queue_items( std::vector<Function>& items ) = 0;
+    virtual void queue_items( std::list<Function>& items ) = 0;
     virtual bool busy() const = 0;
     virtual size_t size() const = 0;
 };
@@ -31,14 +31,14 @@ struct QueueProcessor : IQueueProcessor
 
     virtual void terminate()
     {
+        m_busy = true;
         m_running = false;
-        queue_item( Callable() );
+        queue_item( Function() );
         m_condition.notify_one();
         m_thread.join();
-        m_busy = false;
     }
 
-    virtual void queue_item( const Callable& item )
+    virtual void queue_item( const Function& item )
     {
         boost::unique_lock<boost::mutex> lock( m_mutex );
         while ( max_queue_size <= m_queue.size() )
@@ -50,12 +50,12 @@ struct QueueProcessor : IQueueProcessor
         m_busy = true;
     }
 
-    virtual void queue_items( std::vector<Callable>& items )
+    virtual void queue_items( std::vector<Function>& items )
     {
         queue_items_impl( items );
     }
 
-    virtual void queue_items( std::list<Callable>& items )
+    virtual void queue_items( std::list<Function>& items )
     {
         queue_items_impl( items );
     }
@@ -80,7 +80,7 @@ private:
         {
             boost::unique_lock<boost::mutex> lock( m_mutex );
 
-            BOOST_FOREACH( const Callable& item, items )
+            BOOST_FOREACH( const Function& item, items )
             {
                 m_queue.push( item );
             }
@@ -96,11 +96,12 @@ private:
         {
             try
             {
-                Callable item = get_item();
+                Function item = get_item();
 
                 if ( m_running )
                 {
                     item();
+                    boost::unique_lock<boost::mutex> lock( m_mutex );
                     m_busy = ( ! m_queue.empty() );
                 }
             }
@@ -113,10 +114,10 @@ private:
         }
     }
 
-    Callable get_item()
+    Function get_item()
     {
         boost::unique_lock<boost::mutex> lock( m_mutex );
-        Callable item;
+        Function item;
 
         while ( m_queue.empty() && m_running )
         {
@@ -125,7 +126,7 @@ private:
 
         if ( ! m_running || m_queue.empty() )
         {
-            return Callable();
+            return Function();
         }
 
         item = m_queue.front();
@@ -135,7 +136,7 @@ private:
 
 public:
 
-    std::queue<Callable> m_queue;
+    std::queue<Function> m_queue;
     boost::thread m_thread;
     volatile bool m_running;
     volatile bool m_busy;

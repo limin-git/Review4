@@ -6,9 +6,9 @@ struct IThreadPool
 {
     virtual ~IThreadPool() {}
     virtual void terminate() = 0;
-    virtual void queue_item( const Callable& item );
-    virtual void queue_items( std::vector<Callable>& items ) = 0;
-    virtual void queue_items( std::list<Callable>& items ) = 0;
+    virtual void queue_item( const Function& item );
+    virtual void queue_items( std::vector<Function>& items ) = 0;
+    virtual void queue_items( std::list<Function>& items ) = 0;
 };
 
 template<size_t initial_thread_number = 0, size_t max_thread_number = -1, size_t max_queue_size = -1>
@@ -44,7 +44,7 @@ public:
         }
     }
 
-    void queue_item( const Callable& item )
+    void queue_item( const Function& item )
     {
         boost::lock_guard<boost::mutex> lock( m_mutex );
 
@@ -69,12 +69,12 @@ public:
         }
     }
 
-    virtual void queue_items( std::vector<Callable>& items )
+    virtual void queue_items( std::vector<Function>& items )
     {
         queue_items_impl( items );
     }
 
-    virtual void queue_items( std::list<Callable>& items )
+    virtual void queue_items( std::list<Function>& items )
     {
         queue_items_impl( items );
     }
@@ -83,8 +83,7 @@ private:
 
     template<typename U> void queue_items_impl( const U& items )
     {
-        boost::lock_guard<boost::mutex> lock( m_mutex );
-        BOOST_FOREACH( const Callable& item, items )
+        BOOST_FOREACH( const Function& item, items )
         {
             queue_item( item );
         }

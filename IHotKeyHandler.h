@@ -6,4 +6,4 @@ struct IHotKeyHandler
     virtual ~IHotKeyHandler() {}
 };
 
-typedef boost::function<void()> Callable;
+typedef boost::function<void()> Function;

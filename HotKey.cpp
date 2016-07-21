@@ -25,7 +25,7 @@ HotKey::~HotKey()
 }
 
 
-IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, Callable callback )
+IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, Function callback )
 {
     boost::lock_guard<boost::mutex> lock( m_mutex );
 

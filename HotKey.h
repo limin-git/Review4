@@ -9,7 +9,7 @@ public:
 
     HotKey();
     ~HotKey();
-    virtual IHotKey& register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, Callable callback );
+    virtual IHotKey& register_handler( IHotKeyHandler* handler, UINT fsModifiers, UINT vk, Function callback );
     virtual IHotKey& unregister_handler( IHotKeyHandler* handler );
     virtual void clear();
 
@@ -31,7 +31,7 @@ private:
 
 private:
 
-    typedef std::vector<Callable> CallableList;
+    typedef std::vector<Function> CallableList;
     typedef std::map<IHotKeyHandler*, CallableList> CallbackMap;
     typedef std::pair<UINT, UINT> Key; // modifier, vk
     typedef std::map<Key, CallbackMap> KeyHandlerMap;
