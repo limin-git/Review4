@@ -5,7 +5,7 @@
 namespace Utility
 {
 
-    size_t random( size_t lo, size_t hi )
+    size_t random( int lo, int hi )
     {
         boost::random::mt19937 gen( static_cast<boost::uint32_t>( std::time(0) ) );
         boost::random::uniform_int_distribution<> dist( lo, hi );

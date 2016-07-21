@@ -3,7 +3,7 @@
 
 namespace Utility
 {
-    size_t random( size_t lo, size_t hi );
+    size_t random( int lo, int hi );
 
     template<typename String, typename RangeT>
     void remove_if_is_any_of( String& str, RangeT set )

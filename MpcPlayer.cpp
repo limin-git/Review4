@@ -99,10 +99,10 @@ bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
         return false;
     }
 
-    int sec = subtitle->second();
-    int mil = subtitle->millisecond();
-    int min = subtitle->minute();
-    int hor = subtitle->hour();
+    size_t sec = subtitle->second();
+    size_t mil = subtitle->millisecond();
+    size_t min = subtitle->minute();
+    size_t hor = subtitle->hour();
 
     if ( m_adjust_start_time )
     {

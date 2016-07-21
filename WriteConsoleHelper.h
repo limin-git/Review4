@@ -16,7 +16,7 @@ namespace Utility
 
     inline WriteConsoleHelper& operator << ( WriteConsoleHelper& helper, const std::wstring& ws )
     {
-        WriteConsole( GetStdHandle(STD_OUTPUT_HANDLE), ws.c_str(), ws.size(), 0, 0 );
+        WriteConsole( GetStdHandle(STD_OUTPUT_HANDLE), ws.c_str(), static_cast<DWORD>(ws.size()), 0, 0 );
         return helper;
     }
 
@@ -28,7 +28,7 @@ namespace Utility
 
     inline WriteConsoleHelper& operator << ( WriteConsoleHelper& helper, const std::string& s )
     {
-        WriteConsoleA( GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), 0, 0 );
+        WriteConsoleA( GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), static_cast<DWORD>(s.size()), 0, 0 );
         return helper;
     }
 

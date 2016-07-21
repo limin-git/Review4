@@ -35,7 +35,7 @@ private:
     typedef std::map<IHotKeyHandler*, CallableList> CallbackMap;
     typedef std::pair<UINT, UINT> Key; // modifier, vk
     typedef std::map<Key, CallbackMap> KeyHandlerMap;
-    typedef std::map<Key, size_t> KeyIdMap;
+    typedef std::map<Key, UINT> KeyIdMap;
     KeyHandlerMap m_handlers;
     KeyIdMap m_ids;
     boost::thread m_thread;

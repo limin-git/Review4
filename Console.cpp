@@ -46,7 +46,7 @@ IConsole& Console::cls()
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo( m_cout, &csbi );
     std::wstring buf( csbi.dwSize.X * csbi.dwSize.Y, L' ' );
-    WriteConsoleOutputCharacter( m_cout, buf.c_str(), buf.size(), coord, &written );
+    WriteConsoleOutputCharacter( m_cout, buf.c_str(), static_cast<DWORD>(buf.size()), coord, &written );
     SetConsoleCursorPosition( m_cout, coord );
     return *this;
 }
@@ -79,7 +79,7 @@ IConsole& Console::write_center( const std::wstring& ws )
 {
     DWORD written = 0;
     COORD coord = calculate_center_coord( WideCharToMultiByte( CP_ACP, 0, ws.c_str(), ws.size(), 0, 0, 0, 0 ) );
-    WriteConsoleOutputCharacter( m_cout, ws.c_str(), ws.size(), coord, &written );
+    WriteConsoleOutputCharacter( m_cout, ws.c_str(), static_cast<DWORD>(ws.size()), coord, &written );
     return *this;
 }
 

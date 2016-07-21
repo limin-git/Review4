@@ -34,7 +34,7 @@ namespace Utility
             char* buf = new char[ size ];
             is.seekg( 3, std::ios::beg );
             is.read( buf, size );
-            size_t wsize = MultiByteToWideChar( CP_UTF8, 0, buf, size, 0, 0 );
+            int wsize = MultiByteToWideChar( CP_UTF8, 0, buf, size, 0, 0 );
             ws.resize( wsize );
             MultiByteToWideChar( CP_UTF8, 0, buf, size, &ws[0], wsize );
             delete[] buf;
@@ -46,7 +46,7 @@ namespace Utility
             char* buf = new char[ size ];
             is.seekg( 0, std::ios::beg );
             is.read( buf, size );
-            size_t wsize = MultiByteToWideChar( code_page, 0, buf, size, 0, 0 );
+            int wsize = MultiByteToWideChar( code_page, 0, buf, size, 0, 0 );
             ws.resize( wsize );
             MultiByteToWideChar( code_page, 0, buf, size, &ws[0], wsize );
         }
@@ -77,7 +77,7 @@ namespace Utility
             wchar_t* buf = new wchar_t[wsize/2];
             is.seekg( 2, std::ios::beg );
             is.read( (char*)buf, wsize );
-            size_t size = WideCharToMultiByte( CP_UTF8, 0, buf, wsize, 0, 0, 0, 0 );
+            int size = WideCharToMultiByte( CP_UTF8, 0, buf, wsize, 0, 0, 0, 0 );
             s.resize( size );
             WideCharToMultiByte( CP_UTF8, 0, buf, wsize, &s[0], size, 0, 0 );
             delete[] buf;
@@ -97,10 +97,10 @@ namespace Utility
             {
                 char* buf = new char[size];
                 is.read( buf, size );
-                size_t wsize = MultiByteToWideChar( CP_UTF8, 0, buf, size, 0, 0 );
+                int wsize = MultiByteToWideChar( CP_UTF8, 0, buf, size, 0, 0 );
                 wchar_t* wbuf = new wchar_t[wsize];
                 MultiByteToWideChar( CP_UTF8, 0, buf, size, wbuf, wsize );
-                size_t size = WideCharToMultiByte( string_code_page, 0, wbuf, wsize, 0, 0, 0, 0 );
+                int size = WideCharToMultiByte( string_code_page, 0, wbuf, wsize, 0, 0, 0, 0 );
                 s.resize( size );
                 WideCharToMultiByte( string_code_page, 0, wbuf, wsize, &s[0], size, 0, 0 );
                 delete[] buf;
@@ -122,10 +122,10 @@ namespace Utility
             {
                 char* buf = new char[size];
                 is.read( buf, size );
-                size_t wsize = MultiByteToWideChar( file_code_page, 0, buf, size, 0, 0 );
+                int wsize = MultiByteToWideChar( file_code_page, 0, buf, size, 0, 0 );
                 wchar_t* wbuf = new wchar_t[wsize];
                 MultiByteToWideChar( file_code_page, 0, buf, size, wbuf, wsize );
-                size_t size = WideCharToMultiByte( string_code_page, 0, wbuf, wsize, 0, 0, 0, 0 );
+                int size = WideCharToMultiByte( string_code_page, 0, wbuf, wsize, 0, 0, 0, 0 );
                 s.resize( size );
                 WideCharToMultiByte( string_code_page, 0, wbuf, wsize, &s[0], size, 0, 0 );
                 delete[] buf;
