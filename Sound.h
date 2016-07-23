@@ -8,6 +8,6 @@ public:
 
     Sound();
     ~Sound();
-    virtual void play_sound( const boost::filesystem::path& sound_file );
-    virtual void play_sound( const std::vector<boost::filesystem::path>& sound_files );
+    virtual bool play_sound( const boost::filesystem::path& sound_file );
+    virtual bool play_sound( const std::vector<boost::filesystem::path>& sound_files );
 };

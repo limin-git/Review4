@@ -67,19 +67,14 @@ ISlideshowPtr Scheduler::get_slideshow()
         return ISlideshowPtr( new EmptySlideshow( m_next_time_map.empty() ? L"finished." : L"empty." ) );
     }
 
-    KeyList::iterator it = m_candidates.begin();
+    size_t key = m_candidates.front();
+    m_candidates.pop_front();
 
-    if ( m_randomize )
+    if ( m_candidates.empty() )
     {
-        if ( 1 < m_candidates.size() )
-        {
-            size_t random = Utility::random( 0, m_candidates.size() - 1 );
-            std::advance( it, random );
-        }
+        m_select_candidates_semaphore.post();
     }
 
-    size_t key = *it;
-    m_candidates.erase( it );
     IHistory::instance().write_history( key );
     ISlideshowPtr slideshow = IText::instance().slideshow( key );
 
@@ -96,12 +91,6 @@ ISlideshowPtr Scheduler::get_slideshow()
     }
 
     set_title();
-
-    if ( ! m_schedule.empty() )
-    {
-        m_select_candidates_semaphore.post();
-    }
-
     return slideshow;
 }
 
@@ -138,6 +127,11 @@ void Scheduler::initialize_schedule()
         }
     }
 
+    if ( m_randomize )
+    {
+        Utility::random_shuffle( candidates );
+    }
+
     m_candidates.swap( candidates );
     m_next_time_map.swap( next_time_map );
 }
@@ -172,7 +166,12 @@ void Scheduler::select_candidates_thread()
 
         if ( !candidates.empty() )
         {
+            boost::lock_guard<boost::recursive_mutex> lock( m_mutex );
             m_candidates.insert( m_candidates.end(), candidates.begin(), candidates.end() );
+            if ( m_randomize )
+            {
+                Utility::random_shuffle( m_candidates );
+            }
             set_title();
         }
     }

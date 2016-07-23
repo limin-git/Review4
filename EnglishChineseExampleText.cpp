@@ -56,7 +56,7 @@ bool EnglishChineseExampleText::parse_text()
     {
         const std::wstring& english = it->str(1);
         const std::wstring& chinese = it->str(2);
-        const std::wstring& example = ( (*it)[3].matched ? it->str(3) : L"" );
+        const std::wstring& example = ( (*it)[3].matched ? boost::trim_copy( it->str(3) ) : L"" );
         size_t key = hash( english );
 
         if ( ! IDisable::instance().is_disabled( key ) )

@@ -61,61 +61,66 @@ namespace Utility
     }
 
 
-    std::list<fs::path> get_files_of_directory( const fs::path& dir, size_t first_n )
+    std::vector<fs::path> get_files_of_directory( const fs::path& dir )
     {
-        std::list<fs::path> files;
-        size_t n = 0;
-
-        if ( ! exists( dir ) || ! is_directory( dir ) )
-        {
-            return files;
-        }
-
-        fs::recursive_directory_iterator end;
-        for ( fs::recursive_directory_iterator it( dir ); it != end; ++it )
-        {
-            if ( ! is_directory( it->status() ) )
-            {
-                files.push_back( it->path() );
-
-                if ( first_n <= ++n )
-                {
-                    break;
-                }
-            }
-        }
-
+        std::vector<fs::path> files;
+        get_files_of_directory_if_impl( files, dir );
         return files;
     }
 
 
-    std::list<fs::path> get_files_of_directory_if( const fs::path& dir, const boost::function<bool(const fs::path&)>& predicate, size_t first_n )
+    std::vector<fs::path> get_files_of_directory_n( const fs::path& dir, size_t first_n )
+    {
+        std::vector<fs::path> files;
+        get_files_of_directory_if_impl( files, dir, Pred(), first_n );
+        return files;
+    }
+
+
+    std::vector<fs::path> get_files_of_directory_if( const fs::path& dir, const Pred& pred )
+    {
+        std::vector<fs::path> files;
+        get_files_of_directory_if_impl( files, dir, pred );
+        return files;
+    }
+
+
+    std::vector<fs::path> get_files_of_directory_if_n( const fs::path& dir, const Pred& pred, size_t first_n )
+    {
+        std::vector<fs::path> files;
+        get_files_of_directory_if_impl( files, dir, pred, first_n );
+        return files;
+    }
+
+
+    std::list<fs::path> get_file_list_of_directory( const fs::path& dir )
     {
         std::list<fs::path> files;
-        size_t n = 0;
+        get_files_of_directory_if_impl( files, dir );
+        return files;
+    }
 
-        if ( ! exists( dir ) || ! is_directory( dir ) )
-        {
-            return files;
-        }
 
-        fs::recursive_directory_iterator end;
-        for ( fs::recursive_directory_iterator it( dir ); it != end; ++it )
-        {
-            if ( ! is_directory( it->status() ) )
-            {
-                if ( predicate( it->path() ) )
-                {
-                    files.push_back( it->path() );
+    std::list<fs::path> get_file_list_of_directory_n( const fs::path& dir, size_t first_n )
+    {
+        std::list<fs::path> files;
+        get_files_of_directory_if_impl( files, dir, Pred(), first_n );
+        return files;
+    }
 
-                    if ( first_n <= ++n )
-                    {
-                        break;
-                    }
-                }
-            }
-        }
 
+    std::list<fs::path> get_file_list_of_directory_if( const fs::path& dir, const Pred& pred )
+    {
+        std::list<fs::path> files;
+        get_files_of_directory_if_impl( files, dir, pred );
+        return files;
+    }
+
+
+    std::list<fs::path> get_file_list_of_directory_if_n( const fs::path& dir, const Pred& pred, size_t first_n )
+    {
+        std::list<fs::path> files;
+        get_files_of_directory_if_impl( files, dir, pred, first_n );
         return files;
     }
 

@@ -65,40 +65,6 @@ Wallpaper::~Wallpaper()
 }
 
 
-void Wallpaper::set_wallpaper()
-{
-    if ( m_disable || m_pictures.size() < 2 )
-    {
-        return;
-    }
-
-    boost::lock_guard<boost::recursive_mutex> lock( m_mutex );
-    m_current = m_pictures.begin();
-    size_t rand = Utility::random( 0, m_pictures.size() - 1 );
-    std::advance( m_current, rand );
-    Utility::set_system_wallpaper( *m_current );
-}
-
-
-void Wallpaper::remove_current_picture()
-{
-    if ( ! m_disable )
-    {
-        if ( m_recycle_directory.empty() )
-        {
-            Utility::remove_file( *m_current );
-        }
-        else
-        {
-            Utility::rename_file( *m_current, m_recycle_directory / m_current->filename() );
-        }
-
-        m_pictures.erase( m_current );
-        set_wallpaper();
-    }
-}
-
-
 void Wallpaper::handle_start()
 {
     if ( m_disable || m_directory.empty() || m_recycle_directory.empty() )
@@ -106,19 +72,19 @@ void Wallpaper::handle_start()
         return;
     }
 
-    m_pictures = ( m_check_picture ?
-                   Utility::get_files_of_directory_if( m_directory, &Utility::is_picture, 10 ) :
-                   Utility::get_files_of_directory( m_directory, 10 ) );
-
-    m_search_thread = boost::thread( boost::bind( &Wallpaper::search_pictures_thread, this ) );
-
-    if ( m_pictures.empty() )
+    std::vector<fs::path> pictures = ( m_check_picture ?
+                   Utility::get_files_of_directory_if_n( m_directory, &Utility::is_picture, 10 ) :
+                   Utility::get_files_of_directory_n( m_directory, 10 ) );
+    if ( pictures.empty() )
     {
         return;
     }
 
-    set_wallpaper();
-
+    Utility::random_shuffle( pictures );
+    m_pictures.assign( pictures.begin(), pictures.end() );
+    m_current = m_pictures.begin();
+    Utility::set_system_wallpaper( *m_current );
+    m_search_thread = boost::thread( boost::bind( &Wallpaper::search_pictures_thread, this ) );
     IInput::instance().add_key_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
     IHotKey::instance().register_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
 }
@@ -206,6 +172,22 @@ void Wallpaper::handle_disable()
 }
 
 
+void Wallpaper::set_wallpaper()
+{
+    if (  ! m_disable )
+    {
+        boost::lock_guard<boost::recursive_mutex> lock( m_mutex );
+
+        if ( ++m_current == m_pictures.end() )
+        {
+            m_current = m_pictures.begin();
+        }
+
+        Utility::set_system_wallpaper( *m_current );
+    }
+}
+
+
 void Wallpaper::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
     if ( Utility::updated<size_t>( "wallpaper.frequence", vm, old ) )
@@ -215,18 +197,41 @@ void Wallpaper::options_changed( const po::variables_map& vm, const po::variable
 }
 
 
+void Wallpaper::remove_current_picture()
+{
+    if ( ! m_disable )
+    {
+        boost::lock_guard<boost::recursive_mutex> lock( m_mutex );
+
+        if ( m_recycle_directory.empty() )
+        {
+            Utility::remove_file( *m_current );
+        }
+        else
+        {
+            Utility::rename_file( *m_current, m_recycle_directory / m_current->filename() );
+        }
+
+        m_pictures.erase( m_current++ );
+
+        if ( m_current == m_pictures.end() )
+        {
+            m_current = m_pictures.begin();
+        }
+
+        Utility::set_system_wallpaper( *m_current );
+    }
+}
+
+
 void Wallpaper::search_pictures_thread()
 {
-    fs::path current_path = *m_current;
-    std::list<fs::path> pictures =
+    std::vector<fs::path> pictures =
         ( m_check_picture ?
-          Utility::get_files_of_directory_if( m_directory, &Utility::is_picture ) :
+          Utility::get_files_of_directory_if( m_directory, &Utility::is_picture ):
           Utility::get_files_of_directory( m_directory ) );
-    m_pictures.swap( pictures );
-    std::list<fs::path>::iterator it = std::find( m_pictures.begin(), m_pictures.end(), current_path );
-
-    if ( it != m_pictures.end() )
-    {
-        m_current = it;
-    }
+    Utility::random_shuffle( pictures );
+    boost::lock_guard<boost::recursive_mutex> lock( m_mutex );
+    m_pictures.assign( pictures.begin(), pictures.end() );
+    m_current = m_pictures.begin();
 }

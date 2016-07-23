@@ -32,9 +32,9 @@ MpcPlayer::MpcPlayer()
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer(this).variables_map();
 
-    if ( vm.count( "move.disable" ) )
+    if ( vm.count( "movie.disable" ) )
     {
-        if ( m_disable = ( L"true" == fs::system_complete( vm["move.disable"].as<std::wstring>() ) ) )
+        if ( m_disable = ( L"true" == vm["movie.disable"].as<std::wstring>() ) )
         {
             return;
         }
@@ -84,12 +84,12 @@ MpcPlayer::~MpcPlayer()
 
 bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
 {
-    boost::lock_guard<boost::mutex> lock( m_mutex );
-
     if ( m_disable || NULL == m_player_hwnd )
     {
         return false;
     }
+
+    boost::lock_guard<boost::mutex> lock( m_mutex );
 
     SetForegroundWindow( m_player_hwnd );
     IInputSender::instance().Ctrl_key( 'G' );

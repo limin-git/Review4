@@ -16,8 +16,10 @@ Sound::~Sound()
 }
 
 
-void Sound::play_sound( const boost::filesystem::path& sound_file )
+bool Sound::play_sound( const boost::filesystem::path& sound_file )
 {
+    bool success = true;
+
     try
     {
         IGraphBuilder* graph = NULL;
@@ -40,6 +42,11 @@ void Sound::play_sound( const boost::filesystem::path& sound_file )
                 evnt->WaitForCompletion( INFINITE, &code );
             }
         }
+        else
+        {
+            //TODO: why can not open affair.wav?
+            success = false;
+        }
 
         evnt->Release();
         control->Release();
@@ -48,13 +55,19 @@ void Sound::play_sound( const boost::filesystem::path& sound_file )
     catch ( ... )
     {
     }
+
+    return success;
 }
 
 
-void Sound::play_sound( const std::vector<boost::filesystem::path>& sound_files )
+bool Sound::play_sound( const std::vector<boost::filesystem::path>& sound_files )
 {
+    bool success = true;
+
     for ( size_t i = 0; i < sound_files.size(); ++i )
     {
-        play_sound( sound_files[i] );
+        success &= play_sound( sound_files[i] );
     }
+
+    return success;
 }

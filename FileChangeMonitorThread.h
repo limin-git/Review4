@@ -23,6 +23,8 @@ public:
     void remove_handler( const fs::path& file_path, IFileChangeHandler* handler );
     bool empty() { return m_file_handler_map.empty(); }
 
+private:
+
     fs::path m_dir;
     FileHandlerMap m_file_handler_map;
     FileTimeMap m_file_time_map;

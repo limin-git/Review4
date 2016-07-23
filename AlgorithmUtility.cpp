@@ -11,5 +11,4 @@ namespace Utility
         boost::random::uniform_int_distribution<> dist( lo, hi );
         return dist( gen );
     }
-
 }

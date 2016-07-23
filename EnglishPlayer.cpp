@@ -62,13 +62,19 @@ void EnglishPlayer::speak( const std::vector<std::wstring>& words )
 
 void EnglishPlayer::speak_impl( const Word& word )
 {
+    static ISpeech& speech = ISpeech::instance();
+    static ISound& sound = ISound::instance();
+
     if ( word.path.empty() )
     {
-        ISpeech::instance().speak( word.word );
+        speech.speak( word.word );
     }
     else
     {
-        ISound::instance().play_sound( word.path );
+        if ( ! sound.play_sound( word.path ) )
+        {
+            speech.speak( word.word );
+        }
     }
 }
 
