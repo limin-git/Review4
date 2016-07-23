@@ -8,6 +8,12 @@
 #include "IInput.h"
 #include "IHotKey.h"
 
+#define wallpaper_disable           "wallpaper.disable"
+#define wallpaper_path              "wallpaper.path"
+#define wallpaper_recycle_path      "wallpaper.recycle-path"
+#define wallpaper_frequence         "wallpaper.frequence"
+#define wallpaper_check_picture     "wallpaper.check-picture"
+
 
 Wallpaper::Wallpaper()
     : m_frequence( 2 ),
@@ -17,30 +23,30 @@ Wallpaper::Wallpaper()
 {
     po::options_description options;
     options.add_options()
-        ( "wallpaper.disable", po::wvalue<std::wstring>(), "disable" )
-        ( "wallpaper.path", po::wvalue<std::wstring>(), "picture directory path" )
-        ( "wallpaper.recycle-path", po::wvalue<std::wstring>(), "recycle directory path" )
-        ( "wallpaper.frequence", po::value<size_t>(), "change picture frequence" )
-        ( "wallpaper.check-picture", po::wvalue<std::wstring>(), "check whether the file is a picture or not" )
+        ( wallpaper_disable,        po::wvalue<std::wstring>(),     "disable" )
+        ( wallpaper_path,           po::wvalue<std::wstring>(),     "picture directory path" )
+        ( wallpaper_recycle_path,   po::wvalue<std::wstring>(),     "recycle directory path" )
+        ( wallpaper_frequence,      po::value<size_t>(),            "change picture frequence" )
+        ( wallpaper_check_picture,  po::wvalue<std::wstring>(),     "check whether the file is a picture or not" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer(this).variables_map();
 
-    if ( vm.count( "wallpaper.disable" ) )
+    if ( vm.count( wallpaper_disable ) )
     {
-        if ( m_disable = ( L"true" == vm["wallpaper.disable"].as<std::wstring>() ) )
+        if ( m_disable = ( L"true" == vm[wallpaper_disable].as<std::wstring>() ) )
         {
             return;
         }
     }
 
-    if ( vm.count( "wallpaper.path" ) )
+    if ( vm.count( wallpaper_path ) )
     {
-        m_directory = fs::system_complete( vm["wallpaper.path"].as<std::wstring>() );
+        m_directory = fs::system_complete( vm[wallpaper_path].as<std::wstring>() );
     }
 
-    if ( vm.count( "wallpaper.recycle-path" ) )
+    if ( vm.count( wallpaper_recycle_path ) )
     {
-        m_recycle_directory = fs::system_complete( vm["wallpaper.recycle-path"].as<std::wstring>() );
+        m_recycle_directory = fs::system_complete( vm[wallpaper_recycle_path].as<std::wstring>() );
 
         if ( ! m_recycle_directory.empty() && ! exists( m_recycle_directory ) )
         {
@@ -52,9 +58,9 @@ Wallpaper::Wallpaper()
         }
     }
 
-    if ( vm.count( "wallpaper.check-picture" ) )
+    if ( vm.count( wallpaper_check_picture ) )
     {
-        m_check_picture = ( L"true" == vm["wallpaper.check-picture"].as<std::wstring>() );
+        m_check_picture = ( L"true" == vm[wallpaper_check_picture].as<std::wstring>() );
     }
 }
 
@@ -85,7 +91,7 @@ void Wallpaper::handle_start()
     m_current = m_pictures.begin();
     Utility::set_system_wallpaper( *m_current );
     m_search_thread = boost::thread( boost::bind( &Wallpaper::search_pictures_thread, this ) );
-    IInput::instance().add_key_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
+    IInput::instance().register_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
     IHotKey::instance().register_handler( this, 0, 'Z', boost::bind( &Wallpaper::remove_current_picture, this ) );
 }
 
@@ -98,7 +104,7 @@ void Wallpaper::handle_exit()
     {
         m_disable = true;
         //IHotKey::instance().unregister_handler( this );
-        //IInput::instance().remove_key_handler( this ).remove_mouse_handler( this );
+        //IInput::instance().unregister_handler( this ).unregister_mouse_handler( this );
         Utility::set_system_wallpaper( "C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );
     }
 }
@@ -190,9 +196,9 @@ void Wallpaper::set_wallpaper()
 
 void Wallpaper::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
-    if ( Utility::updated<size_t>( "wallpaper.frequence", vm, old ) )
+    if ( Utility::updated<size_t>( wallpaper_frequence, vm, old ) )
     {
-        m_frequence = vm["wallpaper.frequence"].as<size_t>();
+        m_frequence = vm[wallpaper_frequence].as<size_t>();
     }
 }
 

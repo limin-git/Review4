@@ -4,6 +4,14 @@
 #include "Utility.h"
 #include <conio.h>
 
+#define console_font_name               "console.font-name"
+#define console_font_size               "console.font-size"
+#define console_width                   "console.width"
+#define console_height                  "console.height"
+#define console_color                   "console.color"
+#define console_position                "console.position"
+#define console_disable_system_menu     "console.disable-system-menu"
+
 
 Console::Console()
 {
@@ -18,13 +26,13 @@ Console::Console()
 
     po::options_description options( "Console" );
     options.add_options()
-        ( "console.font-name", po::wvalue<std::wstring>(), "console font name" )
-        ( "console.font-size", po::wvalue<size_t>(), "console font size" )
-        ( "console.width", po::value<size_t>(), "console layout: width" )
-        ( "console.height", po::value<size_t>(), "console layout: height" )
-        ( "console.color", po::wvalue<std::wstring>(), "console color" )
-        ( "console.position", po::wvalue<std::wstring>(), "position(left,top)" )
-        ( "console.disable-system-menu", po::wvalue<std::wstring>(), "disable system menu?)" )
+        ( console_font_name,            po::wvalue<std::wstring>(),     "console font name" )
+        ( console_font_size,            po::wvalue<size_t>(),           "console font size" )
+        ( console_width,                po::value<size_t>(),            "console layout: width" )
+        ( console_height,               po::value<size_t>(),            "console layout: height" )
+        ( console_color,                po::wvalue<std::wstring>(),     "console color" )
+        ( console_position,             po::wvalue<std::wstring>(),     "position(left,top)" )
+        ( console_disable_system_menu,  po::wvalue<std::wstring>(),     "disable system menu?)" )
         ;
     IConfigurationFile::instance().add_options_description( options ).add_observer( this );
 }
@@ -111,30 +119,30 @@ COORD Console::calculate_center_coord( size_t string_length )
 
 void Console::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
-    if ( Utility::updated<std::wstring>( "console.font-name", vm, old ) )
+    if ( Utility::updated<std::wstring>( console_font_name, vm, old ) )
     {
-        set_font_face_name( vm["console.font-name"].as<std::wstring>() );
+        set_font_face_name( vm[console_font_name].as<std::wstring>() );
     }
 
-    if ( Utility::updated<size_t>( "console.font-size", vm, old ) )
+    if ( Utility::updated<size_t>( console_font_size, vm, old ) )
     {
-        set_font_size( vm["console.font-size"].as<size_t>() );
+        set_font_size( vm[console_font_size].as<size_t>() );
     }
 
-    if ( Utility::updated<size_t>( "console.width", vm, old ) )
+    if ( Utility::updated<size_t>( console_width, vm, old ) )
     {
-        set_width( vm["console.width"].as<size_t>() );
+        set_width( vm[console_width].as<size_t>() );
     }
 
-    if ( Utility::updated<size_t>( "console.height", vm, old ) )
+    if ( Utility::updated<size_t>( console_height, vm, old ) )
     {
-        set_height( vm["console.height"].as<size_t>() );
+        set_height( vm[console_height].as<size_t>() );
     }
 
-    if ( Utility::updated<std::wstring>( "console.color", vm, old ) )
+    if ( Utility::updated<std::wstring>( console_color, vm, old ) )
     {
         WORD color = 0;
-        std::wstringstream strm( vm["console.color"].as<std::wstring>() );
+        std::wstringstream strm( vm[console_color].as<std::wstring>() );
         strm >> std::hex >> color;
         if ( 0 == color )
         {
@@ -143,9 +151,9 @@ void Console::options_changed( const po::variables_map& vm, const po::variables_
         set_color( color);
     }
 
-    if ( Utility::updated<std::wstring>( "console.position", vm, old ) )
+    if ( Utility::updated<std::wstring>( console_position, vm, old ) )
     {
-        std::wstring s = vm["console.position"].as<std::wstring>();
+        std::wstring s = vm[console_position].as<std::wstring>();
         size_t p = s.find( L"," );
 
         if ( p != std::wstring::npos )
@@ -156,9 +164,9 @@ void Console::options_changed( const po::variables_map& vm, const po::variables_
         }
     }
 
-    if ( Utility::updated<std::wstring>( "console.disable-system-menu", vm, old ) )
+    if ( Utility::updated<std::wstring>( console_disable_system_menu, vm, old ) )
     {
-        disable_system_buttons( L"true" == vm["console.disable-system-menu"].as<std::wstring>() );
+        disable_system_buttons( L"true" == vm[console_disable_system_menu].as<std::wstring>() );
     }
 }
 

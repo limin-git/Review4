@@ -6,6 +6,15 @@
 #include "IConsole.h"
 #include "Utility.h"
 
+#define movie_disable                   "movie.disable"
+#define movie_player                    "movie.player"
+#define movie_movie                     "movie.movie"
+#define movie_load_subtitle             "movie.load-subtitle"
+#define movie_auto_stop                 "movie.auto-stop"
+#define movie_wait_player_startup       "movie.wait-player-startup"
+#define movie_adjust_start_time         "movie.adjust-start-time"
+#define movie_adjust_duration_time      "movie.adjust-duration-time"
+
 
 MpcPlayer::MpcPlayer()
     : m_player_hwnd( NULL ),
@@ -21,20 +30,20 @@ MpcPlayer::MpcPlayer()
 
     po::options_description options( "Movie" );
     options.add_options()
-        ( "movie.disable", po::wvalue<std::wstring>(), "disable" )
-        ( "movie.player", po::wvalue<std::wstring>(), "mpc player path" )
-        ( "movie.movie", po::wvalue<std::wstring>(), "the movie path" )
-        ( "movie.load-subtitle", po::wvalue<std::wstring>(), "load subtitle?" )
-        ( "movie.auto-stop", po::wvalue<std::wstring>(), "auto stop?" )
-        ( "movie.wait-player-startup", po::value<size_t>()->default_value( 3 ), "wait the play to startup in seconds" )
-        ( "movie.adjust-start-time", po::value<int>()->default_value( 0 ), "adjust subtitle display start time" )
-        ( "movie.adjust-duration-time", po::value<int>()->default_value( 0 ), "adjust subtitle display duration time" )
+        ( movie_disable,                po::wvalue<std::wstring>(),                 "disable" )
+        ( movie_player,                 po::wvalue<std::wstring>(),                 "mpc player path" )
+        ( movie_movie,                  po::wvalue<std::wstring>(),                 "the movie path" )
+        ( movie_load_subtitle,          po::wvalue<std::wstring>(),                 "load subtitle?" )
+        ( movie_auto_stop,              po::wvalue<std::wstring>(),                 "auto stop?" )
+        ( movie_wait_player_startup,    po::value<size_t>()->default_value( 3 ),    "wait the play to startup in seconds" )
+        ( movie_adjust_start_time,      po::value<int>()->default_value( 0 ),       "adjust subtitle display start time" )
+        ( movie_adjust_duration_time,   po::value<int>()->default_value( 0 ),       "adjust subtitle display duration time" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer(this).variables_map();
 
-    if ( vm.count( "movie.disable" ) )
+    if ( vm.count( movie_disable ) )
     {
-        if ( m_disable = ( L"true" == vm["movie.disable"].as<std::wstring>() ) )
+        if ( m_disable = ( L"true" == vm[movie_disable].as<std::wstring>() ) )
         {
             return;
         }
@@ -45,29 +54,29 @@ MpcPlayer::MpcPlayer()
         m_subtitle_path = fs::system_complete( vm["file.name"].as<std::wstring>() );
     }
 
-    if ( vm.count( "movie.player" ) )
+    if ( vm.count( movie_player ) )
     {
-        m_player = fs::system_complete( vm["movie.player"].as<std::wstring>() );
+        m_player = fs::system_complete( vm[movie_player].as<std::wstring>() );
     }
 
-    if ( vm.count( "movie.movie" ) )
+    if ( vm.count( movie_movie ) )
     {
-        m_movie = fs::system_complete( vm["movie.movie"].as<std::wstring>() );
+        m_movie = fs::system_complete( vm[movie_movie].as<std::wstring>() );
     }
 
-    if ( vm.count( "movie.load-subtitle" ) )
+    if ( vm.count( movie_load_subtitle ) )
     {
-        m_load_subtitle = ( L"true" == vm["movie.load-subtitle"].as<std::wstring>() );
+        m_load_subtitle = ( L"true" == vm[movie_load_subtitle].as<std::wstring>() );
     }
 
-    if ( vm.count( "movie.auto-stop" ) )
+    if ( vm.count( movie_auto_stop ) )
     {
-        m_auto_stop = ( L"true" == vm["movie.auto-stop"].as<std::wstring>() );
+        m_auto_stop = ( L"true" == vm[movie_auto_stop].as<std::wstring>() );
     }
 
-    if ( vm.count( "movie.wait-player-startup" ) )
+    if ( vm.count( movie_wait_player_startup ) )
     {
-        m_wait_startup = vm["movie.wait-player-startup"].as<size_t>();
+        m_wait_startup = vm[movie_wait_player_startup].as<size_t>();
     }
 
     initialize();
@@ -272,14 +281,14 @@ void MpcPlayer::locate_player()
 
 void MpcPlayer::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
-    if ( Utility::updated<int>( "movie.adjust-start-time", vm, old ) )
+    if ( Utility::updated<int>( movie_adjust_start_time, vm, old ) )
     {
-        m_adjust_start_time = vm["movie.adjust-start-time"].as<int>();
+        m_adjust_start_time = vm[movie_adjust_start_time].as<int>();
     }
 
-    if ( Utility::updated<int>( "movie.adjust-duration-time", vm, old ) )
+    if ( Utility::updated<int>( movie_adjust_duration_time, vm, old ) )
     {
-        m_adjust_duration_time = vm["movie.adjust-duration-time"].as<int>();
+        m_adjust_duration_time = vm[movie_adjust_duration_time].as<int>();
     }
 }
 

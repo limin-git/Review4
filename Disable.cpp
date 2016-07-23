@@ -3,16 +3,18 @@
 #include "IConfigurationFile.h"
 namespace po = boost::program_options;
 
+#define file_disable    "file.disabled"
+
 
 Disable::Disable()
 {
     po::options_description options;
     options.add_options()
-        ( "file.disabled", po::wvalue<std::wstring>(), "disabled file" )
+        ( file_disable, po::wvalue<std::wstring>(), "disabled file" )
         ;
     m_file_name = IConfigurationFile::instance()
         .add_options_description( options )
-        .variables_map()["file.disabled"].as<std::wstring>();
+        .variables_map()[file_disable].as<std::wstring>();
     m_file_name = system_complete( m_file_name );
     load_file();
     //TODO: support multiple disable files

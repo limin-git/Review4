@@ -14,6 +14,10 @@
 namespace po = boost::program_options;
 static const std::time_t ONE_DAY = 12 * 3600;
 
+#define review_schedule             "review.schedule"
+#define review_once_per_session     "review.once-per-session"
+#define review_randomize            "review.randomize"
+
 
 Scheduler::Scheduler()
     : m_running( true ),
@@ -25,9 +29,9 @@ Scheduler::Scheduler()
     //TODO: lock when keys wer pressed down for a long time.
     po::options_description options( "Scheduler" );
     options.add_options()
-        ( "review.schedule", po::wvalue<std::wstring>(), "schedule" )
-        ( "review.once-per-session", po::wvalue<std::wstring>(), "once per session" )
-        ( "review.randomize", po::wvalue<std::wstring>(), "randomize or not" )
+        ( review_schedule,          po::wvalue<std::wstring>(), "schedule" )
+        ( review_once_per_session,  po::wvalue<std::wstring>(), "once per session" )
+        ( review_randomize,         po::wvalue<std::wstring>(), "randomize or not" )
         ;
     IConfigurationFile::instance().add_options_description( options ).add_observer( this );
     parse_schedule_configuration();
@@ -251,14 +255,14 @@ void Scheduler::set_title()
 
 void Scheduler::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
-    if ( Utility::updated<std::wstring>( "review.once-per-session", vm, old ) )
+    if ( Utility::updated<std::wstring>( review_once_per_session, vm, old ) )
     {
-        m_once_per_session = ( L"true" == vm["review.once-per-session"].as<std::wstring>() );
+        m_once_per_session = ( L"true" == vm[review_once_per_session].as<std::wstring>() );
     }
 
-    if ( Utility::updated<std::wstring>( "review.randomize", vm, old ) )
+    if ( Utility::updated<std::wstring>( review_randomize, vm, old ) )
     {
-        m_randomize = ( L"true" == vm["review.randomize"].as<std::wstring>() );
+        m_randomize = ( L"true" == vm[review_randomize].as<std::wstring>() );
     }
 }
 
@@ -268,9 +272,9 @@ void Scheduler::parse_schedule_configuration()
     po::variables_map& vm = IConfigurationFile::instance().variables_map();
     std::wstring schedule_string;
 
-    if ( vm.count( "review.schedule" ) )
+    if ( vm.count( review_schedule ) )
     {
-        schedule_string = vm["review.schedule"].as<std::wstring>();
+        schedule_string = vm[review_schedule].as<std::wstring>();
     }
 
     if ( schedule_string == L"disable" || schedule_string == L"no" )

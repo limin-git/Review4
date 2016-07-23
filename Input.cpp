@@ -90,7 +90,7 @@ void Input::run()
 }
 
 
-IInput& Input::add_key_handler( IInputHandler* handler, UINT state, WORD vk, const Callback& callback )
+IInput& Input::register_handler( IInputHandler* handler, UINT state, WORD vk, const Callback& callback )
 {
     boost::lock_guard<boost::mutex> lock( m_mutex );
     m_key_handlers[std::make_pair( state, vk )][handler].push_back( callback );
@@ -98,7 +98,7 @@ IInput& Input::add_key_handler( IInputHandler* handler, UINT state, WORD vk, con
 }
 
 
-IInput& Input::add_key_handler( IInputHandler* handler, UINT state, WORD vk_first, WORD vk_last, const Callback& callback )
+IInput& Input::register_handler( IInputHandler* handler, UINT state, WORD vk_first, WORD vk_last, const Callback& callback )
 {
     boost::lock_guard<boost::mutex> lock( m_mutex );
 
@@ -111,7 +111,7 @@ IInput& Input::add_key_handler( IInputHandler* handler, UINT state, WORD vk_firs
 }
 
 
-IInput& Input::remove_key_handler( IInputHandler* handler )
+IInput& Input::unregister_handler( IInputHandler* handler )
 {
     boost::lock_guard<boost::mutex> lock( m_mutex );
 
@@ -124,7 +124,7 @@ IInput& Input::remove_key_handler( IInputHandler* handler )
 }
 
 
-IInput& Input::add_mouse_handler( IInputHandler* handler, DWORD event_flas, DWORD button_state, const Callback& callback )
+IInput& Input::register_mouse_handler( IInputHandler* handler, DWORD event_flas, DWORD button_state, const Callback& callback )
 {
     boost::lock_guard<boost::mutex> lock( m_mutex );
 
@@ -143,7 +143,7 @@ IInput& Input::add_mouse_handler( IInputHandler* handler, DWORD event_flas, DWOR
 }
 
 
-IInput& Input::remove_mouse_handler( IInputHandler* handler )
+IInput& Input::unregister_mouse_handler( IInputHandler* handler )
 {
     boost::lock_guard<boost::mutex> lock( m_mutex );
 

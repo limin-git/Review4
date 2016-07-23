@@ -2,12 +2,20 @@
 #include "CommandLine.h"
 namespace po = boost::program_options;
 
+#define config_file     "config-file"
+#define config          "config"
+#define cfg             "cfg"
+#define configuration   "configuration"
+
 
 CommandLine::CommandLine()
     : m_options_description( "Usage" )
 {
     m_options_description.add_options()
-        ( "config-file,c", po::wvalue< std::vector<std::wstring> >()->multitoken(),  "configuration files." )
+        ( config_file, po::wvalue< std::vector<std::wstring> >()->multitoken(),  "configuration files." )
+        ( config, po::wvalue< std::vector<std::wstring> >()->multitoken(),  "configuration files." )
+        ( cfg, po::wvalue< std::vector<std::wstring> >()->multitoken(),  "configuration files." )
+        ( configuration, po::wvalue< std::vector<std::wstring> >()->multitoken(),  "configuration files." )
         ;
 }
 
@@ -15,7 +23,7 @@ CommandLine::CommandLine()
 void CommandLine::parse_command_line( int argc, wchar_t* argv[] )
 {
     po::positional_options_description options;
-    options.add( "config-file", -1 );
+    options.add( config_file, -1 );
 
     try
     {

@@ -9,6 +9,8 @@
 #define _WIN32_WINNT 0x0600
 #endif
 
+#pragma warning( disable: 4995 4819 4996 4275 4267 )
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 

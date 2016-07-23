@@ -9,6 +9,8 @@
 #include "IConfigurationFile.h"
 namespace po = boost::program_options;
 
+#define advanced_hash_without_symbols   "advanced.hash-without-symbols"
+
 
 EnglishChineseExampleText::EnglishChineseExampleText( const fs::path& file_path )
     : AbstructText( file_path ),
@@ -18,13 +20,13 @@ EnglishChineseExampleText::EnglishChineseExampleText( const fs::path& file_path 
 
     po::options_description options( "Advanced" );
     options.add_options()
-        ( "advanced.hash-without-symbols", po::wvalue<std::wstring>(), "trim symbols when hash the key string" )
+        ( advanced_hash_without_symbols, po::wvalue<std::wstring>(), "trim symbols when hash the key string" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
 
-    if ( vm.count( "advanced.hash-without-symbols" ) )
+    if ( vm.count( advanced_hash_without_symbols ) )
     {
-        m_hash_without_symbols = L"true" == vm[ "advanced.hash-without-symbols" ].as<std::wstring>();
+        m_hash_without_symbols = L"true" == vm[advanced_hash_without_symbols].as<std::wstring>();
     }
 }
 

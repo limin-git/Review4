@@ -53,7 +53,6 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4995;4819;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -130,7 +129,6 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4995;4819;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -213,7 +211,6 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4995;4819;4996;4275"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -261,7 +258,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(Project)$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(ProjectDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -298,12 +295,11 @@
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				EnableEnhancedInstructionSet="2"
+				EnableEnhancedInstructionSet="0"
 				FloatingPointModel="2"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4995;4819;4996;4275"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -324,7 +320,7 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="1"
+				OptimizeForWindows98="0"
 				TargetMachine="17"
 			/>
 			<Tool

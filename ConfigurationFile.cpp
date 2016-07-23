@@ -4,21 +4,39 @@
 #include "IFileChangeManager.h"
 #include "FileUtility.h"
 
+#define config_file_option     "config-file"
+#define config_option          "config"
+#define cfg_option             "cfg"
+#define configuration_option   "configuration"
+
 
 ConfigurationFile::ConfigurationFile()
 {
     po::variables_map& vm = ICommandLine::instance().variables_map();
+    std::vector<std::wstring> config_files;
 
-    if ( vm.count( "config-file" ) )
+    if ( vm.count( config_file_option ) )
     {
-        std::vector<std::wstring> config_files = vm[ "config-file" ].as< std::vector<std::wstring> >();
+        config_files = vm[ config_file_option ].as< std::vector<std::wstring> >();
+    }
+    else if ( vm.count( config_option ) )
+    {
+        config_files = vm[ config_option ].as< std::vector<std::wstring> >();
+    }
+    else if ( vm.count( cfg_option ) )
+    {
+        config_files = vm[ cfg_option ].as< std::vector<std::wstring> >();
+    }
+    else if ( vm.count( configuration_option ) )
+    {
+        config_files = vm[ configuration_option ].as< std::vector<std::wstring> >();
+    }
 
-        BOOST_FOREACH( const std::wstring& config_file, config_files )
-        {
-            boost::filesystem::path p = boost::filesystem::system_complete( config_file );
-            load_config_file( p );
-            IFileChangeManager::instance().add_handler( p, this );
-        }
+    BOOST_FOREACH( const std::wstring& config_file, config_files )
+    {
+        boost::filesystem::path p = boost::filesystem::system_complete( config_file );
+        load_config_file( p );
+        IFileChangeManager::instance().add_handler( p, this );
     }
 }
 

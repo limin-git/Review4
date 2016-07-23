@@ -99,9 +99,12 @@ private:
             }
         };
 
-        boost::lock_guard<boost::mutex> lock( m_mutex );
         static Predicate pred;
-        std::vector<IQueueProcessor*> processors = m_processors;
+        std::vector<IQueueProcessor*> processors;
+        {
+            boost::lock_guard<boost::mutex> lock( m_mutex );
+            processors = m_processors;
+        }
         std::sort( processors.begin(), processors.end(), pred );
         return *processors.front();
     }

@@ -4,28 +4,31 @@
 #include "FileUtility.h"
 #include "IDisable.h"
 
+#define file_history        "file.history"
+#define review_no_history   "review.no-history"
+
 
 History::History()
     : m_no_history( false )
 {
     po::options_description options;
     options.add_options()
-        ( "file.history", po::wvalue<std::wstring>(), "history file" )
-        ( "review.no-history", po::wvalue<std::wstring>(), "write history or not?" )
+        ( file_history,         po::wvalue<std::wstring>(), "history file" )
+        ( review_no_history,    po::wvalue<std::wstring>(), "write history or not?" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
 
-    if ( vm.count( "review.no-history" ) )
+    if ( vm.count( review_no_history ) )
     {
-        if ( m_no_history = ( L"true" == vm["review.no-history"].as<std::wstring>() ) )
+        if ( m_no_history = ( L"true" == vm[review_no_history].as<std::wstring>() ) )
         {
             return;
         }
     }
 
-    if ( vm.count( "file.history" ) )
+    if ( vm.count( file_history ) )
     {
-        m_file_name = vm["file.history"].as<std::wstring>();
+        m_file_name = vm[file_history].as<std::wstring>();
     }
 
     m_file_name = system_complete( m_file_name );

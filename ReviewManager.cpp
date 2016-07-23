@@ -10,26 +10,30 @@
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
+#define advanced_register_hot_keys      "advanced.register-hot-keys"
+#define file_name_option                "file.name"
+#define wallpaper_path                  "wallpaper.path"
+
 
 ReviewManager::ReviewManager()
     : m_register_hot_keys( false )
 {
     po::options_description options( "" );
     options.add_options()
-        ( "advanced.register-hot-keys", po::wvalue<std::wstring>(), "register hot keys?" )
-        ( "file.name", po::wvalue<std::wstring>(), "file name" )
-        ( "wallpaper.path", po::wvalue<std::wstring>(), "register hot keys?" )
+        ( advanced_register_hot_keys,   po::wvalue<std::wstring>(), "register hot keys?" )
+        ( file_name_option,             po::wvalue<std::wstring>(), "file name" )
+        ( wallpaper_path,               po::wvalue<std::wstring>(), "register hot keys?" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
 
-    if ( vm.count( "advanced.register-hot-keys" ) )
+    if ( vm.count( advanced_register_hot_keys ) )
     {
-        m_register_hot_keys = ( L"true" == vm["advanced.register-hot-keys"].as<std::wstring>() );
+        m_register_hot_keys = ( L"true" == vm[advanced_register_hot_keys].as<std::wstring>() );
     }
 
-    if ( vm.count( "file.name" ) )
+    if ( vm.count( file_name_option ) )
     {
-        fs::path file_name = fs::system_complete( vm["file.name"].as<std::wstring>() );
+        fs::path file_name = fs::system_complete( vm[file_name_option].as<std::wstring>() );
 
         if ( file_name.extension() == ".ece" )
         {
@@ -45,7 +49,7 @@ ReviewManager::ReviewManager()
         }
     }
 
-    if ( vm.count( "wallpaper.path" ) )
+    if ( vm.count( wallpaper_path ) )
     {
         m_reivews[new Wallpaper] = new QueueProcessor<1>;
     }
@@ -54,7 +58,7 @@ ReviewManager::ReviewManager()
 
 ReviewManager::~ReviewManager()
 {
-    //IInput::instance().remove_key_handler( this ).remove_mouse_handler( this );
+    //IInput::instance().unregister_handler( this ).unregister_mouse_handler( this );
     //IHotKey::instance().unregister_handler( this );
 
     BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
@@ -93,17 +97,17 @@ void ReviewManager::run()
     else
     {
         IInput::instance()
-            .add_key_handler( this, 0, VK_DOWN,      boost::bind( &ReviewManager::handle_continue, this ) )
-            .add_key_handler( this, 0, VK_BACK,      boost::bind( &ReviewManager::handle_continue, this ) )
-            .add_key_handler( this, 0, VK_OEM_3,     boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
-            .add_key_handler( this, 0, VK_OEM_5,     boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
-            .add_key_handler( this, 0, VK_RIGHT,     boost::bind( &ReviewManager::handle_next, this ) )
-            .add_key_handler( this, 0, VK_NEXT,      boost::bind( &ReviewManager::handle_next, this ) )
-            .add_key_handler( this, 0, VK_UP,        boost::bind( &ReviewManager::handle_replay, this ) )
-            .add_key_handler( this, 0, VK_LEFT,      boost::bind( &ReviewManager::handle_previous, this ) )
-            .add_key_handler( this, 0, VK_PRIOR,     boost::bind( &ReviewManager::handle_previous, this ) )
-            .add_key_handler( this, 0, VK_DELETE,    boost::bind( &ReviewManager::handle_disable, this ) )
-            .add_key_handler( this, 0, VK_ESCAPE,    boost::bind( &ReviewManager::handle_exit, this ) )
+            .register_handler( this, 0, VK_DOWN,                boost::bind( &ReviewManager::handle_continue, this ) )
+            .register_handler( this, 0, VK_BACK,                boost::bind( &ReviewManager::handle_continue, this ) )
+            .register_handler( this, 0, VK_OEM_3,               boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
+            .register_handler( this, 0, VK_OEM_5,               boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
+            .register_handler( this, 0, VK_RIGHT,               boost::bind( &ReviewManager::handle_next, this ) )
+            .register_handler( this, 0, VK_NEXT,                boost::bind( &ReviewManager::handle_next, this ) )
+            .register_handler( this, 0, VK_UP,                  boost::bind( &ReviewManager::handle_replay, this ) )
+            .register_handler( this, 0, VK_LEFT,                boost::bind( &ReviewManager::handle_previous, this ) )
+            .register_handler( this, 0, VK_PRIOR,               boost::bind( &ReviewManager::handle_previous, this ) )
+            .register_handler( this, 0, VK_DELETE,              boost::bind( &ReviewManager::handle_disable, this ) )
+            .register_handler( this, 0, VK_ESCAPE,              boost::bind( &ReviewManager::handle_exit, this ) )
             ;
     }
 

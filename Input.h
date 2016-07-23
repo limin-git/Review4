@@ -8,11 +8,11 @@ struct Input : IInput
 public:
 
     virtual void run();
-    virtual IInput& add_key_handler( IInputHandler* handler, UINT state, WORD vk, const Callback& callback );
-    virtual IInput& add_key_handler( IInputHandler* handler, UINT state, WORD vk_first, WORD vk_last, const Callback& callback );
-    virtual IInput& remove_key_handler( IInputHandler* handler );
-    virtual IInput& add_mouse_handler( IInputHandler* handler, DWORD event_flas, DWORD button_state, const Callback& callback );
-    virtual IInput& remove_mouse_handler( IInputHandler* handler );
+    virtual IInput& register_handler( IInputHandler* handler, UINT state, WORD vk, const Callback& callback );
+    virtual IInput& register_handler( IInputHandler* handler, UINT state, WORD vk_first, WORD vk_last, const Callback& callback );
+    virtual IInput& unregister_handler( IInputHandler* handler );
+    virtual IInput& register_mouse_handler( IInputHandler* handler, DWORD event_flas, DWORD button_state, const Callback& callback );
+    virtual IInput& unregister_mouse_handler( IInputHandler* handler );
     virtual IInput& clear();
 
 private:

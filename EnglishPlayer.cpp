@@ -5,14 +5,17 @@
 #include "ISound.h"
 #include "Utility.h"
 
+#define speech_path         "speech.path"
+#define speech_disable      "speech.disable"
+
 
 EnglishPlayer::EnglishPlayer()
     : m_options_description( "Speech" ),
       m_disabled( false )
 {
     m_options_description.add_options()
-        ( "speech.path", po::wvalue< std::vector<std::wstring> >(), "speech path with format 'path | .extension'" )
-        ( "speech.disable", po::wvalue<std::wstring>(), "disable speech (true/false)" )
+        ( speech_path,      po::wvalue< std::vector<std::wstring> >(),      "speech path with format 'path | .extension'" )
+        ( speech_disable,   po::wvalue<std::wstring>(),                     "disable speech (true/false)" )
         ;
     IConfigurationFile::instance().add_options_description( m_options_description ).add_observer( this );
 }
@@ -81,10 +84,10 @@ void EnglishPlayer::speak_impl( const Word& word )
 
 void EnglishPlayer::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
-    if ( Utility::updated< std::vector<std::wstring> >( "speech.path", vm, old ) )
+    if ( Utility::updated< std::vector<std::wstring> >( speech_path, vm, old ) )
     {
         SpeechDirectory speech_directories;
-        std::vector<std::wstring> dirs = vm["speech.path"].as< std::vector<std::wstring> >();
+        std::vector<std::wstring> dirs = vm[speech_path].as< std::vector<std::wstring> >();
 
         for ( size_t i = 0; i < dirs.size(); ++i )
         {
@@ -104,9 +107,9 @@ void EnglishPlayer::options_changed( const po::variables_map& vm, const po::vari
         m_speech_directories.swap( speech_directories );
     }
 
-    if ( Utility::updated<std::wstring>( "speech.disable", vm, old ) )
+    if ( Utility::updated<std::wstring>( speech_disable, vm, old ) )
     {
-        const std::wstring s = vm["speech.disable"].as<std::wstring>();
+        const std::wstring s = vm[speech_disable].as<std::wstring>();
         m_disabled = ( L"true" == s || L"1" == s || L"TRUE" == s || L"True" == s );
     }
 }
