@@ -11,7 +11,7 @@
 #define wallpaper_disable           "wallpaper.disable"
 #define wallpaper_path              "wallpaper.path"
 #define wallpaper_recycle_path      "wallpaper.recycle-path"
-#define wallpaper_frequence         "wallpaper.frequence"
+#define wallpaper_frequency         "wallpaper.frequency"
 #define wallpaper_check_picture     "wallpaper.check-picture"
 
 
@@ -26,7 +26,7 @@ Wallpaper::Wallpaper()
         ( wallpaper_disable,        po::wvalue<std::wstring>(),     "disable" )
         ( wallpaper_path,           po::wvalue<std::wstring>(),     "picture directory path" )
         ( wallpaper_recycle_path,   po::wvalue<std::wstring>(),     "recycle directory path" )
-        ( wallpaper_frequence,      po::value<size_t>(),            "change picture frequence" )
+        ( wallpaper_frequency,      po::value<size_t>(),            "change picture frequency" )
         ( wallpaper_check_picture,  po::wvalue<std::wstring>(),     "check whether the file is a picture or not" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer(this).variables_map();
@@ -196,9 +196,9 @@ void Wallpaper::set_wallpaper()
 
 void Wallpaper::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
-    if ( Utility::updated<size_t>( wallpaper_frequence, vm, old ) )
+    if ( Utility::updated<size_t>( wallpaper_frequency, vm, old ) )
     {
-        m_frequence = vm[wallpaper_frequence].as<size_t>();
+        m_frequence = vm[wallpaper_frequency].as<size_t>();
     }
 }
 
