@@ -14,6 +14,7 @@
 #define movie_wait_player_startup       "movie.wait-player-startup"
 #define movie_adjust_start_time         "movie.adjust-start-time"
 #define movie_adjust_duration_time      "movie.adjust-duration-time"
+#define movie_more_than_an_hour         "movie.more-than-an-hour"
 
 
 MpcPlayer::MpcPlayer()
@@ -24,7 +25,8 @@ MpcPlayer::MpcPlayer()
       m_running( true ),
       m_adjust_start_time( 0 ),
       m_adjust_duration_time( 0 ),
-      m_disable( false )
+      m_disable( false ),
+      m_more_than_an_hour( true )
 {
     m_console = GetConsoleWindow();
 
@@ -38,6 +40,7 @@ MpcPlayer::MpcPlayer()
         ( movie_wait_player_startup,    po::value<size_t>()->default_value( 3 ),    "wait the play to startup in seconds" )
         ( movie_adjust_start_time,      po::value<int>()->default_value( 0 ),       "adjust subtitle display start time" )
         ( movie_adjust_duration_time,   po::value<int>()->default_value( 0 ),       "adjust subtitle display duration time" )
+        ( movie_more_than_an_hour,      po::wvalue<std::wstring>(),                 "whether movie play time is more than an hour" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer(this).variables_map();
 
@@ -67,11 +70,6 @@ MpcPlayer::MpcPlayer()
     if ( vm.count( movie_load_subtitle ) )
     {
         m_load_subtitle = ( L"true" == vm[movie_load_subtitle].as<std::wstring>() );
-    }
-
-    if ( vm.count( movie_auto_stop ) )
-    {
-        m_auto_stop = ( L"true" == vm[movie_auto_stop].as<std::wstring>() );
     }
 
     if ( vm.count( movie_wait_player_startup ) )
@@ -108,10 +106,10 @@ bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
         return false;
     }
 
-    size_t sec = subtitle->second();
-    size_t mil = subtitle->millisecond();
-    size_t min = subtitle->minute();
-    size_t hor = subtitle->hour();
+    int sec = subtitle->second();
+    int mil = subtitle->millisecond();
+    int min = subtitle->minute();
+    int hor = subtitle->hour();
 
     if ( m_adjust_start_time )
     {
@@ -121,8 +119,13 @@ bool MpcPlayer::play( ISubtitleSlideshowPtr subtitle )
     }
 
     std::stringstream ss;
-    ss  << std::setw(2) << std::setfill('0') << hor
-        << std::setw(2) << std::setfill('0') << min
+
+    if ( m_more_than_an_hour )
+    {
+        ss << std::setw(2) << std::setfill('0') << hor;
+    }
+
+    ss  << std::setw(2) << std::setfill('0') << min
         << std::setw(2) << std::setfill('0') << sec
         << std::setw(2) << std::setfill('0') << mil
         ;
@@ -181,7 +184,10 @@ void MpcPlayer::play_thread( const ISubtitleSlideshowPtr& subtitle )
         }
     }
 
-    pause();
+    if ( m_auto_stop )
+    {
+        pause();
+    }
 }
 
 
@@ -201,7 +207,7 @@ void MpcPlayer::pause()
     if ( m_playing )
     {
         SetForegroundWindow( m_player_hwnd );
-        IInputSender::instance().key( VK_SPACE );
+        IInputSender::instance().key( VK_SPACE ); 
         m_playing = false;
     }
 }
@@ -289,6 +295,16 @@ void MpcPlayer::options_changed( const po::variables_map& vm, const po::variable
     if ( Utility::updated<int>( movie_adjust_duration_time, vm, old ) )
     {
         m_adjust_duration_time = vm[movie_adjust_duration_time].as<int>();
+    }
+
+    if ( vm.count( movie_auto_stop ) )
+    {
+        m_auto_stop = ( L"true" == vm[movie_auto_stop].as<std::wstring>() );
+    }
+
+    if ( vm.count( movie_more_than_an_hour ) )
+    {
+        m_more_than_an_hour = ( L"true" == vm[movie_more_than_an_hour].as<std::wstring>() );
     }
 }
 

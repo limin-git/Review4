@@ -45,6 +45,7 @@ private:
     size_t m_wait_startup;
     int m_adjust_start_time;
     int m_adjust_duration_time;
+    bool m_more_than_an_hour;
     volatile bool m_playing;
     volatile bool m_running;
     ISubtitleSlideshowPtr m_subtitle;
