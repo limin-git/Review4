@@ -6,9 +6,12 @@
 #include "IHotKey.h"
 #include "IConfigurationFile.h"
 
+#define REVIEW_AGAIN_DISTANCE 20
+
 
 TextReview::TextReview()
-    : m_current_show_finished( false )
+    : m_current_show_finished( false ),
+      m_index( 0 )
 {
 }
 
@@ -22,6 +25,7 @@ TextReview::~TextReview()
 void TextReview::handle_start()
 {
     m_review_history.push_back( IScheduler::instance().get_slideshow() );
+    m_index++;
     m_current = m_review_history.begin();
     show();
 }
@@ -107,7 +111,17 @@ void TextReview::go_forward()
 
     if ( m_current == m_review_history.end() )
     {
-        m_review_history.push_back( IScheduler::instance().get_slideshow() );
+        if ( ( false == m_review_again.empty() ) && ( REVIEW_AGAIN_DISTANCE <= m_index - m_review_again.front().first ) )
+        {
+            m_review_history.push_back( m_review_again.front().second );
+            m_review_again.pop_front();
+        }
+        else
+        {
+            m_review_history.push_back( IScheduler::instance().get_slideshow() );
+            m_index++;
+        }
+
         m_current = m_review_history.end();
         m_current--;
     }
@@ -141,4 +155,15 @@ void TextReview::delete_review_history( size_t key )
 
         it++;
     }
+}
+
+
+void TextReview::handle_review_again()
+{
+    if ( ( m_current != m_review_history.end() ) && ! (*m_current)->empty() )
+    {
+        m_review_again.push_back( std::make_pair( m_index, *m_current ) );
+    }
+
+    handle_continue();
 }

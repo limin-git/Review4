@@ -109,6 +109,10 @@ void ReviewManager::run()
                 .register_handler( this, 0, 'W',                    boost::bind( &ReviewManager::handle_replay, this ) )
                 ;
         }
+
+        IHotKey::instance()
+            .register_handler( this, 0, 'R',                    boost::bind( &ReviewManager::handle_review_again, this ) )
+            ;
     }
     else
     {
@@ -138,6 +142,9 @@ void ReviewManager::run()
                 ;
         }
 
+        IInput::instance()
+            .register_handler( this, 0, 'R',                boost::bind( &ReviewManager::handle_review_again, this ) )
+            ;
     }
 
     IInput::instance().run();
@@ -228,4 +235,13 @@ void ReviewManager::handle_exit()
 
     SetForegroundWindow( GetConsoleWindow() );
     IInputSender::instance().key( VK_ESCAPE );
+}
+
+
+void ReviewManager::handle_review_again()
+{
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
+    {
+        v.second->queue_item( boost::bind( &IReview::handle_review_again, v.first ) );
+    }
 }

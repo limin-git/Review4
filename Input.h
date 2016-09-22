@@ -32,6 +32,6 @@ private:
     typedef std::map<DWORD, CallbackMap> MouseHandlerMap;
     MouseHandlerMap m_mouse_button_pressed_handlers;
     MouseHandlerMap m_other_mouse_handlers;
-    ThreadPool<1> m_thread_pool;
+    ThreadPool<2> m_thread_pool;
     boost::mutex m_mutex;
 };
