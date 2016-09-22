@@ -11,6 +11,7 @@ namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
 #define advanced_register_hot_keys      "advanced.register-hot-keys"
+#define advanced_enable_key_asdw        "advanced.enable-key-asdw"
 #define file_name_option                "file.name"
 #define wallpaper_path                  "wallpaper.path"
 
@@ -21,6 +22,7 @@ ReviewManager::ReviewManager()
     po::options_description options( "" );
     options.add_options()
         ( advanced_register_hot_keys,   po::wvalue<std::wstring>(), "register hot keys?" )
+        ( advanced_enable_key_asdw,     po::wvalue<std::wstring>(), "enable shortcut key ASDW?" )
         ( file_name_option,             po::wvalue<std::wstring>(), "file name" )
         ( wallpaper_path,               po::wvalue<std::wstring>(), "register hot keys?" )
         ;
@@ -73,6 +75,8 @@ void ReviewManager::run()
 {
     start();
 
+    po::variables_map& vm = IConfigurationFile::instance().variables_map();
+
     if ( m_register_hot_keys )
     {
         IHotKey::instance()
@@ -95,6 +99,16 @@ void ReviewManager::run()
             .register_handler( this, MOD_CONTROL, VK_UP,        boost::bind( &ReviewManager::handle_jump_back, this, 50 ) )
             .register_handler( this, MOD_CONTROL, VK_PRIOR,     boost::bind( &ReviewManager::handle_jump_back, this, 100 ) )
             ;
+
+        if ( vm.count( advanced_enable_key_asdw ) && vm[advanced_enable_key_asdw].as<std::wstring>() == L"true" )
+        {
+            IHotKey::instance()
+                .register_handler( this, 0, 'S',                    boost::bind( &ReviewManager::handle_continue, this ) )
+                .register_handler( this, 0, 'A',                    boost::bind( &ReviewManager::handle_previous, this ) )
+                .register_handler( this, 0, 'D',                    boost::bind( &ReviewManager::handle_next, this ) )
+                .register_handler( this, 0, 'W',                    boost::bind( &ReviewManager::handle_replay, this ) )
+                ;
+        }
     }
     else
     {
@@ -113,6 +127,17 @@ void ReviewManager::run()
             .register_handler( this, 0, VK_DELETE,              boost::bind( &ReviewManager::handle_disable, this ) )
             .register_handler( this, 0, VK_ESCAPE,              boost::bind( &ReviewManager::handle_exit, this ) )
             ;
+
+        if ( vm.count( advanced_enable_key_asdw ) && vm[advanced_enable_key_asdw].as<std::wstring>() == L"true" )
+        {
+            IInput::instance()
+                .register_handler( this, 0, 'S',                boost::bind( &ReviewManager::handle_continue, this ) )
+                .register_handler( this, 0, 'D',                boost::bind( &ReviewManager::handle_next, this ) )
+                .register_handler( this, 0, 'W',                boost::bind( &ReviewManager::handle_replay, this ) )
+                .register_handler( this, 0, 'A',                boost::bind( &ReviewManager::handle_previous, this ) )
+                ;
+        }
+
     }
 
     IInput::instance().run();

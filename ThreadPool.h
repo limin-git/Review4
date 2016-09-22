@@ -26,12 +26,14 @@ public:
 
     ~ThreadPool()
     {
+#if 0 // TODO: deadlock
         terminate();
 
         BOOST_FOREACH( IQueueProcessor* p, m_processors )
         {
             delete p;
         }
+#endif
     }
 
     virtual void terminate()

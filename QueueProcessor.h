@@ -33,7 +33,6 @@ struct QueueProcessor : IQueueProcessor
     {
         m_busy = true;
         m_running = false;
-        queue_item( Function() );
         m_condition.notify_one();
         m_thread.join();
     }
@@ -98,7 +97,7 @@ private:
             {
                 Function item = get_item();
 
-                if ( m_running )
+                if ( m_running && item )
                 {
                     item();
                     boost::unique_lock<boost::mutex> lock( m_mutex );
