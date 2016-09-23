@@ -35,4 +35,5 @@ protected:
     ISlideshowPtrList::iterator m_current;
     bool m_current_show_finished;
     int m_index;
+    int m_review_again_distance;
 };

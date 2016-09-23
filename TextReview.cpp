@@ -6,13 +6,25 @@
 #include "IHotKey.h"
 #include "IConfigurationFile.h"
 
-#define REVIEW_AGAIN_DISTANCE 20
+#define DEFAULT_REVIEW_AGAIN_DISTANCE   30
+#define review_review_again_distance    "review.review-again-distance"
 
 
 TextReview::TextReview()
     : m_current_show_finished( false ),
-      m_index( 0 )
+      m_index( 0 ),
+      m_review_again_distance( DEFAULT_REVIEW_AGAIN_DISTANCE )
 {
+    po::options_description options;
+    options.add_options()
+        ( review_review_again_distance, po::value<size_t>(), "review again distance" )
+        ;
+    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
+
+    if ( vm.count( review_review_again_distance ) )
+    {
+        m_review_again_distance = vm[review_review_again_distance].as<size_t>();
+    }
 }
 
 
@@ -111,7 +123,7 @@ void TextReview::go_forward()
 
     if ( m_current == m_review_history.end() )
     {
-        if ( ( false == m_review_again.empty() ) && ( REVIEW_AGAIN_DISTANCE <= m_index - m_review_again.front().first ) )
+        if ( ( false == m_review_again.empty() ) && ( m_review_again_distance <= m_index - m_review_again.front().first ) )
         {
             m_review_history.push_back( m_review_again.front().second );
             m_review_again.pop_front();
@@ -162,7 +174,10 @@ void TextReview::handle_review_again()
 {
     if ( ( m_current != m_review_history.end() ) && ! (*m_current)->empty() )
     {
-        m_review_again.push_back( std::make_pair( m_index, *m_current ) );
+        if ( m_review_again.empty() || m_review_again.back().first != m_index )
+        {
+            m_review_again.push_back( std::make_pair( m_index, *m_current ) );
+        }
     }
 
     handle_continue();
