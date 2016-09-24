@@ -176,9 +176,10 @@ void TextReview::handle_review_again()
     {
         if ( m_review_again.empty() || m_review_again.back().first != m_index )
         {
+            (*m_current)->clear_state();
             m_review_again.push_back( std::make_pair( m_index, *m_current ) );
         }
     }
 
-    handle_continue();
+    handle_next();
 }
