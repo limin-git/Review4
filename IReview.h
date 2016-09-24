@@ -14,4 +14,5 @@ struct IReview
     virtual void handle_jump( size_t distance ) = 0;
     virtual void handle_jump_back( size_t distance ) = 0;
     virtual void handle_review_again() {};
+    virtual void handle_listen() {};
 };

@@ -112,6 +112,7 @@ void ReviewManager::run()
 
         IHotKey::instance()
             .register_handler( this, 0, 'R',                    boost::bind( &ReviewManager::handle_review_again, this ) )
+            .register_handler( this, MOD_CONTROL, 'L',          boost::bind( &ReviewManager::handle_listen, this ) )
             ;
     }
     else
@@ -144,6 +145,7 @@ void ReviewManager::run()
 
         IInput::instance()
             .register_handler( this, 0, 'R',                boost::bind( &ReviewManager::handle_review_again, this ) )
+            .register_handler( this, MOD_CONTROL, 'L',      boost::bind( &ReviewManager::handle_listen, this ) )
             ;
     }
 
@@ -243,5 +245,14 @@ void ReviewManager::handle_review_again()
     BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
         v.second->queue_item( boost::bind( &IReview::handle_review_again, v.first ) );
+    }
+}
+
+
+void ReviewManager::handle_listen()
+{
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
+    {
+        v.second->queue_item( boost::bind( &IReview::handle_listen, v.first ) );
     }
 }

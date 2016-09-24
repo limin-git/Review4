@@ -20,6 +20,7 @@ public:
     virtual void handle_jump_back( size_t distance );
     virtual void handle_disable();
     virtual void handle_review_again();
+    virtual void handle_listen();
 
 protected:
 

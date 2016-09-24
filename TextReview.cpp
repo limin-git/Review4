@@ -183,3 +183,52 @@ void TextReview::handle_review_again()
 
     handle_next();
 }
+
+
+void TextReview::handle_listen()
+{
+    struct ListenThread
+    {
+        ListenThread( TextReview* review )
+            : listening( false ),
+              m_review( review )
+        {
+        }
+
+        void listen()
+        {
+            listening = true;
+
+            m_review->handle_next();
+
+            while ( listening )
+            {
+                m_review->handle_continue();
+
+                if ( listening )
+                {
+                    Sleep( 1500 );
+                }
+
+                if ( listening )
+                {
+                    m_review->handle_continue();
+                }
+            }
+        }
+
+        bool listening;
+        TextReview* m_review;
+    };
+
+    static ListenThread* listen_thread = new ListenThread( this );
+
+    if ( false == listen_thread->listening )
+    {
+        boost::thread t( boost::bind( &ListenThread::listen, listen_thread ) );
+    }
+    else
+    {
+        listen_thread->listening = false;
+    }
+}
