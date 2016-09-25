@@ -5,26 +5,27 @@
 #include "IDisable.h"
 #include "IHotKey.h"
 #include "IConfigurationFile.h"
+#include "Utility.h"
 
 #define DEFAULT_REVIEW_AGAIN_DISTANCE   30
+#define DEFAULT_LISTEN_INTERVAL         1500
 #define review_review_again_distance    "review.review-again-distance"
+#define review_listen_interval          "review.listen-interval"
 
 
 TextReview::TextReview()
     : m_current_show_finished( false ),
       m_index( 0 ),
-      m_review_again_distance( DEFAULT_REVIEW_AGAIN_DISTANCE )
+      m_review_again_distance( DEFAULT_REVIEW_AGAIN_DISTANCE ),
+      m_listen_interval( DEFAULT_LISTEN_INTERVAL ),
+      m_listening( false )
 {
     po::options_description options;
     options.add_options()
         ( review_review_again_distance, po::value<size_t>(), "review again distance" )
+        ( review_listen_interval,       po::value<size_t>(), "review listen interval" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
-
-    if ( vm.count( review_review_again_distance ) )
-    {
-        m_review_again_distance = vm[review_review_again_distance].as<size_t>();
-    }
+    IConfigurationFile::instance().add_options_description( options ).add_observer( this );
 }
 
 
@@ -187,48 +188,37 @@ void TextReview::handle_review_again()
 
 void TextReview::handle_listen()
 {
-    struct ListenThread
+    m_listening = !m_listening;
+
+    if ( m_listening )
     {
-        ListenThread( TextReview* review )
-            : listening( false ),
-              m_review( review )
-        {
-        }
-
-        void listen()
-        {
-            listening = true;
-
-            m_review->handle_next();
-
-            while ( listening )
-            {
-                m_review->handle_continue();
-
-                if ( listening )
-                {
-                    Sleep( 1500 );
-                }
-
-                if ( listening )
-                {
-                    m_review->handle_continue();
-                }
-            }
-        }
-
-        bool listening;
-        TextReview* m_review;
-    };
-
-    static ListenThread* listen_thread = new ListenThread( this );
-
-    if ( false == listen_thread->listening )
-    {
-        boost::thread t( boost::bind( &ListenThread::listen, listen_thread ) );
+        boost::thread t( boost::bind( &TextReview::listen_thread_function, this ) );
     }
-    else
+}
+
+
+void TextReview::options_changed( const po::variables_map& vm, const po::variables_map& old )
+{
+    if ( Utility::updated<size_t>( review_review_again_distance, vm, old ) )
     {
-        listen_thread->listening = false;
+        m_review_again_distance = vm[review_review_again_distance].as<size_t>();
+    }
+
+    if ( Utility::updated<size_t>( review_listen_interval, vm, old ) )
+    {
+        m_listen_interval = vm[review_listen_interval].as<size_t>();
+    }
+}
+
+
+void TextReview::listen_thread_function()
+{
+    handle_next();
+
+    while ( m_listening )
+    {
+        handle_continue(); if ( !m_listening ) { break; }
+        Sleep( m_listen_interval ); if ( !m_listening ) { break; }
+        handle_continue();
     }
 }

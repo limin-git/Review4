@@ -75,79 +75,11 @@ void ReviewManager::run()
 {
     start();
 
-    po::variables_map& vm = IConfigurationFile::instance().variables_map();
+    IHotKey::instance()
+        .register_handler( this, MOD_CONTROL|MOD_ALT, 'L',  boost::bind( &ReviewManager::handle_listen, this ) )
+        ;
 
-    if ( m_register_hot_keys )
-    {
-        IHotKey::instance()
-            .register_handler( this, 0, VK_DOWN,                boost::bind( &ReviewManager::handle_continue, this ) )
-            .register_handler( this, 0, VK_OEM_3,               boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
-            .register_handler( this, 0, VK_OEM_5,               boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
-            .register_handler( this, 0, VK_LEFT,                boost::bind( &ReviewManager::handle_previous, this ) )
-            .register_handler( this, 0, VK_PRIOR,               boost::bind( &ReviewManager::handle_previous, this ) )
-            .register_handler( this, 0, VK_BROWSER_BACK,        boost::bind( &ReviewManager::handle_previous, this ) )
-            .register_handler( this, 0, VK_RIGHT,               boost::bind( &ReviewManager::handle_next, this ) )
-            .register_handler( this, 0, VK_NEXT,                boost::bind( &ReviewManager::handle_next, this ) )
-            .register_handler( this, 0, VK_BROWSER_FORWARD,     boost::bind( &ReviewManager::handle_next, this ) )
-            .register_handler( this, 0, VK_UP,                  boost::bind( &ReviewManager::handle_replay, this ) )
-            .register_handler( this, 0, VK_DELETE,              boost::bind( &ReviewManager::handle_disable, this ) )
-            .register_handler( this, 0, VK_ESCAPE,              boost::bind( &ReviewManager::handle_exit, this ) )
-            .register_handler( this, MOD_CONTROL, VK_RIGHT,     boost::bind( &ReviewManager::handle_jump, this, 10 ) )
-            .register_handler( this, MOD_CONTROL, VK_DOWN,      boost::bind( &ReviewManager::handle_jump, this, 50 ) )
-            .register_handler( this, MOD_CONTROL, VK_NEXT,      boost::bind( &ReviewManager::handle_jump, this, 100 ) )
-            .register_handler( this, MOD_CONTROL, VK_LEFT,      boost::bind( &ReviewManager::handle_jump_back, this, 10 ) )
-            .register_handler( this, MOD_CONTROL, VK_UP,        boost::bind( &ReviewManager::handle_jump_back, this, 50 ) )
-            .register_handler( this, MOD_CONTROL, VK_PRIOR,     boost::bind( &ReviewManager::handle_jump_back, this, 100 ) )
-            ;
-
-        if ( vm.count( advanced_enable_key_asdw ) && vm[advanced_enable_key_asdw].as<std::wstring>() == L"true" )
-        {
-            IHotKey::instance()
-                .register_handler( this, 0, 'S',                    boost::bind( &ReviewManager::handle_continue, this ) )
-                .register_handler( this, 0, 'A',                    boost::bind( &ReviewManager::handle_previous, this ) )
-                .register_handler( this, 0, 'D',                    boost::bind( &ReviewManager::handle_next, this ) )
-                .register_handler( this, 0, 'W',                    boost::bind( &ReviewManager::handle_replay, this ) )
-                ;
-        }
-
-        IHotKey::instance()
-            .register_handler( this, 0, 'R',                    boost::bind( &ReviewManager::handle_review_again, this ) )
-            .register_handler( this, MOD_CONTROL, 'L',          boost::bind( &ReviewManager::handle_listen, this ) )
-            ;
-    }
-    else
-    {
-        IInput::instance()
-            .register_handler( this, 0, VK_DOWN,                boost::bind( &ReviewManager::handle_continue, this ) )
-            .register_handler( this, 0, VK_BACK,                boost::bind( &ReviewManager::handle_continue, this ) )
-            .register_handler( this, 0, VK_OEM_3,               boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
-            .register_handler( this, 0, VK_OEM_5,               boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
-            .register_handler( this, 0, VK_RIGHT,               boost::bind( &ReviewManager::handle_next, this ) )
-            .register_handler( this, 0, VK_NEXT,                boost::bind( &ReviewManager::handle_next, this ) )
-            .register_handler( this, 0, VK_BROWSER_FORWARD,     boost::bind( &ReviewManager::handle_next, this ) )
-            .register_handler( this, 0, VK_UP,                  boost::bind( &ReviewManager::handle_replay, this ) )
-            .register_handler( this, 0, VK_LEFT,                boost::bind( &ReviewManager::handle_previous, this ) )
-            .register_handler( this, 0, VK_PRIOR,               boost::bind( &ReviewManager::handle_previous, this ) )
-            .register_handler( this, 0, VK_BROWSER_BACK,        boost::bind( &ReviewManager::handle_previous, this ) )
-            .register_handler( this, 0, VK_DELETE,              boost::bind( &ReviewManager::handle_disable, this ) )
-            .register_handler( this, 0, VK_ESCAPE,              boost::bind( &ReviewManager::handle_exit, this ) )
-            ;
-
-        if ( vm.count( advanced_enable_key_asdw ) && vm[advanced_enable_key_asdw].as<std::wstring>() == L"true" )
-        {
-            IInput::instance()
-                .register_handler( this, 0, 'S',                boost::bind( &ReviewManager::handle_continue, this ) )
-                .register_handler( this, 0, 'D',                boost::bind( &ReviewManager::handle_next, this ) )
-                .register_handler( this, 0, 'W',                boost::bind( &ReviewManager::handle_replay, this ) )
-                .register_handler( this, 0, 'A',                boost::bind( &ReviewManager::handle_previous, this ) )
-                ;
-        }
-
-        IInput::instance()
-            .register_handler( this, 0, 'R',                boost::bind( &ReviewManager::handle_review_again, this ) )
-            .register_handler( this, MOD_CONTROL, 'L',      boost::bind( &ReviewManager::handle_listen, this ) )
-            ;
-    }
+    regist_hot_keys();
 
     IInput::instance().run();
 }
@@ -251,8 +183,67 @@ void ReviewManager::handle_review_again()
 
 void ReviewManager::handle_listen()
 {
+    static bool listening = false;
+    listening = !listening;
+
+    unregister_hot_keys();
+
+    if ( listening )
+    {
+        IHotKey::instance().register_handler( this, MOD_CONTROL, 'L', boost::bind( &ReviewManager::handle_listen, this ) );
+    }
+    else
+    {
+        regist_hot_keys();
+    }
+
     BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
     {
         v.second->queue_item( boost::bind( &IReview::handle_listen, v.first ) );
     }
+}
+
+
+void ReviewManager::regist_hot_keys()
+{
+    IHotKey::instance()
+        .register_handler( this, 0, VK_DOWN,                boost::bind( &ReviewManager::handle_continue, this ) )
+        .register_handler( this, 0, VK_OEM_3,               boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
+        .register_handler( this, 0, VK_OEM_5,               boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
+        .register_handler( this, 0, VK_LEFT,                boost::bind( &ReviewManager::handle_previous, this ) )
+        .register_handler( this, 0, VK_PRIOR,               boost::bind( &ReviewManager::handle_previous, this ) )
+        .register_handler( this, 0, VK_BROWSER_BACK,        boost::bind( &ReviewManager::handle_previous, this ) )
+        .register_handler( this, 0, VK_RIGHT,               boost::bind( &ReviewManager::handle_next, this ) )
+        .register_handler( this, 0, VK_NEXT,                boost::bind( &ReviewManager::handle_next, this ) )
+        .register_handler( this, 0, VK_BROWSER_FORWARD,     boost::bind( &ReviewManager::handle_next, this ) )
+        .register_handler( this, 0, VK_UP,                  boost::bind( &ReviewManager::handle_replay, this ) )
+        .register_handler( this, 0, VK_DELETE,              boost::bind( &ReviewManager::handle_disable, this ) )
+        .register_handler( this, 0, VK_ESCAPE,              boost::bind( &ReviewManager::handle_exit, this ) )
+        .register_handler( this, MOD_CONTROL, VK_RIGHT,     boost::bind( &ReviewManager::handle_jump, this, 10 ) )
+        .register_handler( this, MOD_CONTROL, VK_DOWN,      boost::bind( &ReviewManager::handle_jump, this, 50 ) )
+        .register_handler( this, MOD_CONTROL, VK_NEXT,      boost::bind( &ReviewManager::handle_jump, this, 100 ) )
+        .register_handler( this, MOD_CONTROL, VK_LEFT,      boost::bind( &ReviewManager::handle_jump_back, this, 10 ) )
+        .register_handler( this, MOD_CONTROL, VK_UP,        boost::bind( &ReviewManager::handle_jump_back, this, 50 ) )
+        .register_handler( this, MOD_CONTROL, VK_PRIOR,     boost::bind( &ReviewManager::handle_jump_back, this, 100 ) )
+        .register_handler( this, 0, 'R',                    boost::bind( &ReviewManager::handle_review_again, this ) )
+        .register_handler( this, MOD_CONTROL, 'L',          boost::bind( &ReviewManager::handle_listen, this ) )
+        ;
+
+    po::variables_map& vm = IConfigurationFile::instance().variables_map();
+
+    if ( vm.count( advanced_enable_key_asdw ) && vm[advanced_enable_key_asdw].as<std::wstring>() == L"true" )
+    {
+        IHotKey::instance()
+            .register_handler( this, 0, 'S',                    boost::bind( &ReviewManager::handle_continue, this ) )
+            .register_handler( this, 0, 'A',                    boost::bind( &ReviewManager::handle_previous, this ) )
+            .register_handler( this, 0, 'D',                    boost::bind( &ReviewManager::handle_next, this ) )
+            .register_handler( this, 0, 'W',                    boost::bind( &ReviewManager::handle_replay, this ) )
+            ;
+    }
+}
+
+
+void ReviewManager::unregister_hot_keys()
+{
+    IHotKey::instance().unregister_handler( this );
 }

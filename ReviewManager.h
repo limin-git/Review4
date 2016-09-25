@@ -30,6 +30,8 @@ private:
 
     void start();
     void handle_exit();
+    void regist_hot_keys();
+    void unregister_hot_keys();
 
 private:
 

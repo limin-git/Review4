@@ -1,9 +1,11 @@
 #pragma once
 #include "IReview.h"
 #include "ISlideShow.h"
+#include "IConfigurationFileObserver.h"
 
 
-struct TextReview : IReview
+struct TextReview : IReview,
+                    IConfigurationFileObserver
 {
 public:
 
@@ -21,6 +23,7 @@ public:
     virtual void handle_disable();
     virtual void handle_review_again();
     virtual void handle_listen();
+    virtual void options_changed( const po::variables_map& vm, const po::variables_map& old );
 
 protected:
 
@@ -28,6 +31,7 @@ protected:
     void go_forward();
     void go_back();
     void delete_review_history( size_t key );
+    void listen_thread_function();
 
 protected:
 
@@ -37,4 +41,6 @@ protected:
     bool m_current_show_finished;
     int m_index;
     int m_review_again_distance;
+    int m_listen_interval;
+    bool m_listening;
 };

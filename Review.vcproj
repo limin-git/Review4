@@ -431,6 +431,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Filter.h"
+				>
+			</File>
+			<File
 				RelativePath=".\History.h"
 				>
 			</File>
@@ -500,6 +504,14 @@
 			</File>
 			<File
 				RelativePath=".\IFileChangeManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IFilter.h"
 				>
 			</File>
 			<File
@@ -856,6 +868,10 @@
 			</File>
 			<File
 				RelativePath=".\FileChangeMonitorThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Filter.cpp"
 				>
 			</File>
 			<File
