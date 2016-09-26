@@ -12,11 +12,14 @@ Filter::Filter()
     options.add_options()
         ( file_filter, po::wvalue<std::wstring>(), "filter file" )
         ;
-    m_file_name = IConfigurationFile::instance()
-        .add_options_description( options )
-        .variables_map()[file_filter].as<std::wstring>();
-    m_file_name = system_complete( m_file_name );
-    load_file();
+    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
+
+    if ( vm.count( file_filter ) )
+    {
+        m_file_name = vm[file_filter].as<std::wstring>();
+        m_file_name = system_complete( m_file_name );
+        load_file();
+    }
 }
 
 
@@ -56,5 +59,11 @@ bool Filter::is_filtered( const std::wstring& str )
 
 void Filter::filter( ISlideshowPtr slideshow )
 {
-    // TODO
+    const std::wstring& str = slideshow->key_string();
+
+    if ( ! is_filtered( str ) )
+    {
+        m_filter.insert( str );
+        m_file_stream << str << std::endl;
+    }
 }

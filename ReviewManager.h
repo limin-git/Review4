@@ -25,6 +25,7 @@ public:
     virtual void handle_disable();
     virtual void handle_review_again();
     virtual void handle_listen();
+    virtual void handle_filter();
 
 private:
 

@@ -204,6 +204,15 @@ void ReviewManager::handle_listen()
 }
 
 
+void ReviewManager::handle_filter()
+{
+    BOOST_FOREACH( ReviewMap::value_type& v, m_reivews )
+    {
+        v.second->queue_item( boost::bind( &IReview::handle_filter, v.first ) );
+    }
+}
+
+
 void ReviewManager::regist_hot_keys()
 {
     IHotKey::instance()
@@ -227,6 +236,7 @@ void ReviewManager::regist_hot_keys()
         .register_handler( this, MOD_CONTROL, VK_PRIOR,     boost::bind( &ReviewManager::handle_jump_back, this, 100 ) )
         .register_handler( this, 0, 'R',                    boost::bind( &ReviewManager::handle_review_again, this ) )
         .register_handler( this, MOD_CONTROL, 'L',          boost::bind( &ReviewManager::handle_listen, this ) )
+        .register_handler( this, MOD_CONTROL, VK_DELETE,    boost::bind( &ReviewManager::handle_filter, this ) )
         ;
 
     po::variables_map& vm = IConfigurationFile::instance().variables_map();

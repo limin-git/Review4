@@ -6,6 +6,7 @@
 #include "IHotKey.h"
 #include "IConfigurationFile.h"
 #include "Utility.h"
+#include "IFilter.h"
 
 #define DEFAULT_REVIEW_AGAIN_DISTANCE   30
 #define DEFAULT_LISTEN_INTERVAL         1500
@@ -193,6 +194,16 @@ void TextReview::handle_listen()
     if ( m_listening )
     {
         boost::thread t( boost::bind( &TextReview::listen_thread_function, this ) );
+    }
+}
+
+
+void TextReview::handle_filter()
+{
+    if ( ( m_current != m_review_history.end() ) && ! (*m_current)->empty() )
+    {
+        IFilter::instance().filter( *m_current );
+        handle_disable();
     }
 }
 

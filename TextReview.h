@@ -23,6 +23,7 @@ public:
     virtual void handle_disable();
     virtual void handle_review_again();
     virtual void handle_listen();
+    virtual void handle_filter();
     virtual void options_changed( const po::variables_map& vm, const po::variables_map& old );
 
 protected:
@@ -42,5 +43,5 @@ protected:
     int m_index;
     int m_review_again_distance;
     int m_listen_interval;
-    bool m_listening;
+    volatile bool m_listening;
 };
