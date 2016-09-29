@@ -4,6 +4,7 @@
 
 void Input::run()
 {
+    m_running = true;
     HANDLE cin = GetStdHandle(STD_INPUT_HANDLE);
     const size_t size = 1024;
     INPUT_RECORD input_buffer[size];
@@ -11,7 +12,7 @@ void Input::run()
 
     SetConsoleMode( cin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT );
 
-    while ( true )
+    while ( m_running )
     {
         ReadConsoleInput( cin, input_buffer, size, &num_read );
 
@@ -44,10 +45,10 @@ void Input::run()
                         }
                     }
 
-                    if ( VK_ESCAPE == e.wVirtualKeyCode )
-                    {
-                        return;
-                    }
+                    //if ( VK_ESCAPE == e.wVirtualKeyCode )
+                    //{
+                    //    return;
+                    //}
                 }
                 break;
 
@@ -208,4 +209,10 @@ void Input::debug_print_mouse_event( const MOUSE_EVENT_RECORD& e )
         << "dwEventFlags=" << std::hex << e.dwEventFlags << "\n\n"
         ;
     std::cout << strm.str() << std::endl;
+}
+
+
+void Input::terminate()
+{
+    m_running = false;
 }

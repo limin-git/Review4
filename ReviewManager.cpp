@@ -167,6 +167,7 @@ void ReviewManager::handle_exit()
         v.second->queue_item( boost::bind( &IReview::handle_exit, v.first ) );
     }
 
+    IInput::instance().terminate();
     SetForegroundWindow( GetConsoleWindow() );
     IInputSender::instance().key( VK_ESCAPE );
 }

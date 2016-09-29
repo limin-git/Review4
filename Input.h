@@ -8,6 +8,7 @@ struct Input : IInput
 public:
 
     virtual void run();
+    virtual void terminate();
     virtual IInput& register_handler( IInputHandler* handler, UINT state, WORD vk, const Callback& callback );
     virtual IInput& register_handler( IInputHandler* handler, UINT state, WORD vk_first, WORD vk_last, const Callback& callback );
     virtual IInput& unregister_handler( IInputHandler* handler );
@@ -34,4 +35,5 @@ private:
     MouseHandlerMap m_other_mouse_handlers;
     ThreadPool<2> m_thread_pool;
     boost::mutex m_mutex;
+    volatile bool m_running;
 };

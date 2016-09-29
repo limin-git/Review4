@@ -231,5 +231,10 @@ void TextReview::listen_thread_function()
         handle_continue(); if ( !m_listening ) { break; }
         Sleep( m_listen_interval ); if ( !m_listening ) { break; }
         handle_continue();
+
+        if ( (*m_current)->empty() )
+        {
+            exit(0);
+        }
     }
 }

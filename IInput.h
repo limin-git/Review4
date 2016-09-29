@@ -6,6 +6,7 @@ struct IInput
 {
     virtual ~IInput() {}
     virtual void run() = 0;
+    virtual void terminate() = 0;
     virtual IInput& register_handler( IInputHandler* handler, UINT control_state, WORD vk, const Callback& callback ) = 0;
     virtual IInput& register_handler( IInputHandler* handler, UINT control_state, WORD vk_first, WORD vk_last, const Callback& callback ) = 0;
     virtual IInput& unregister_handler( IInputHandler* handler ) = 0;
