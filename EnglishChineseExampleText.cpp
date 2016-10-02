@@ -62,16 +62,15 @@ bool EnglishChineseExampleText::parse_text()
         const std::wstring& example = ( (*it)[3].matched ? boost::trim_copy( it->str(3) ) : L"" );
         size_t key = hash( english );
 
-        if ( IFilter::instance().is_filtered( english ) )
+        if ( IFilter::instance().is_filtered( english )    || 
+             IDisable::instance().is_disabled( key )       ||
+             slidshow_map.find( key ) != slidshow_map.end() )
         {
             continue;
         }
 
-        if ( ! IDisable::instance().is_disabled( key ) )
-        {
-            keys.push_back( key );
-            slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example ) );
-        }
+        keys.push_back( key );
+        slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example ) );
     }
 
     m_string.swap( s );
