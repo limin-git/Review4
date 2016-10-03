@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Filter.h"
 #include "IConfigurationFile.h"
+#include "FileUtility.h"
 namespace po = boost::program_options;
 
 #define file_filter    "file.filter"
@@ -30,21 +31,25 @@ Filter::~Filter()
 
 void Filter::load_file()
 {
+    std::wstring s = Utility::wstring_from_file( m_file_name.wstring().c_str() );
+
+    const boost::wregex e
+    (
+        L"(?x)"
+        L" ^ [ \t¡¡]* ([^\\r\\n]+?) [ \t¡¡]* [\\r\\n]{1,2}"           // $1: english
+    );
+
+    boost::wsregex_iterator it( s.begin(), s.end(), e );
+    boost::wsregex_iterator end;
+
+    for ( ; it != end; ++it )
+    {
+        m_filter.insert( it->str(1) );
+    }
+
     m_file_stream.open( m_file_name.wstring().c_str(), std::ios::in | std::ios::out | std::ios::app );
 
-    if ( m_file_stream )
-    {
-        for ( std::wstring s; std::getline( m_file_stream, s ); )
-        {
-            if ( !s.empty() )
-            {
-                m_filter.insert( s );
-            }
-        }
-
-        m_file_stream.clear();
-    }
-    else
+    if ( ! m_file_stream )
     {
         m_file_stream.open( m_file_name.wstring().c_str(), std::ios::out | std::ios::app );
     }
