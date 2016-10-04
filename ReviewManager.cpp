@@ -245,10 +245,10 @@ void ReviewManager::regist_hot_keys()
     if ( vm.count( advanced_enable_key_asdw ) && vm[advanced_enable_key_asdw].as<std::wstring>() == L"true" )
     {
         IHotKey::instance()
-            .register_handler( this, 0, 'S',                    boost::bind( &ReviewManager::handle_continue, this ) )
-            .register_handler( this, 0, 'A',                    boost::bind( &ReviewManager::handle_previous, this ) )
-            .register_handler( this, 0, 'D',                    boost::bind( &ReviewManager::handle_next, this ) )
-            .register_handler( this, 0, 'W',                    boost::bind( &ReviewManager::handle_replay, this ) )
+            .register_handler( this, 0, 'S',                boost::bind( &ReviewManager::handle_continue, this ) )
+            .register_handler( this, 0, 'A',                boost::bind( &ReviewManager::handle_previous, this ) )
+            .register_handler( this, 0, 'D',                boost::bind( &ReviewManager::handle_next, this ) )
+            .register_handler( this, 0, 'W',                boost::bind( &ReviewManager::handle_replay, this ) )
             ;
     }
 }

@@ -224,13 +224,15 @@ void TextReview::options_changed( const po::variables_map& vm, const po::variabl
 
 void TextReview::listen_thread_function()
 {
-    handle_next();
-
     while ( m_listening )
     {
-        handle_continue(); if ( !m_listening ) { break; }
-        Sleep( m_listen_interval ); if ( !m_listening ) { break; }
-        handle_continue();
+        (*m_current)->show_all();       if ( !m_listening ) { break; }
+        go_forward();                   if ( !m_listening ) { break; }
+
+        if ( m_listen_interval )
+        {
+            Sleep( m_listen_interval );     if ( !m_listening ) { break; }
+        }
 
         if ( (*m_current)->empty() )
         {

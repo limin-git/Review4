@@ -35,4 +35,5 @@ private:
     QueueProcessor<> m_processor;
     po::options_description m_options_description;
     bool m_disabled;
+    bool m_is_synchronized;
 };

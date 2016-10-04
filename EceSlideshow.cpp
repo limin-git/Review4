@@ -45,6 +45,15 @@ bool EceSlideshow::show()
 }
 
 
+bool EceSlideshow::show_all()
+{
+    IConsole::instance().cls().write( m_cache );
+    IEnglishPlayer::instance().speak( m_english );
+    m_stage = English;
+    return true;
+}
+
+
 void EceSlideshow::clear_state()
 {
     m_stage = English;
