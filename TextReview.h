@@ -44,4 +44,5 @@ protected:
     int m_review_again_distance;
     int m_listen_interval;
     volatile bool m_listening;
+    volatile bool m_auto_review_again;
 };

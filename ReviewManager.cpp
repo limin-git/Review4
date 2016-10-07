@@ -10,10 +10,10 @@
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
-#define advanced_register_hot_keys      "advanced.register-hot-keys"
-#define advanced_enable_key_asdw        "advanced.enable-key-asdw"
-#define file_name_option                "file.name"
-#define wallpaper_path                  "wallpaper.path"
+#define advanced_register_hot_keys                  "advanced.register-hot-keys"
+#define advanced_enable_key_asdw                    "advanced.enable-key-asdw"
+#define file_name_option                            "file.name"
+#define wallpaper_path                              "wallpaper.path"
 
 
 ReviewManager::ReviewManager()
@@ -21,12 +21,12 @@ ReviewManager::ReviewManager()
 {
     po::options_description options( "" );
     options.add_options()
-        ( advanced_register_hot_keys,   po::wvalue<std::wstring>(), "register hot keys?" )
-        ( advanced_enable_key_asdw,     po::wvalue<std::wstring>(), "enable shortcut key ASDW?" )
-        ( file_name_option,             po::wvalue<std::wstring>(), "file name" )
-        ( wallpaper_path,               po::wvalue<std::wstring>(), "register hot keys?" )
+        ( advanced_register_hot_keys,               po::wvalue<std::wstring>(), "register hot keys?" )
+        ( advanced_enable_key_asdw,                 po::wvalue<std::wstring>(), "enable shortcut key ASDW?" )
+        ( file_name_option,                         po::wvalue<std::wstring>(), "file name" )
+        ( wallpaper_path,                           po::wvalue<std::wstring>(), "register hot keys?" )
         ;
-    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
+    po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).add_observer( this ).variables_map();
 
     if ( vm.count( advanced_register_hot_keys ) )
     {
@@ -257,4 +257,9 @@ void ReviewManager::regist_hot_keys()
 void ReviewManager::unregister_hot_keys()
 {
     IHotKey::instance().unregister_handler( this );
+}
+
+
+void ReviewManager::options_changed( const po::variables_map& vm, const po::variables_map& old )
+{
 }

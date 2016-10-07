@@ -4,11 +4,13 @@
 #include "IHotKeyHandler.h"
 #include "IReview.h"
 #include "QueueProcessor.h"
+#include "IConfigurationFileObserver.h"
 
 
 struct ReviewManager : IReviewManager,
                        IInputHandler,
-                       IHotKeyHandler
+                       IHotKeyHandler,
+                       IConfigurationFileObserver
 {
 public:
 
@@ -26,6 +28,7 @@ public:
     virtual void handle_review_again();
     virtual void handle_listen();
     virtual void handle_filter();
+    virtual void options_changed( const po::variables_map& vm, const po::variables_map& old );
 
 private:
 
