@@ -92,6 +92,18 @@ void EnglishPlayer::speak_impl( const Word& word )
 }
 
 
+bool EnglishPlayer::is_synchronized()
+{
+    return m_is_synchronized;
+}
+
+
+void EnglishPlayer::synchronize( bool is_sync )
+{
+    m_is_synchronized = is_sync;
+}
+
+
 void EnglishPlayer::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
     if ( Utility::updated< std::vector<std::wstring> >( speech_path, vm, old ) )

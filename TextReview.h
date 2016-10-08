@@ -38,6 +38,7 @@ protected:
 
     ISlideshowPtrList m_review_history;
     std::list< std::pair<int, ISlideshowPtr> > m_review_again;
+    std::set<size_t> m_review_again_set;
     ISlideshowPtrList::iterator m_current;
     bool m_current_show_finished;
     int m_index;

@@ -7,6 +7,7 @@
 #include "IConfigurationFile.h"
 #include "Utility.h"
 #include "IFilter.h"
+#include "IEnglishPlayer.h"
 
 #define DEFAULT_REVIEW_AGAIN_DISTANCE   30
 #define DEFAULT_LISTEN_INTERVAL         1500
@@ -86,10 +87,10 @@ void TextReview::handle_replay()
 void TextReview::handle_disable()
 {
     ISlideshowPtr slideshow = *m_current;
+    handle_next();
     size_t key = slideshow->key();
     delete_review_history( key );
     IDisable::instance().disable( slideshow );
-    handle_next();
 }
 
 
@@ -130,6 +131,7 @@ void TextReview::go_forward()
     if ( ( false == m_review_again.empty() ) && ( m_review_again_distance <= m_index - m_review_again.front().first ) )
     {
         m_review_history.push_back( m_review_again.front().second );
+        m_review_again_set.erase( m_review_again.front().second->key() );
         m_review_again.pop_front();
         m_current = m_review_history.end();
         m_current--;
@@ -144,9 +146,15 @@ void TextReview::go_forward()
 
     (*m_current)->clear_state();
 
-    if ( m_auto_review_again && ( m_review_again.back().first != m_index ) )
+    if ( m_auto_review_again )
     {
-        m_review_again.push_back( std::make_pair( m_index, *m_current ) );
+        size_t key = (*m_current)->key();
+
+        if ( m_review_again_set.find( key ) == m_review_again_set.end() )
+        {
+            m_review_again.push_back( std::make_pair( m_index, *m_current ) );
+            m_review_again_set.insert( key );
+        }
     }
 }
 
@@ -185,6 +193,8 @@ void TextReview::delete_review_history( size_t key )
 
         it++;
     }
+
+    m_review_again_set.erase( key );
 }
 
 
@@ -249,6 +259,9 @@ void TextReview::options_changed( const po::variables_map& vm, const po::variabl
 void TextReview::listen_thread_function()
 {
     bool is_auto_review = m_auto_review_again;
+    bool is_syn = IEnglishPlayer::instance().is_synchronized();
+
+    IEnglishPlayer::instance().synchronize( true );
     m_auto_review_again = false;
 
     while ( m_listening )
@@ -269,4 +282,5 @@ void TextReview::listen_thread_function()
     }
 
     m_auto_review_again = is_auto_review;
+    IEnglishPlayer::instance().synchronize( is_syn );
 }

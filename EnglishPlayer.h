@@ -14,6 +14,8 @@ public:
     ~EnglishPlayer();
     virtual void speak( const std::wstring& word );
     virtual void speak( const std::vector<std::wstring>& words );
+    virtual bool is_synchronized();
+    virtual void synchronize( bool is_sync );
     virtual void options_changed( const po::variables_map& vm, const po::variables_map& old );
 
 private:
