@@ -11,23 +11,31 @@
 namespace po = boost::program_options;
 
 #define advanced_hash_without_symbols   "advanced.hash-without-symbols"
+#define advanced_lines_after_english    "advanced.lines-after-english"
 
 
 EnglishChineseExampleText::EnglishChineseExampleText( const fs::path& file_path )
     : AbstructText( file_path ),
-      m_hash_without_symbols( true )
+      m_hash_without_symbols( true ),
+      m_lines_after_english( 1 )
 {
     m_file_path = system_complete( m_file_path );
 
     po::options_description options( "Advanced" );
     options.add_options()
         ( advanced_hash_without_symbols, po::wvalue<std::wstring>(), "trim symbols when hash the key string" )
+        ( advanced_lines_after_english,  po::value<size_t>(), "lines after english" )
         ;
     po::variables_map& vm = IConfigurationFile::instance().add_options_description( options ).variables_map();
 
     if ( vm.count( advanced_hash_without_symbols ) )
     {
         m_hash_without_symbols = L"true" == vm[advanced_hash_without_symbols].as<std::wstring>();
+    }
+
+    if ( vm.count( advanced_lines_after_english ) )
+    {
+        m_lines_after_english = vm[advanced_lines_after_english].as<size_t>();
     }
 }
 
@@ -70,7 +78,7 @@ bool EnglishChineseExampleText::parse_text()
         }
 
         keys.push_back( key );
-        slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example ) );
+        slidshow_map[key] = ISlideshowPtr( new EceSlideshow( key, english, chinese, example, m_lines_after_english ) );
     }
 
     m_string.swap( s );

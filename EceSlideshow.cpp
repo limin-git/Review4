@@ -4,7 +4,7 @@
 #include "IConsole.h"
 
 
-EceSlideshow::EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp )
+EceSlideshow::EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp, size_t lines )
     : m_key( key ),
       m_english( eng ),
       m_chinese( chs ),
@@ -14,7 +14,7 @@ EceSlideshow::EceSlideshow( size_t key, const std::wstring& eng, const std::wstr
     std::wstringstream strm;
     strm
         << L"\n"
-        << L"\t" << m_english << L"\n"
+        << L"\t" << m_english << std::wstring( lines, L'\n' )
         << L"\t" << m_chinese << L"\n"
         << L"\t" << boost::replace_all_copy( m_example, L"\n", L"\n\t" );
     m_cache = strm.str();
