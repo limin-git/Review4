@@ -7,6 +7,7 @@
 #include "Utility.h"
 #include "IInput.h"
 #include "IHotKey.h"
+#include "IGlobalSignals.h"
 
 #define wallpaper_disable           "wallpaper.disable"
 #define wallpaper_path              "wallpaper.path"
@@ -19,7 +20,8 @@ Wallpaper::Wallpaper()
     : m_frequence( 2 ),
       m_count( 0 ),
       m_disable( false ),
-      m_check_picture( true )
+      m_check_picture( true ),
+      m_listening( false )
 {
     po::options_description options;
     options.add_options()
@@ -105,7 +107,7 @@ void Wallpaper::handle_exit()
         m_disable = true;
         //IHotKey::instance().unregister_handler( this );
         //IInput::instance().unregister_handler( this ).unregister_mouse_handler( this );
-        Utility::set_system_wallpaper( "C:\\Windows\\Web\\Wallpaper\\Theme1\\img1.jpg" );
+        Utility::set_system_wallpaper( "C:\\Windows\\Web\\Wallpaper\\Bing\\BorneoRainforest_ROW10198412592_1920x1200.jpg" );
     }
 }
 
@@ -240,4 +242,38 @@ void Wallpaper::search_pictures_thread()
     boost::lock_guard<boost::recursive_mutex> lock( m_mutex );
     m_pictures.assign( pictures.begin(), pictures.end() );
     m_current = m_pictures.begin();
+}
+
+
+void Wallpaper::handle_listen()
+{
+    if ( m_disable )
+    {
+        return;
+    }
+
+    m_listening = !m_listening;
+
+    if ( m_listening )
+    {
+        boost::thread t( boost::bind( &Wallpaper::listen_thread_function, this ) );
+    }
+    else
+    {
+        IGlobalSignals::instance().signal_next_slide();
+    }
+}
+
+
+void Wallpaper::listen_thread_function()
+{
+    while ( m_listening )
+    {
+        IGlobalSignals::instance().wait_next_slide();
+
+        if ( m_listening )
+        {
+            set_wallpaper();
+        }
+    }
 }

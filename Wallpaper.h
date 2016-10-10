@@ -26,6 +26,7 @@ public:
     virtual void handle_jump( size_t distance );
     virtual void handle_jump_back( size_t distance );
     virtual void handle_disable();
+    virtual void handle_listen();
     virtual void options_changed( const po::variables_map& vm, const po::variables_map& old );
 
 protected:
@@ -36,6 +37,7 @@ private:
 
     void set_wallpaper();
     void search_pictures_thread();
+    void listen_thread_function();
 
 private:
 
@@ -49,4 +51,5 @@ private:
     bool volatile m_check_picture;
     boost::thread m_search_thread;
     boost::recursive_mutex m_mutex;
+    volatile bool m_listening;
 };

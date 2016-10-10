@@ -8,6 +8,7 @@
 #include "Utility.h"
 #include "IFilter.h"
 #include "IEnglishPlayer.h"
+#include "IGlobalSignals.h"
 
 #define DEFAULT_REVIEW_AGAIN_DISTANCE   30
 #define DEFAULT_LISTEN_INTERVAL         1500
@@ -267,6 +268,7 @@ void TextReview::listen_thread_function()
     while ( m_listening )
     {
         (*m_current)->show_all();       if ( !m_listening ) { break; }
+        IGlobalSignals::instance().signal_next_slide();
 
         if ( m_listen_interval )
         {

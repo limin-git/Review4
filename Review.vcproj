@@ -875,11 +875,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GlobalSignals.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GlobalSignals.h"
+				>
+			</File>
+			<File
 				RelativePath=".\History.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\HotKey.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IGlobalSignals.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IGlobalSignals.h"
 				>
 			</File>
 			<File
