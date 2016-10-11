@@ -26,9 +26,17 @@ bool EceSlideshow::show()
     switch ( m_stage )
     {
     case English:
-        IConsole::instance().cls().write_center( m_english );
-        IEnglishPlayer::instance().speak( m_english );
-        m_stage = Chinese;
+        {
+            //std::wstringstream strm( m_english );
+            //for ( size_t i = 0; i < 20; ++i )
+            //{
+            //    strm << "    " << m_english;
+            //}
+            //IConsole::instance().cls().write_center( strm.str() );
+            IConsole::instance().cls().write_center( m_english );
+            IEnglishPlayer::instance().speak( m_english );
+            m_stage = Chinese;
+        }
         return false;
 
     case Chinese:

@@ -24,12 +24,12 @@ TextReview::TextReview()
       m_review_again_distance( DEFAULT_REVIEW_AGAIN_DISTANCE ),
       m_listen_interval( DEFAULT_LISTEN_INTERVAL ),
       m_listening( false ),
-      m_auto_review_again( false )
+      m_auto_review_again( 0 )
 {
     po::options_description options;
     options.add_options()
         ( review_review_again_distance, po::value<size_t>(), "review again distance" )
-        ( review_auto_review_again,     po::wvalue<std::wstring>(), "auto add to review again list" )
+        ( review_auto_review_again,     po::value<size_t>(), "auto add to review again list" )
         ( review_listen_interval,       po::value<size_t>(), "review listen interval" )
         ;
     IConfigurationFile::instance().add_options_description( options ).add_observer( this );
@@ -151,10 +151,14 @@ void TextReview::go_forward()
     {
         size_t key = (*m_current)->key();
 
-        if ( m_review_again_set.find( key ) == m_review_again_set.end() )
+        if ( m_review_times[key] < m_auto_review_again )
         {
-            m_review_again.push_back( std::make_pair( m_index, *m_current ) );
-            m_review_again_set.insert( key );
+            if ( m_review_again_set.find( key ) == m_review_again_set.end() )
+            {
+                m_review_again.push_back( std::make_pair( m_index, *m_current ) );
+                m_review_again_set.insert( key );
+                m_review_times[key]++;
+            }
         }
     }
 }
@@ -245,9 +249,9 @@ void TextReview::options_changed( const po::variables_map& vm, const po::variabl
         m_review_again_distance = vm[review_review_again_distance].as<size_t>();
     }
 
-    if ( Utility::updated<std::wstring>( review_auto_review_again, vm, old ) )
+    if ( Utility::updated<size_t>( review_auto_review_again, vm, old ) )
     {
-        m_auto_review_again = ( L"true" == vm[review_auto_review_again].as<std::wstring>() );
+        m_auto_review_again = vm[review_auto_review_again].as<size_t>();
     }
 
     if ( Utility::updated<size_t>( review_listen_interval, vm, old ) )
@@ -259,23 +263,22 @@ void TextReview::options_changed( const po::variables_map& vm, const po::variabl
 
 void TextReview::listen_thread_function()
 {
-    bool is_auto_review = m_auto_review_again;
-    bool is_syn = IEnglishPlayer::instance().is_synchronized();
-
-    IEnglishPlayer::instance().synchronize( true );
-    m_auto_review_again = false;
-
+    size_t auto_review = m_auto_review_again;
+    m_auto_review_again = 0;
     m_review_again.clear();
     m_review_again_set.clear();
 
+    bool is_syn = IEnglishPlayer::instance().is_synchronized();
+    IEnglishPlayer::instance().synchronize( true );
+
     while ( m_listening )
     {
-        (*m_current)->show_all();       if ( !m_listening ) { break; }
+        (*m_current)->show_all(); if ( !m_listening ) { break; }
         IGlobalSignals::instance().signal_next_slide();
 
         if ( m_listen_interval )
         {
-            Sleep( m_listen_interval );     if ( !m_listening ) { break; }
+            Sleep( m_listen_interval ); if ( !m_listening ) { break; }
         }
 
         if ( (*m_current)->empty() )
@@ -283,9 +286,9 @@ void TextReview::listen_thread_function()
             exit(0);
         }
 
-        go_forward();                   if ( !m_listening ) { break; }
+        go_forward(); if ( !m_listening ) { break; }
     }
 
-    m_auto_review_again = is_auto_review;
+    m_auto_review_again = auto_review;
     IEnglishPlayer::instance().synchronize( is_syn );
 }
