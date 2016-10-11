@@ -6,7 +6,7 @@ struct EceSlideshow : ISlideshow
 {
 public:
 
-    EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp, size_t lines = 1 );
+    EceSlideshow( size_t key, const std::wstring& eng, const std::wstring& chs, const std::wstring& exp, size_t lines = 1, size_t indents = 1 );
     virtual bool show();
     virtual bool show_all();
     virtual void clear_state();

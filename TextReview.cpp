@@ -265,6 +265,9 @@ void TextReview::listen_thread_function()
     IEnglishPlayer::instance().synchronize( true );
     m_auto_review_again = false;
 
+    m_review_again.clear();
+    m_review_again_set.clear();
+
     while ( m_listening )
     {
         (*m_current)->show_all();       if ( !m_listening ) { break; }
