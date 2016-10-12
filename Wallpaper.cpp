@@ -41,29 +41,7 @@ Wallpaper::Wallpaper()
         }
     }
 
-    if ( vm.count( wallpaper_path ) )
-    {
-        m_directory = fs::system_complete( vm[wallpaper_path].as<std::wstring>() );
-    }
-
-    if ( vm.count( wallpaper_recycle_path ) )
-    {
-        m_recycle_directory = fs::system_complete( vm[wallpaper_recycle_path].as<std::wstring>() );
-
-        if ( ! m_recycle_directory.empty() && ! exists( m_recycle_directory ) )
-        {
-            boost::system::error_code ec;
-            if ( ! create_directories( m_recycle_directory, ec ) )
-            {
-                m_recycle_directory.clear();
-            }
-        }
-    }
-
-    if ( vm.count( wallpaper_check_picture ) )
-    {
-        m_check_picture = ( L"true" == vm[wallpaper_check_picture].as<std::wstring>() );
-    }
+    initialize();
 }
 
 
@@ -202,6 +180,27 @@ void Wallpaper::options_changed( const po::variables_map& vm, const po::variable
     {
         m_frequence = vm[wallpaper_frequency].as<size_t>();
     }
+
+    if ( Utility::updated<std::wstring>( wallpaper_disable, vm, old ) )
+    {
+        m_disable = ( L"true" == vm[wallpaper_disable].as<std::wstring>() );
+
+        if ( !m_disable && m_directory.empty()  )
+        {
+            initialize();
+            handle_start();
+        }
+
+        if ( !m_disable && m_listening )
+        {
+            boost::thread t( boost::bind( &Wallpaper::listen_thread_function, this ) );
+        }
+
+        if ( m_disable && !m_directory.empty() )
+        {
+            Utility::set_system_wallpaper( "C:\\Windows\\Web\\Wallpaper\\Bing\\BorneoRainforest_ROW10198412592_1920x1200.jpg" );
+        }
+    }
 }
 
 
@@ -247,12 +246,12 @@ void Wallpaper::search_pictures_thread()
 
 void Wallpaper::handle_listen()
 {
+    m_listening = !m_listening;
+
     if ( m_disable )
     {
         return;
     }
-
-    m_listening = !m_listening;
 
     if ( m_listening )
     {
@@ -267,13 +266,48 @@ void Wallpaper::handle_listen()
 
 void Wallpaper::listen_thread_function()
 {
-    while ( m_listening )
+    while ( m_listening && !m_disable )
     {
         IGlobalSignals::instance().wait_next_slide();
 
-        if ( m_listening )
+        if ( m_listening && !m_disable )
         {
             set_wallpaper();
         }
+    }
+}
+
+
+void Wallpaper::initialize()
+{
+    if ( !m_directory.empty() )
+    {
+        return;
+    }
+
+    po::variables_map& vm = IConfigurationFile::instance().variables_map();
+
+    if ( vm.count( wallpaper_path ) )
+    {
+        m_directory = fs::system_complete( vm[wallpaper_path].as<std::wstring>() );
+    }
+
+    if ( vm.count( wallpaper_recycle_path ) )
+    {
+        m_recycle_directory = fs::system_complete( vm[wallpaper_recycle_path].as<std::wstring>() );
+
+        if ( ! m_recycle_directory.empty() && ! exists( m_recycle_directory ) )
+        {
+            boost::system::error_code ec;
+            if ( ! create_directories( m_recycle_directory, ec ) )
+            {
+                m_recycle_directory.clear();
+            }
+        }
+    }
+
+    if ( vm.count( wallpaper_check_picture ) )
+    {
+        m_check_picture = ( L"true" == vm[wallpaper_check_picture].as<std::wstring>() );
     }
 }

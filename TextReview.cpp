@@ -289,6 +289,7 @@ void TextReview::listen_thread_function()
         go_forward(); if ( !m_listening ) { break; }
     }
 
+    IGlobalSignals::instance().signal_next_slide();
     m_auto_review_again = auto_review;
     IEnglishPlayer::instance().synchronize( is_syn );
 }
