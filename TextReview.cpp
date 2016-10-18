@@ -133,37 +133,49 @@ void TextReview::go_forward()
 {
     boost::lock_guard<boost::recursive_mutex> guard( m_mutex );
 
-    if ( m_current_slide->empty() )
+    // inside history
+    if ( ++m_current_it != m_review_history.end() )
     {
-        m_current_slide = IScheduler::instance().get_slideshow();
+        m_current_slide = *m_current_it;
+        m_current_slide->clear_state();
+        return;
+    }
 
-        if ( m_current_slide->empty() )
-        {
-            return;
-        }
-
-        // TODO: duplicate code
-        m_review_history.push_back( m_current_slide );
-        m_index++;
+    if ( ! m_review_again.empty() && ( m_review_again_distance <= m_index - m_review_again.front().first ) )
+    {
+        ISlideshowPtr slide = m_review_again.front().second;
+        m_review_history.push_back( slide );
+        m_review_again.pop_front();
+        m_review_again_set.erase( slide->key() );
         m_current_it = m_review_history.end();
         m_current_it--;
     }
     else
     {
-        m_current_it++;
-    }
+        ISlideshowPtr slide = IScheduler::instance().get_slideshow();
 
-    if ( ( false == m_review_again.empty() ) && ( m_review_again_distance <= m_index - m_review_again.front().first ) )
-    {
-        m_review_history.push_back( m_review_again.front().second );
-        m_review_again_set.erase( m_review_again.front().second->key() );
-        m_review_again.pop_front();
-        m_current_it = m_review_history.end();
-        m_current_it--;
-    }
-    else if ( m_current_it == m_review_history.end() )
-    {
-        m_review_history.push_back( IScheduler::instance().get_slideshow() );
+        if ( slide->empty() )
+        {
+            if ( ! m_review_history.empty() )
+            {
+                m_current_slide = m_review_again.front().second;
+                m_review_again.pop_front();
+                m_review_again_set.erase( m_current_slide->key() );
+            }
+            else
+            {
+                m_current_slide = slide;
+            }
+
+            if ( m_current_it != m_review_history.begin() )
+            {
+                m_current_it--;
+            }
+
+            return;
+        }
+
+        m_review_history.push_back( slide );
         m_index++;
         m_current_it = m_review_history.end();
         m_current_it--;
@@ -217,7 +229,7 @@ void TextReview::delete_review_history( size_t key )
         }
         else
         {
-            m_current_slide = boost::shared_ptr<ISlideshow>( new EmptySlideshow );
+            m_current_it--;
             go_forward();
         }
     }
