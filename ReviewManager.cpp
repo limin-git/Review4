@@ -7,22 +7,27 @@
 #include "TextReview.h"
 #include "SubtitleReview.h"
 #include "Wallpaper.h"
+#include "Utility.h"
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
 #define advanced_register_hot_keys                  "advanced.register-hot-keys"
 #define advanced_enable_key_asdw                    "advanced.enable-key-asdw"
+#define advanced_disable_hotkeys_when_listening     "advanced.disable-hotkeys-when-listening"
 #define file_name_option                            "file.name"
 #define wallpaper_path                              "wallpaper.path"
 
 
 ReviewManager::ReviewManager()
-    : m_register_hot_keys( false )
+    : m_register_hot_keys( false ),
+      m_disable_hotkeys_when_listening( true ),
+      m_listening( false )
 {
     po::options_description options( "" );
     options.add_options()
         ( advanced_register_hot_keys,               po::wvalue<std::wstring>(), "register hot keys?" )
         ( advanced_enable_key_asdw,                 po::wvalue<std::wstring>(), "enable shortcut key ASDW?" )
+        ( advanced_disable_hotkeys_when_listening,  po::wvalue<std::wstring>(), "disable hotkeys when listening(default: true)?" )
         ( file_name_option,                         po::wvalue<std::wstring>(), "file name" )
         ( wallpaper_path,                           po::wvalue<std::wstring>(), "register hot keys?" )
         ;
@@ -184,17 +189,17 @@ void ReviewManager::handle_review_again()
 
 void ReviewManager::handle_listen()
 {
-    static bool listening = false;
-    listening = !listening;
+    m_listening = !m_listening;
 
-    unregister_hot_keys();
-
-    if ( listening )
+    if ( m_listening && m_disable_hotkeys_when_listening )
     {
+        unregister_hot_keys();
         IHotKey::instance().register_handler( this, MOD_CONTROL, 'L', boost::bind( &ReviewManager::handle_listen, this ) );
     }
-    else
+
+    if ( ! m_listening )
     {
+        unregister_hot_keys();
         regist_hot_keys();
     }
 
@@ -262,4 +267,22 @@ void ReviewManager::unregister_hot_keys()
 
 void ReviewManager::options_changed( const po::variables_map& vm, const po::variables_map& old )
 {
+    if ( Utility::updated<std::wstring>( advanced_disable_hotkeys_when_listening, vm, old ) )
+    {
+        m_disable_hotkeys_when_listening = ( L"true" == vm[advanced_disable_hotkeys_when_listening].as<std::wstring>() );
+
+        if ( m_listening )
+        {
+            unregister_hot_keys();
+
+            if ( m_disable_hotkeys_when_listening )
+            {
+                IHotKey::instance().register_handler( this, MOD_CONTROL, 'L', boost::bind( &ReviewManager::handle_listen, this ) );
+            }
+            else
+            {
+                regist_hot_keys();
+            }
+        }
+    }
 }

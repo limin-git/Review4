@@ -40,6 +40,8 @@ private:
 private:
 
     bool m_register_hot_keys;
+    bool m_disable_hotkeys_when_listening;
     typedef std::map<IReview*, IQueueProcessor*> ReviewMap;
     ReviewMap m_reivews;
+    bool m_listening;
 };

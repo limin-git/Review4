@@ -40,11 +40,13 @@ protected:
     std::list< std::pair<int, ISlideshowPtr> > m_review_again;
     std::map<size_t, size_t> m_review_times;
     std::set<size_t> m_review_again_set;
-    ISlideshowPtrList::iterator m_current;
+    ISlideshowPtrList::iterator m_current_it;
+    ISlideshowPtr m_current_slide;
     bool m_current_show_finished;
     int m_index;
     int m_review_again_distance;
     int m_listen_interval;
     volatile bool m_listening;
     volatile size_t m_auto_review_again;
+    boost::recursive_mutex m_mutex;
 };
