@@ -38,6 +38,7 @@ private:
     void set_wallpaper();
     void search_pictures_thread();
     void listen_thread_function();
+    void initialize();
 
 private:
 
