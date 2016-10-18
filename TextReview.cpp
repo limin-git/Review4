@@ -60,12 +60,14 @@ void TextReview::handle_exit()
 
 void TextReview::handle_continue()
 {
+    boost::lock_guard<boost::recursive_mutex> guard( m_mutex );
     show();
 }
 
 
 void TextReview::handle_next()
 {
+    boost::lock_guard<boost::recursive_mutex> guard( m_mutex );
     go_forward();
     m_current_show_finished = false;
     show();
@@ -74,6 +76,7 @@ void TextReview::handle_next()
 
 void TextReview::handle_previous()
 {
+    boost::lock_guard<boost::recursive_mutex> guard( m_mutex );
     go_back();
     m_current_show_finished = false;
     show();
@@ -82,8 +85,9 @@ void TextReview::handle_previous()
 
 void TextReview::handle_replay()
 {
-    (*m_current_it)->clear_state();
-    m_current_show_finished = (*m_current_it)->show();
+    boost::lock_guard<boost::recursive_mutex> guard( m_mutex );
+    m_current_slide->clear_state();
+    m_current_show_finished = m_current_slide->show();
 }
 
 
@@ -187,6 +191,8 @@ void TextReview::go_forward()
 
 void TextReview::go_back()
 {
+    boost::lock_guard<boost::recursive_mutex> guard( m_mutex );
+
     if ( m_current_it != m_review_history.begin() )
     {
         m_current_it--;
@@ -244,12 +250,14 @@ void TextReview::delete_review_history( size_t key )
 
 void TextReview::handle_review_again()
 {
-    if ( ( m_current_it != m_review_history.end() ) && ! (*m_current_it)->empty() )
+    boost::lock_guard<boost::recursive_mutex> guard( m_mutex );
+
+    if ( ( m_current_it != m_review_history.end() ) && ! m_current_slide->empty() )
     {
         if ( m_review_again.empty() || m_review_again.back().first != m_index )
         {
-            (*m_current_it)->clear_state();
-            m_review_again.push_back( std::make_pair( m_index, *m_current_it ) );
+            m_current_slide->clear_state();
+            m_review_again.push_back( std::make_pair( m_index, m_current_slide ) );
         }
     }
 
@@ -317,7 +325,12 @@ void TextReview::listen_thread_function()
 
         if ( m_listen_interval )
         {
-            Sleep( m_listen_interval ); if ( !m_listening ) { break; }
+            for ( size_t i = 0, step = 10; m_listening && i < m_listen_interval; i += step )
+            {
+                Sleep( step );
+            }
+
+            if ( !m_listening ) { break; }
         }
 
         if ( m_current_slide->empty() )
@@ -326,6 +339,11 @@ void TextReview::listen_thread_function()
         }
 
         go_forward(); if ( !m_listening ) { break; }
+
+        if ( m_current_slide->empty() )
+        {
+            exit(0);
+        }
     }
 
     IGlobalSignals::instance().signal_next_slide();

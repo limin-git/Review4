@@ -223,8 +223,8 @@ void ReviewManager::regist_hot_keys()
 {
     IHotKey::instance()
         .register_handler( this, 0, VK_DOWN,                boost::bind( &ReviewManager::handle_continue, this ) )
-        .register_handler( this, 0, VK_OEM_3,               boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
-        .register_handler( this, 0, VK_OEM_5,               boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
+        //.register_handler( this, 0, VK_OEM_3,               boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
+        //.register_handler( this, 0, VK_OEM_5,               boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
         .register_handler( this, 0, VK_LEFT,                boost::bind( &ReviewManager::handle_previous, this ) )
         .register_handler( this, 0, VK_PRIOR,               boost::bind( &ReviewManager::handle_previous, this ) )
         .register_handler( this, 0, VK_BROWSER_BACK,        boost::bind( &ReviewManager::handle_previous, this ) )
