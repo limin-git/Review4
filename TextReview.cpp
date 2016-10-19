@@ -18,6 +18,30 @@
 #define review_listen_interval          "review.listen-interval"
 
 
+struct AsynchronizedGuard
+{
+    AsynchronizedGuard( bool is_listening )
+    {
+        if ( is_listening )
+        {
+            m_is_synchronized = IEnglishPlayer::instance().is_synchronized();
+            IEnglishPlayer::instance().synchronize( false );
+        }
+    }
+
+    ~AsynchronizedGuard()
+    {
+        if ( m_is_listening )
+        {
+            IEnglishPlayer::instance().synchronize( m_is_synchronized );
+        }
+    }
+
+    bool m_is_listening;
+    bool m_is_synchronized;
+};
+
+
 
 TextReview::TextReview()
     : m_current_show_finished( false ),
@@ -125,6 +149,7 @@ void TextReview::show()
         go_forward();
     }
 
+    AsynchronizedGuard guard( m_listening );
     m_current_show_finished = m_current_slide->show();
 }
 
@@ -156,7 +181,7 @@ void TextReview::go_forward()
 
         if ( slide->empty() )
         {
-            if ( ! m_review_history.empty() )
+            if ( ! m_review_again.empty() )
             {
                 m_current_slide = m_review_again.front().second;
                 m_review_again.pop_front();
@@ -322,11 +347,6 @@ void TextReview::options_changed( const po::variables_map& vm, const po::variabl
 
 void TextReview::listen_thread_function()
 {
-    size_t auto_review = m_auto_review_again;
-    m_auto_review_again = 0;
-    m_review_again.clear();
-    m_review_again_set.clear();
-
     bool is_syn = IEnglishPlayer::instance().is_synchronized();
     IEnglishPlayer::instance().synchronize( true );
 
@@ -359,6 +379,5 @@ void TextReview::listen_thread_function()
     }
 
     IGlobalSignals::instance().signal_next_slide();
-    m_auto_review_again = auto_review;
     IEnglishPlayer::instance().synchronize( is_syn );
 }

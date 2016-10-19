@@ -173,10 +173,20 @@ void Console::options_changed( const po::variables_map& vm, const po::variables_
 
 void Console::set_font_face_name( const std::wstring& name )
 {
-    if ( name !=  L"新宋体" && name != L"Consolas" && name != L"Lucida Console"  )
-    {
-        return;
-    }
+    //if ( name !=  L"新宋体" &&
+    //     name != L"Consolas" &&
+    //     name != L"Lucida Console" &&
+    //     name != L"MS Gothic" &&
+    //     name != L"Raster Fonts" &&
+    //     name != L"SimSun-ExtB" &&
+    //     name != L"仿宋" &&
+    //     name != L"幼圆" &&
+    //     name != L"楷体" &&
+    //     name != L"隶书" &&
+    //     name != L"黑体" )
+    //{
+    //    return;
+    //}
 
     CONSOLE_FONT_INFOEX f;
     f.cbSize = sizeof( CONSOLE_FONT_INFOEX );
