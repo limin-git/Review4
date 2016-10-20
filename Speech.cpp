@@ -1,6 +1,10 @@
 #include "stdafx.h"
+#include "IConfigurationFile.h"
+#include "Utility.h"
 #include "Speech.h"
 #include <sphelper.h>
+
+#define speech_name "speech.name"
 
 
 Speech::Speech()
@@ -9,22 +13,11 @@ Speech::Speech()
     ::CoInitializeEx( NULL, COINIT_MULTITHREADED );
     ::CoCreateInstance( CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&m_sp_voice );
 
-#if 1
-    ISpObjectToken* token = NULL;
-    //HRESULT find_token =  SpFindBestToken( SPCAT_VOICES, L"", L"Name=VW Julie", &token );
-    //HRESULT find_token =  SpFindBestToken( L"HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\SPEECH\\Voices", L"Vendor=Voiceware;Name=VW Paul", L"", &token );
-    HRESULT find_token =  SpFindBestToken( L"HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\SPEECH\\Voices", L"Vendor=Microsoft;Name=Microsoft Tracy Desktop", L"", &token );
-
-    if ( SUCCEEDED(find_token) )
-    {
-        HRESULT set_voice = m_sp_voice->SetVoice( token );
-
-        if ( SUCCEEDED(set_voice) )
-        {
-            m_sp_voice->Speak( L"ƒ„∫√ ¿ΩÁhello, world", 0, NULL );
-        }
-    }
-#endif
+    po::options_description options;
+    options.add_options()
+        ( speech_name, po::wvalue<std::wstring>(), "speech name" )
+        ;
+    IConfigurationFile::instance().add_options_description( options ).add_observer( this );
 }
 
 
@@ -39,6 +32,7 @@ void Speech::speak( const std::wstring& word )
 {
     if ( m_sp_voice )
     {
+        boost::lock_guard<boost::mutex> guard( m_mutex );
         m_sp_voice->Speak( word.c_str(), 0, NULL );
     }
 }
@@ -46,6 +40,8 @@ void Speech::speak( const std::wstring& word )
 
 void Speech::speak( const std::vector<std::wstring>& words )
 {
+    boost::lock_guard<boost::mutex> guard( m_mutex );
+
     for ( size_t i = 0; i < words.size(); ++i )
     {
         m_sp_voice->Speak( words[i].c_str(), 0, NULL );
@@ -53,6 +49,25 @@ void Speech::speak( const std::vector<std::wstring>& words )
         if ( i + 1 < words.size() )
         {
             boost::this_thread::sleep_for( boost::chrono::milliseconds(300) );
+        }
+    }
+}
+
+
+void Speech::options_changed( const po::variables_map& vm, const po::variables_map& old )
+{
+    if ( Utility::updated<std::wstring>( speech_name, vm, old ) )
+    {
+        boost::lock_guard<boost::mutex> guard( m_mutex );
+        std::wstring attribs = L"Name=" + vm[speech_name].as<std::wstring>();;
+        ISpObjectToken* token = NULL;
+
+        if ( SUCCEEDED( SpFindBestToken( SPCAT_VOICES , attribs.c_str(), L"", &token ) ) )
+        {
+            ISpObjectToken* old_token = NULL;
+            m_sp_voice->GetVoice( &old_token );
+            m_sp_voice->SetVoice( token );
+            old_token->Release();
         }
     }
 }

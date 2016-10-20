@@ -899,11 +899,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ILog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Input.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\InputSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Log.cpp"
 				>
 			</File>
 			<File

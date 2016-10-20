@@ -18,7 +18,7 @@ EnglishPlayer::EnglishPlayer()
     m_options_description.add_options()
         ( speech_path,          po::wvalue< std::vector<std::wstring> >(),      "speech path with format 'path | .extension'" )
         ( speech_disable,       po::wvalue<std::wstring>(),                     "disable speech (true/false)" )
-        ( speech_synchronized,  po::value<bool>(),                              "synchronized or asynchronized" )
+        ( speech_synchronized,  po::wvalue<std::wstring>(),                     "synchronized or asynchronized" )
         ;
     IConfigurationFile::instance().add_options_description( m_options_description ).add_observer( this );
 }
@@ -135,8 +135,8 @@ void EnglishPlayer::options_changed( const po::variables_map& vm, const po::vari
         m_disabled = ( L"true" == s || L"1" == s || L"TRUE" == s || L"True" == s );
     }
 
-    if ( Utility::updated<bool>( speech_synchronized, vm, old ) )
+    if ( Utility::updated<std::wstring>( speech_synchronized, vm, old ) )
     {
-        m_is_synchronized = vm[speech_synchronized].as<bool>();
+        m_is_synchronized = ( L"true" == vm[speech_synchronized].as<std::wstring>() );
     }
 }

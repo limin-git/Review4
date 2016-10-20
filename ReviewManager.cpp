@@ -8,6 +8,7 @@
 #include "SubtitleReview.h"
 #include "Wallpaper.h"
 #include "Utility.h"
+#include "ILog.h"
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
@@ -191,15 +192,14 @@ void ReviewManager::handle_listen()
 {
     m_listening = !m_listening;
 
-    if ( m_listening && m_disable_hotkeys_when_listening )
+    unregister_hot_keys();
+
+    if ( m_listening )
     {
-        unregister_hot_keys();
         IHotKey::instance().register_handler( this, MOD_CONTROL, 'L', boost::bind( &ReviewManager::handle_listen, this ) );
     }
-
-    if ( ! m_listening )
+    else
     {
-        unregister_hot_keys();
         regist_hot_keys();
     }
 
@@ -221,10 +221,12 @@ void ReviewManager::handle_filter()
 
 void ReviewManager::regist_hot_keys()
 {
+    log_info << L"ReviewManager::regist_hot_keys";
+
     IHotKey::instance()
         .register_handler( this, 0, VK_DOWN,                boost::bind( &ReviewManager::handle_continue, this ) )
-        //.register_handler( this, 0, VK_OEM_3,               boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
-        //.register_handler( this, 0, VK_OEM_5,               boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
+        //.register_handler( this, 0, VK_OEM_3,             boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
+        //.register_handler( this, 0, VK_OEM_5,             boost::bind( &ReviewManager::handle_continue, this ) )     //  '\|' for US
         .register_handler( this, 0, VK_LEFT,                boost::bind( &ReviewManager::handle_previous, this ) )
         .register_handler( this, 0, VK_PRIOR,               boost::bind( &ReviewManager::handle_previous, this ) )
         .register_handler( this, 0, VK_BROWSER_BACK,        boost::bind( &ReviewManager::handle_previous, this ) )
@@ -234,12 +236,12 @@ void ReviewManager::regist_hot_keys()
         .register_handler( this, 0, VK_UP,                  boost::bind( &ReviewManager::handle_replay, this ) )
         .register_handler( this, 0, VK_DELETE,              boost::bind( &ReviewManager::handle_disable, this ) )
         .register_handler( this, 0, VK_ESCAPE,              boost::bind( &ReviewManager::handle_exit, this ) )
-        .register_handler( this, MOD_CONTROL, VK_RIGHT,     boost::bind( &ReviewManager::handle_jump, this, 10 ) )
-        .register_handler( this, MOD_CONTROL, VK_DOWN,      boost::bind( &ReviewManager::handle_jump, this, 50 ) )
-        .register_handler( this, MOD_CONTROL, VK_NEXT,      boost::bind( &ReviewManager::handle_jump, this, 100 ) )
-        .register_handler( this, MOD_CONTROL, VK_LEFT,      boost::bind( &ReviewManager::handle_jump_back, this, 10 ) )
-        .register_handler( this, MOD_CONTROL, VK_UP,        boost::bind( &ReviewManager::handle_jump_back, this, 50 ) )
-        .register_handler( this, MOD_CONTROL, VK_PRIOR,     boost::bind( &ReviewManager::handle_jump_back, this, 100 ) )
+        //.register_handler( this, MOD_CONTROL, VK_RIGHT,   boost::bind( &ReviewManager::handle_jump, this, 10 ) )
+        //.register_handler( this, MOD_CONTROL, VK_DOWN,    boost::bind( &ReviewManager::handle_jump, this, 50 ) )
+        //.register_handler( this, MOD_CONTROL, VK_NEXT,    boost::bind( &ReviewManager::handle_jump, this, 100 ) )
+        //.register_handler( this, MOD_CONTROL, VK_LEFT,    boost::bind( &ReviewManager::handle_jump_back, this, 10 ) )
+        //.register_handler( this, MOD_CONTROL, VK_UP,      boost::bind( &ReviewManager::handle_jump_back, this, 50 ) )
+        //.register_handler( this, MOD_CONTROL, VK_PRIOR,   boost::bind( &ReviewManager::handle_jump_back, this, 100 ) )
         .register_handler( this, 0, 'R',                    boost::bind( &ReviewManager::handle_review_again, this ) )
         .register_handler( this, MOD_CONTROL, 'L',          boost::bind( &ReviewManager::handle_listen, this ) )
         .register_handler( this, MOD_CONTROL, VK_DELETE,    boost::bind( &ReviewManager::handle_filter, this ) )
@@ -261,6 +263,8 @@ void ReviewManager::regist_hot_keys()
 
 void ReviewManager::unregister_hot_keys()
 {
+    log_info << L"ReviewManager::unregister_hot_keys";
+
     IHotKey::instance().unregister_handler( this );
 }
 
@@ -270,19 +274,5 @@ void ReviewManager::options_changed( const po::variables_map& vm, const po::vari
     if ( Utility::updated<std::wstring>( advanced_disable_hotkeys_when_listening, vm, old ) )
     {
         m_disable_hotkeys_when_listening = ( L"true" == vm[advanced_disable_hotkeys_when_listening].as<std::wstring>() );
-
-        if ( m_listening )
-        {
-            unregister_hot_keys();
-
-            if ( m_disable_hotkeys_when_listening )
-            {
-                IHotKey::instance().register_handler( this, MOD_CONTROL, 'L', boost::bind( &ReviewManager::handle_listen, this ) );
-            }
-            else
-            {
-                regist_hot_keys();
-            }
-        }
     }
 }

@@ -21,6 +21,7 @@
 struct AsynchronizedGuard
 {
     AsynchronizedGuard( bool is_listening )
+        : m_is_listening( is_listening )
     {
         if ( is_listening )
         {

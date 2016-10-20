@@ -45,7 +45,7 @@ protected:
     bool m_current_show_finished;
     int m_index;
     int m_review_again_distance;
-    int m_listen_interval;
+    size_t m_listen_interval;
     volatile bool m_listening;
     volatile size_t m_auto_review_again;
     boost::recursive_mutex m_mutex;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ICommandLine.h"
 #include "IReviewManager.h"
+#include "ILog.h"
 
 
 int wmain(int argc, wchar_t* argv[])
@@ -13,6 +14,7 @@ int wmain(int argc, wchar_t* argv[])
     }
 
     ICommandLine::instance().parse_command_line( argc, argv );
+    ILog::instance();
 
     try
     {
