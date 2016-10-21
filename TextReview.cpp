@@ -10,6 +10,7 @@
 #include "IEnglishPlayer.h"
 #include "IGlobalSignals.h"
 #include "EmptySlideshow.h"
+#include "ILog.h"
 
 #define DEFAULT_REVIEW_AGAIN_DISTANCE   30
 #define DEFAULT_LISTEN_INTERVAL         1500

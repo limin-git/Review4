@@ -43,5 +43,5 @@ private:
     bool m_disable_hotkeys_when_listening;
     typedef std::map<IReview*, IQueueProcessor*> ReviewMap;
     ReviewMap m_reivews;
-    bool m_listening;
+    volatile bool m_listening;
 };

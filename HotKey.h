@@ -16,6 +16,7 @@ public:
 private:
 
     void message_loop();
+    bool completed() const { return m_operation_complete; }
 
 private:
 
@@ -46,4 +47,5 @@ private:
     boost::condition_variable m_operation_condition;
     bool m_operation_complete;
     volatile bool m_message_loop;
+    std::set<UINT> m_failed_ids;
 };

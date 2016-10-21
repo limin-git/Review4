@@ -15,6 +15,7 @@ namespace fs = boost::filesystem;
 #define advanced_register_hot_keys                  "advanced.register-hot-keys"
 #define advanced_enable_key_asdw                    "advanced.enable-key-asdw"
 #define advanced_disable_hotkeys_when_listening     "advanced.disable-hotkeys-when-listening"
+#define advanced_fix_hotkeys                        "advanced.fix-hotkeys"
 #define file_name_option                            "file.name"
 #define wallpaper_path                              "wallpaper.path"
 
@@ -29,6 +30,7 @@ ReviewManager::ReviewManager()
         ( advanced_register_hot_keys,               po::wvalue<std::wstring>(), "register hot keys?" )
         ( advanced_enable_key_asdw,                 po::wvalue<std::wstring>(), "enable shortcut key ASDW?" )
         ( advanced_disable_hotkeys_when_listening,  po::wvalue<std::wstring>(), "disable hotkeys when listening(default: true)?" )
+        ( advanced_fix_hotkeys,                     po::wvalue<std::wstring>(), "fix hotkeys?" )
         ( file_name_option,                         po::wvalue<std::wstring>(), "file name" )
         ( wallpaper_path,                           po::wvalue<std::wstring>(), "register hot keys?" )
         ;
@@ -81,11 +83,10 @@ void ReviewManager::run()
 {
     start();
 
-    IHotKey::instance()
-        .register_handler( this, MOD_CONTROL|MOD_ALT, 'L',  boost::bind( &ReviewManager::handle_listen, this ) )
-        ;
-
-    regist_hot_keys();
+    if ( ! IConfigurationFile::instance().variables_map().count( advanced_fix_hotkeys ) )
+    {
+        regist_hot_keys();
+    }
 
     IInput::instance().run();
 }
@@ -221,8 +222,6 @@ void ReviewManager::handle_filter()
 
 void ReviewManager::regist_hot_keys()
 {
-    log_info << L"ReviewManager::regist_hot_keys";
-
     IHotKey::instance()
         .register_handler( this, 0, VK_DOWN,                boost::bind( &ReviewManager::handle_continue, this ) )
         //.register_handler( this, 0, VK_OEM_3,             boost::bind( &ReviewManager::handle_continue, this ) )     // '`~' for US
@@ -263,8 +262,6 @@ void ReviewManager::regist_hot_keys()
 
 void ReviewManager::unregister_hot_keys()
 {
-    log_info << L"ReviewManager::unregister_hot_keys";
-
     IHotKey::instance().unregister_handler( this );
 }
 
@@ -274,5 +271,11 @@ void ReviewManager::options_changed( const po::variables_map& vm, const po::vari
     if ( Utility::updated<std::wstring>( advanced_disable_hotkeys_when_listening, vm, old ) )
     {
         m_disable_hotkeys_when_listening = ( L"true" == vm[advanced_disable_hotkeys_when_listening].as<std::wstring>() );
+    }
+
+    if ( Utility::updated<std::wstring>( advanced_fix_hotkeys, vm, old ) )
+    {
+        unregister_hot_keys();
+        regist_hot_keys();
     }
 }

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "HotKey.h"
 #include "IInputSender.h"
+#include "ILog.h"
 
 
 HotKey::HotKey()
@@ -49,10 +50,8 @@ IHotKey& HotKey::register_handler( IHotKeyHandler* handler, UINT fsModifiers, UI
         IInputSender::instance().Ctrl_Alt_Shift_key( 'R' );
         id++;
 
-        while ( ! m_operation_complete )
-        {
-            m_operation_condition.wait_for( operation_lock, boost::chrono::milliseconds(10) );
-        }
+        boost::chrono::system_clock::time_point wake_up_time = boost::chrono::system_clock::now() + boost::chrono::milliseconds(100);
+        m_operation_condition.wait_until( operation_lock, wake_up_time, boost::bind( &HotKey::completed, this ) );
     }
 
     return *this;
@@ -63,7 +62,7 @@ IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
 {
     boost::lock_guard<boost::mutex> lock( m_mutex );
 
-    std::set<UINT> ids;
+    std::set<UINT> ids = m_failed_ids;
 
     for ( KeyHandlerMap::iterator it = m_handlers.begin(); it != m_handlers.end(); NULL )
     {
@@ -86,13 +85,17 @@ IHotKey& HotKey::unregister_handler( IHotKeyHandler* handler )
     if ( ! ids.empty() )
     {
         boost::unique_lock<boost::mutex> operation_lock( m_operation_mutex );
+        m_failed_ids = ids;
         m_unregister_ids.swap( ids );
         m_operation_complete = false;
         IInputSender::instance().Ctrl_Alt_Shift_key( 'U' );
 
-        while ( ! m_operation_complete )
+        boost::chrono::system_clock::time_point wake_up_time = boost::chrono::system_clock::now() + boost::chrono::milliseconds(100);
+        m_operation_condition.wait_until( operation_lock, wake_up_time, boost::bind( &HotKey::completed, this ) );
+
+        if ( completed() )
         {
-            m_operation_condition.wait_for( operation_lock, boost::chrono::milliseconds(10) );
+            m_failed_ids.clear();
         }
     }
 
@@ -108,10 +111,8 @@ void HotKey::clear()
     m_operation_complete = false;
     IInputSender::instance().Ctrl_Alt_Shift_key( 'C' );
 
-    while ( ! m_operation_complete )
-    {
-        m_operation_condition.wait( operation_lock );
-    }
+    boost::chrono::system_clock::time_point wake_up_time = boost::chrono::system_clock::now() + boost::chrono::milliseconds(100);
+    m_operation_condition.wait_until( operation_lock, wake_up_time, boost::bind( &HotKey::completed, this ) );
 }
 
 
