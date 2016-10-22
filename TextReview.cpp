@@ -11,6 +11,7 @@
 #include "IGlobalSignals.h"
 #include "EmptySlideshow.h"
 #include "ILog.h"
+#include "TlsParameter.h"
 
 #define DEFAULT_REVIEW_AGAIN_DISTANCE   30
 #define DEFAULT_LISTEN_INTERVAL         1500
@@ -87,6 +88,7 @@ void TextReview::handle_exit()
 void TextReview::handle_continue()
 {
     boost::lock_guard<boost::recursive_mutex> guard( m_mutex );
+    disable_play_when_listening();
     show();
 }
 
@@ -94,6 +96,7 @@ void TextReview::handle_continue()
 void TextReview::handle_next()
 {
     boost::lock_guard<boost::recursive_mutex> guard( m_mutex );
+    disable_play_when_listening();
     go_forward();
     m_current_show_finished = false;
     show();
@@ -103,6 +106,7 @@ void TextReview::handle_next()
 void TextReview::handle_previous()
 {
     boost::lock_guard<boost::recursive_mutex> guard( m_mutex );
+    disable_play_when_listening();
     go_back();
     m_current_show_finished = false;
     show();
@@ -382,4 +386,19 @@ void TextReview::listen_thread_function()
 
     IGlobalSignals::instance().signal_next_slide();
     IEnglishPlayer::instance().synchronize( is_syn );
+}
+
+
+void TextReview::disable_play_when_listening()
+{
+    boost::thread_specific_ptr<std::wstring>& param = TlsParameter::get_param( TLS_PARAM_PlayEnglish );
+
+    if ( m_listening && NULL == param.get() )
+    {
+        param.reset( new std::wstring( L"false" ) );
+    }
+    else if ( ! m_listening && param.get() != NULL )
+    {
+        param.reset();
+    }
 }

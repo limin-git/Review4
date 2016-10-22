@@ -3,6 +3,7 @@
 #include "IConfigurationFile.h"
 #include "ISpeech.h"
 #include "ISound.h"
+#include "TlsParameter.h"
 #include "Utility.h"
 
 #define speech_path         "speech.path"
@@ -34,6 +35,12 @@ EnglishPlayer::~EnglishPlayer()
 void EnglishPlayer::speak( const std::wstring& word )
 {
     if ( m_disabled || word.empty() )
+    {
+        return;
+    }
+
+    boost::thread_specific_ptr<std::wstring>& param = TlsParameter::get_param( TLS_PARAM_PlayEnglish );
+    if ( param.get() != NULL && L"false" == *param )
     {
         return;
     }

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Disable.h"
 #include "IConfigurationFile.h"
+#include "IText.h"
 namespace po = boost::program_options;
 
 #define file_disable    "file.disabled"
@@ -30,18 +31,18 @@ void Disable::disable( ISlideshowPtr slideshow )
 {
     // TODO: create 2 threads
 
-    if ( is_disabled( slideshow->key() ) || 0 == slideshow->key() )
+    if ( is_disabled( slideshow->key_string() ) || 0 == slideshow->key() )
     {
         return;
     }
 
-    m_file_stream << slideshow->key() /*<< L"\t" << slideshow->key_string()*/ << std::endl; // TODO: fix unicode fstream
-    m_disabled.insert( slideshow->key() );
+    m_file_stream << slideshow->key_string() << std::endl; // TODO: fix unicode fstream
+    m_disabled.insert( slideshow->key_string() );
     notify( slideshow->key() );
 }
 
 
-const std::set<size_t>& Disable::disabled()
+const std::set<std::wstring>& Disable::disabled()
 {
     return m_disabled;
 }
@@ -66,16 +67,7 @@ void Disable::load_file()
         {
             if ( !s.empty() )
             {
-                size_t pos = s.find( '\t' );
-
-                try
-                {
-                    size_t key = boost::lexical_cast<size_t>( s.substr( 0, pos ) );
-                    m_disabled.insert( key );
-                }
-                catch ( std::exception& )
-                {
-                }
+                m_disabled.insert( s );
             }
         }
 
@@ -101,6 +93,12 @@ void Disable::remove_observer( IDisableObserver* observer )
 
 
 bool Disable::is_disabled( size_t key )
+{
+    return is_disabled( IText::instance().slideshow( key )->key_string() );
+}
+
+
+bool Disable::is_disabled( const std::wstring& key )
 {
     return ( m_disabled.find( key ) != m_disabled.end() );
 }

@@ -955,6 +955,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TlsParameter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TlsParameter.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Wallpaper.cpp"
 				>
 			</File>

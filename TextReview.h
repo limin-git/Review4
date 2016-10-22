@@ -34,6 +34,10 @@ protected:
     void delete_review_history( size_t key );
     void listen_thread_function();
 
+private:
+
+    void disable_play_when_listening();
+
 protected:
 
     ISlideshowPtrList m_review_history;

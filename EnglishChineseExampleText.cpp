@@ -79,7 +79,7 @@ bool EnglishChineseExampleText::parse_text()
         size_t key = hash( english );
 
         if ( IFilter::instance().is_filtered( english )    || 
-             IDisable::instance().is_disabled( key )       ||
+             IDisable::instance().is_disabled( english )   ||
              slidshow_map.find( key ) != slidshow_map.end() )
         {
             continue;

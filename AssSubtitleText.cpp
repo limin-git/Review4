@@ -44,7 +44,7 @@ bool AssSubtitleText::parse_text()
 
         size_t key = m_hash( it->str() );
 
-        if ( IDisable::instance().is_disabled( key ) )
+        if ( IDisable::instance().is_disabled( it->str() ) )
         {
             continue;
         }
