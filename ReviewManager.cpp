@@ -197,7 +197,10 @@ void ReviewManager::handle_listen()
 
     if ( m_listening )
     {
-        IHotKey::instance().register_handler( this, MOD_CONTROL, 'L', boost::bind( &ReviewManager::handle_listen, this ) );
+        IHotKey::instance()
+            .register_handler( this, MOD_CONTROL, 'L', boost::bind( &ReviewManager::handle_listen, this ) )
+            .register_handler( this, MOD_CONTROL, 'H', boost::bind( &ReviewManager::handle_fix_hotkeys, this ) )
+            ;
     }
     else
     {
@@ -243,6 +246,7 @@ void ReviewManager::regist_hot_keys()
         //.register_handler( this, MOD_CONTROL, VK_PRIOR,   boost::bind( &ReviewManager::handle_jump_back, this, 100 ) )
         .register_handler( this, 0, 'R',                    boost::bind( &ReviewManager::handle_review_again, this ) )
         .register_handler( this, MOD_CONTROL, 'L',          boost::bind( &ReviewManager::handle_listen, this ) )
+        .register_handler( this, MOD_CONTROL, 'H',          boost::bind( &ReviewManager::handle_fix_hotkeys, this ) )
         .register_handler( this, MOD_CONTROL, VK_DELETE,    boost::bind( &ReviewManager::handle_filter, this ) )
         ;
 
@@ -277,5 +281,26 @@ void ReviewManager::options_changed( const po::variables_map& vm, const po::vari
     {
         unregister_hot_keys();
         regist_hot_keys();
+    }
+}
+
+
+void ReviewManager::handle_fix_hotkeys()
+{
+    static bool enable = false;
+    enable = !enable;
+
+    unregister_hot_keys();
+
+    if ( enable )
+    {
+        regist_hot_keys();
+    }
+    else
+    {
+        IHotKey::instance()
+            .register_handler( this, MOD_CONTROL, 'L', boost::bind( &ReviewManager::handle_listen, this ) )
+            .register_handler( this, MOD_CONTROL, 'H', boost::bind( &ReviewManager::handle_fix_hotkeys, this ) )
+            ;
     }
 }
