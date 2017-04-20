@@ -9,6 +9,7 @@
 #define speech_path         "speech.path"
 #define speech_disable      "speech.disable"
 #define speech_synchronized "speech.synchronized"
+static const boost::timer::nanosecond_type one_hundred_milliseconds(100 * 1000000LL);
 
 
 EnglishPlayer::EnglishPlayer()
@@ -22,6 +23,7 @@ EnglishPlayer::EnglishPlayer()
         ( speech_synchronized,  po::wvalue<std::wstring>(),                     "synchronized or asynchronized" )
         ;
     IConfigurationFile::instance().add_options_description( m_options_description ).add_observer( this );
+    Sleep(100);
 }
 
 
@@ -59,14 +61,20 @@ void EnglishPlayer::speak( const std::wstring& word )
             break;
         }
     }
-
+  
     if ( m_is_synchronized )
     {
         speak_impl( w );
     }
     else
     {
-        m_processor.queue_item( boost::bind( &EnglishPlayer::speak_impl, this, w ) );
+        if ( one_hundred_milliseconds < m_timer.elapsed().wall )
+        {
+            m_processor.queue_item( boost::bind( &EnglishPlayer::speak_impl, this, w ) );
+        }
+
+        m_timer.stop();
+        m_timer.start();
     }
 }
 

@@ -38,4 +38,5 @@ private:
     po::options_description m_options_description;
     bool m_disabled;
     bool m_is_synchronized;
+    boost::timer::cpu_timer m_timer;
 };

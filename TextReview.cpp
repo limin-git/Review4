@@ -191,7 +191,7 @@ void TextReview::go_forward()
             {
                 m_current_slide = m_review_again.front().second;
                 m_review_again.pop_front();
-                m_review_again_set.erase( m_current_slide->key() );
+                m_review_again.push_back( std::make_pair( m_index, m_current_slide ) );
             }
             else
             {
